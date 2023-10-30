@@ -51,7 +51,7 @@ async function START_APP(){
     /**
      *  Get all components emitters
      */
-    emitterFactory()
+    await emitterFactory()
     /**
      *  On Update
      */

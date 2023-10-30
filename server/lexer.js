@@ -3,24 +3,104 @@ const fs = require("fs")
 // vars:
 const componentEnds = "<"
 const componentsDir = "../components/"
+const logicComponentSeparator = ">>>"
+const logicFunctionsSeparator = "#"
+let ComponentsJsLogic = {}
+let componentJsLogic = []
 //-----------------------------------------------------------------------^
 
-function executeJsLogic(jsLogic) {
-    // Manage logic js:
-    console.log("jsLogic --->", jsLogic)
-    // 1. Evaluate js logic
-    eval(jsLogic)
-    // 2. Call the functions inside jsLogic
-    anime1()
-    anime2()
-}
-
+// function executeJsLogic(jsLogic) {
+//     // Manage logic js:
+//     console.log("jsLogic --->", jsLogic)
+//     // 1. Evaluate js logic
+//     eval(jsLogic)
+//     // 2. Call the functions inside jsLogic
+//     anime1()
+//     anime2()
+// }
 function returnFileDataSplitByLines(link = componentsDir + "root.gm") {
-    let [jsLogic, componentsLogic] = fs.readFileSync(link).toString().split("return")
+    /**
+     * Get Data
+     */
+    let [jsLogic, componentsLogic] = fs.readFileSync(link).toString().split(logicComponentSeparator)
+    /**
+     * Handle components functions logic
+     */
+    console.log("jsLogic", jsLogic);
+    if (jsLogic){
+        componentJsLogic = jsLogic.split(logicFunctionsSeparator)
+        componentJsLogic = componentJsLogic.filter(line => line)
+        if (componentJsLogic.length){
+            componentJsLogic = componentJsLogic.map(line => line.replaceAll("\r", ""))
+            normalizeJsLogic()
+        }
+    }
+    /**
+     * Handle components structure
+     */
     let splitByLineComponents = componentsLogic.split("\n")
     splitByLineComponents = splitByLineComponents.map(line => line.replaceAll("\r", ""))
     splitByLineComponents = splitByLineComponents.filter(line => line)
     return splitByLineComponents
+}
+function normalizeJsLogic(){
+    console.log("componentJsLogic:", componentJsLogic);
+    /**
+     * Get chunks
+     */
+    for(let iC = 0 ; iC < componentJsLogic.length; iC++ ){
+
+        let chunkLogic = componentJsLogic[iC].split("\n")
+        let endIndx = null
+        let emitterName = null
+        let functionName = null
+        let normalizedLogic = []
+        console.log("chunkLogic:", chunkLogic);
+
+        for (let iL = 0 ; iL < chunkLogic.length; iL++){
+            /**
+             * Skip children lines
+             **/
+            if (endIndx && iL < endIndx) continue;
+            if (endIndx && iL == endIndx) {
+                endIndx = null
+                continue
+            };
+            let line = chunkLogic[iL]
+            console.log("line:", line);
+            const lineHasEmitterName = iL == 0
+            const lineHasComponentTag = line.match(/^\s*@omponent/)
+            const lenOfWhiteSpace = getLenOfWhiteSpaceAtFrontOfLine(line)
+
+            if(lineHasEmitterName){
+                emitterName = line.match(/^\w+(?=\s+)/)[0]
+                functionName = line.match(/[\w\d_]+(?=\()/)[0]
+                if (!ComponentsJsLogic[emitterName]){
+                    ComponentsJsLogic[emitterName] = {}
+                }
+                ComponentsJsLogic[emitterName][functionName] = null
+                continue
+            }
+            else if(lineHasComponentTag){
+                let [chldComponent, skipLineToIndex]  = extractChild(
+                    iL,
+                    chunkLogic,
+                    lenOfWhiteSpace
+                ) 
+                endIndx = skipLineToIndex
+                chldComponent = chldComponent.map(line => line.slice(lenOfWhiteSpace))
+                console.log("chldComponent:", chldComponent);
+                const asset  = lexer(chldComponent)
+                normalizedLogic.push(JSON.stringify(asset))
+                continue
+            }
+            normalizedLogic.push(line)
+        }
+
+        console.log("normalizedLogic:", normalizedLogic);
+        ComponentsJsLogic[emitterName][functionName] = normalizedLogic.join("\n")
+    }
+
 }
 function checkIsPropOneLine(line, lineEnd) {
     line = line.trimEnd()
@@ -31,7 +111,6 @@ function checkIsPropOneLine(line, lineEnd) {
         return false
     }
 }
-
 function extractEntireProp(
     i,
     splitByLineComponents,
@@ -64,7 +143,6 @@ function extractEntireProp(
     let extrProp = splitByLineComponents.slice(i, endIndx + 1)
     return [extrProp, endIndx]
 }
-
 function extraxtPropValue(
     i,
     splitByLineComponents,
@@ -88,7 +166,6 @@ function extraxtPropValue(
 
     return [value, skipLineToIndex]
 }
-
 function getLenOfWhiteSpaceAtFrontOfLine(line) {
     let count = 0
     for (let c of line) {
@@ -100,7 +177,6 @@ function getLenOfWhiteSpaceAtFrontOfLine(line) {
     }
     return count
 }
-
 function extractChild(
     i,
     splitByLineComponents,
@@ -115,23 +191,11 @@ function extractChild(
             child.push(line)
             skipLineToIndex = indx
             let lenOf = getLenOfWhiteSpaceAtFrontOfLine(line)
-
-            console.log(
-                "extractChild >>>",
-                lenOfWhiteSpace == lenOf, "\n",
-                lenOfWhiteSpace, "\n",
-                lenOf, "\n",
-            );
-
             if (lenOfWhiteSpace == lenOf && line.endsWith(componentEnds)) break
         }
     }
     return [child, skipLineToIndex]
 }
-
-/**
- * 
- */
 function lexer(
     splitByLineComponents = returnFileDataSplitByLines(),
     whiteSpaceLenTree = 0
@@ -186,7 +250,6 @@ function lexer(
                 )
                 // Normalize the child in order whiteSpaceLenTree == 0
                 chldComponent = chldComponent.map(line => line.slice(lenOfWhiteSpace))
-                console.log("CHILD >>> ", chldComponent);
                 //---------------------------------------------------------------------^
 
                 endIndx = skipLineToIndex
@@ -261,4 +324,4 @@ function lexer(
 
 }
 
-module.exports = lexer
+module.exports = {lexer, ComponentsJsLogic}

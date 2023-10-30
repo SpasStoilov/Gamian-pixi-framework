@@ -40,33 +40,33 @@ export class GenericEmitter{
         await this.afterDestroy();
     }
     // Hooks:
-    async beforeRender(){
+    async beforeRender(asset=null){
         return ()=>{}
     }
-    async render(){
+    async render(asset=null){
         return ()=>{}
     }
-    async afterRender(){
-        return ()=>{}
-    }
-    //
-    async beforeUpdate(){
-        return ()=>{}
-    }
-    async update(){
-        return ()=>{}
-    }
-    async afterUpdate(){
+    async afterRender(asset=null){
         return ()=>{}
     }
     //
-    async beforeDestroy(){
+    async beforeUpdate(asset=null){
         return ()=>{}
     }
-    async destroy(){
+    async update(asset=null){
         return ()=>{}
     }
-    async afterDestroy(){
+    async afterUpdate(asset=null){
+        return ()=>{}
+    }
+    //
+    async beforeDestroy(asset=null){
+        return ()=>{}
+    }
+    async destroy(asset=null){
+        return ()=>{}
+    }
+    async afterDestroy(asset=null){
         return ()=>{}
     }
 } 

@@ -1,6 +1,8 @@
 import * as AllEmitters from "../components/emitters.js"
 import {emitter} from "../root.js"
+import { fetchME } from "./Utils/fetch.js"
 
+export let functionalEmitterRegister = {}
 export let classEmitterRegister = {}
 /**
  * Creates all instaces of componets emitters.
@@ -8,7 +10,9 @@ export let classEmitterRegister = {}
  * eventName == new emitterClass().constructor.name 
  * handler == new emitterClass().init
  */
-export function emitterFactory(){
+export async function emitterFactory(){
+    let functionalLogic = await fetchME("js-logic")
+    console.log("functionalLogic", functionalLogic);
     /**
      * Loop over all emitterClass in components dir
      */
@@ -28,4 +32,6 @@ export function emitterFactory(){
          */
         emitter.on(name, instance.init.bind(instance));
     }
+
+    return Promise.resolve()
 }

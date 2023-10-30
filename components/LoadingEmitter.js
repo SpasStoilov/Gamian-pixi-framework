@@ -9,9 +9,9 @@ export class LoadingEmitter extends GenericEmitter{
     constructor(){
         super()
     }
-    
     async render(){
         console.log("LoadingEmitter >>> render");
+        this.tree
         return ()=>{}
     }
     async update(){

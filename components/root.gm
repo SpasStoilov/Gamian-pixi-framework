@@ -1,5 +1,4 @@
-return
-
+>>>
 @omponent Container;
     name ~ ROOT_CONTAINER;
     emitter ~ RootEmitter;

@@ -1,0 +1,3 @@
+Server-side:
+1. Split js logic to funtions.
+2. Normalize each function (she is mixed with gamian logic).

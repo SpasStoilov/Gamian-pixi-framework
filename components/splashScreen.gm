@@ -1,5 +1,4 @@
-return
-
+>>>
 @omponent Container; 
     name ~ splash_container;
     emitter ~ SplashEmitter;

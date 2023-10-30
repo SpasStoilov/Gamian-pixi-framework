@@ -2,6 +2,7 @@ import * as PIXI from '../node_modules/pixi.js/dist/pixi.mjs';
 import {fetchME}  from "./Utils/fetch.js"
 import {classEmitterRegister} from "./GlobalEmitterRegister.js"
 import {evalArgs, evalProp} from "./Utils/EvalProps.js"
+import {ParentChainVisibility} from "./Utils/ParentChainVisibility.js"
 import {ongoingEvent} from "./Utils/OngoingEvent.js"
 
 export class TreeBuilder{
@@ -30,7 +31,7 @@ export class TreeBuilder{
     root_gm = {}
 
     /**
-     * Holds information which props of asset to ignore on update.
+     * Holds information which props of asset to ignore.
      */
     ignore_on_update = {}
 
@@ -51,6 +52,11 @@ export class TreeBuilder{
      * Holds all animations about every assets.
      */
     animator = {}
+    /**
+     * Holds jsLogic.
+     * TODO: add to delete asset
+     */
+    functionalRegister = {}
 
     /**
      * Defines what components can be present in the three
@@ -76,7 +82,7 @@ export class TreeBuilder{
      * Information needed to construct the tree
      */
     async getTreeInformation(){
-        this.root_gm = await fetchME("")
+        this.root_gm = await fetchME("structure")
         return this.root_gm
     }
     /**
@@ -210,7 +216,6 @@ export class TreeBuilder{
         // Asset ready!
         return asset
     }
-
     updateAssetLifeState(assetName, setDestroyState=false){
         const asset_life_state = this.assets_current_life_state[assetName]
         /**
@@ -227,7 +232,6 @@ export class TreeBuilder{
         }
         return this.assets_current_life_state[assetName]
     }
-
     showNeededAssets(){
         for (
             let [assetName, value] of Object.entries(this.show_components)
@@ -249,7 +253,9 @@ export class TreeBuilder{
 
     };
     setContext(assetName){
+        //....
         const emmiterName = this.asset_emitter_mapper[assetName]
+        //....
         this.props = classEmitterRegister[emmiterName]
     }
     hookTreeParams(){
@@ -272,9 +278,12 @@ export class TreeBuilder{
 
     };
     hookParams(asset, params){
-        if (asset && asset.visible){
+        //....
+        const parentChainVisible = ParentChainVisibility(asset)
+        //....
+        if (asset && asset.visible && parentChainVisible){
             /**
-            * Update life-state of the asset only when is visible
+            * Update life-state of the asset
             */
             const asset_life_state = this.updateAssetLifeState(asset.name)
             const assetReRendered = asset_life_state != "first-render"
@@ -290,7 +299,6 @@ export class TreeBuilder{
             )
         }
     }
-
     evalParams(asset, params, ignore=[], update=[], assetReRendered){
         for (let [key, value] of Object.entries(params)){
             /**
@@ -310,6 +318,69 @@ export class TreeBuilder{
                 evalProp.call(this.props, asset, key, value, assetReRendered)
             }
         }
+    }
+    get(assetName){
+        let asset = this.assets_register[assetName]
+        /**
+         * Check if asset exist
+         */
+        if (!asset){
+            console.log(`Asset with name - ${assetName} dose not exist in tree!`)
+            return false
+        }
+        return asset
+    }
+    pos(component, parent, parentEmitter){
+        return this.prepareComponent(component, parent, parentEmitter)
+    }
+    del(assetName){
+        /**
+         * Check if asset exist
+         */
+        let asset = this.get(assetName)
+        if (asset)return;
+        /**
+         * Delete mask
+         */
+        if (asset.mask){
+            this.del(asset.mask.name)
+        }
+        /**
+         * Holds all assets current state (first-render; re-render; destroy).
+         */
+        delete this.assets_current_life_state[assetName]
+        /**
+         * Holds all assets parameters.
+         */
+        delete this.assets_params[assetName]
+        /**
+         * Holds information which props of asset to ignore.
+         */
+        delete this.ignore_on_update[assetName]
+        /**
+         * Holds information which props of asset to update.
+         */
+        delete this.on_update[assetName]
+        /**
+         * Holds information about which assets visibility.
+         */
+        delete this.show_components[assetName]
+        /**
+         * Maps asset to emitter.
+         */
+        delete this.asset_emitter_mapper[assetName]
+        /**
+         * Holds all animations about every assets.
+         */
+        delete this.animator[assetName]
+        /**
+         * Delete from parent
+         */
+        asset.parent.removeChild(asset)
+        /**
+         * Holds all assets in que. Easy to get (no structure).
+         */
+        delete this.assets_register[assetName]
     }
     animate(){};
 }
