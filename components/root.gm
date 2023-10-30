@@ -1,0 +1,11 @@
+return
+
+@omponent Container;
+    name ~ ROOT_CONTAINER;
+    emitter ~ RootEmitter;
+    @omponent loadingScreen.gm; 
+    <
+    @omponent splashScreen.gm; 
+    <
+<
+    

@@ -1,0 +1,15 @@
+return
+@omponent Container;
+    name ~ loading_container;
+    emitter ~ LoadingEmitter;
+    x ~ this.x + asset.x;
+    y ~ 200;
+    visible ~ this.emitterName == ongoingEvent;
+    update ~ ["x"];
+    @omponent Sprite; 
+        args ~ ../assets/sprites/player.png;
+        name ~ player_1;
+        visible ~ this.emitterName == ongoingEvent;
+        scale.set(4);
+    <
+<
