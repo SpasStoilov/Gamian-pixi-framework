@@ -1,0 +1,25 @@
+{
+  "name": "gamian-lang",
+  "displayName": "Gamian Lang",
+  "description": "Syntax highlight fot Gamian Lang",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "gamian",
+      "aliases": ["Gamian", "gamian"],
+      "extensions": [".gm"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "gamian",
+      "scopeName": "source.gamian",
+      "path": "./syntaxes/gamian.tmLanguage.json"
+    }]
+  }
+}
