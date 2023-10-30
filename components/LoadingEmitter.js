@@ -17,6 +17,7 @@ export class LoadingEmitter extends GenericEmitter{
     async update(){
         console.log("LoadingEmitter >>> update");
         await new Promise((resolve)=>{
+            this.emitter.emit("posAsset")
             setTimeout(() => {
                 resolve()
             }, 10000)

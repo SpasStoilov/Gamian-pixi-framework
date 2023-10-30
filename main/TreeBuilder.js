@@ -88,11 +88,14 @@ export class TreeBuilder{
     /**
      * Extract needed data for object creation 
      */
-    prepareComponent(component=this.root_gm, parent=null, parentEmitter=null){
+    prepareComponent(component, parent, parentEmitter=null){
         console.log("Tree Builder >>> prepareComponent:", component);
         /**
          * Check for "must have" props
          */
+        if (!parent){
+            throw new Error("Tree Builder >>> Component type must have parent!")
+        }
         if (!component.type){
             throw new Error("Tree Builder >>> Component type is missing!")
         }
@@ -161,8 +164,8 @@ export class TreeBuilder{
                 if (component.mask)continue;
                 //-------------------------------------------------------^
 
-                const child = this.prepareComponent(childComponent, asset, component.emitter)
-                asset.addChild(child)
+                this.prepareComponent(childComponent, asset, component.emitter)
+                // asset.addChild(child)
             }
         }
         /**
@@ -196,7 +199,7 @@ export class TreeBuilder{
                 const mask = this.prepareComponent(
                     component, parent, component.emitter
                 )
-                parent.addChild(mask)
+                // parent.addChild(mask)
                 asset.mask = mask
             }
         }
@@ -212,6 +215,11 @@ export class TreeBuilder{
          * Current life state
          */
         this.assets_current_life_state[asset.name] = undefined
+
+        /**
+         * Stage asset
+         */
+        parent.addChild(asset)
 
         // Asset ready!
         return asset

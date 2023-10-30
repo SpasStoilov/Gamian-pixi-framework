@@ -37,17 +37,13 @@ async function START_APP(){
      *  Get Tree information from back-end
      */
     const root_gm = await tree.getTreeInformation()
-    console.log("gamian >>> root_gm: ", root_gm);
+    console.log("gamian >>> back-end-response: ", root_gm);
     /**
-     *  Get Tree Structure
+     *  Render Tree Root
      */
-    const structure = tree.prepareComponent()
-    console.log("gamian >>> assets_register:", tree.assets_register);
-    /**
-     *  Add the Tree to Stage
-     */
-    app.stage.removeChildren()
-    app.stage.addChild(structure)
+    const structure = tree.prepareComponent(root_gm, app.stage)
+    console.log("gamian >>> Assets Register:", tree.assets_register);
+    console.log("gamian >>> Tree Structure:", structure);
     /**
      *  Get all components emitters
      */

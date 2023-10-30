@@ -31,6 +31,24 @@ export async function emitterFactory(){
          *  Note: it is doing it constantly!
          */
         emitter.on(name, instance.init.bind(instance));
+        /**
+         * Register all logic of the instance as events
+         */
+        if (functionalLogic[name]){
+            for (
+                let [_, funcData] of Object.entries(functionalLogic[name])
+            ){
+                /**
+                 * Define logic
+                 */
+                if (funcData.emitType == "once"){
+                    eval(`emitter.once(funcData.name, (${funcData.logic}).bind(instance))`)
+                }
+                else if (funcData.emitType == "on"){
+                    eval(`emitter.on(funcData.name}, (${funcData.logic}).bind(instance))`)
+                }
+            }
+        }
     }
 
     return Promise.resolve()

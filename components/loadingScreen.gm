@@ -1,44 +1,16 @@
-#LoadingEmitter Onsomthing(){
-    let list = []
-    for (let i of somthing){
-        list.push(
-            @omponent Sprite; 
-                args ~ ../assets/sprites/player.png;
-                name ~ player_1;
-                scale.set(4);
-            <
-        )
-    }
-    let v = 
+#LoadingEmitter.once posAsset(){
+    this.tree.pos(
         @omponent Sprite; 
-            args ~ ../assets/sprites/player.png;
-            name ~ player_1;
+            args ~ ../assets/sprites/player3.png;
+            name ~ player_3;
             scale.set(4);
+            x ~ 50;
+            y ~ 70;
         <
-
-    let arr = [
-        @omponent Sprite; 
-            args ~ ../assets/sprites/player.png;
-            name ~ player_1;
-            scale.set(4);
-        <,
-        @omponent Sprite; 
-            args ~ ../assets/sprites/player.png;
-            name ~ player_1;
-            scale.set(4);
-        <,
-    ]
-    let arr = {
-        prop: 
-            @omponent Sprite; 
-                args ~ ../assets/sprites/player.png;
-                name ~ player_1;
-                scale.set(4);
-            <
         ,
-    }
-
-    return list
+        this.tree.get("loading_container"),
+        "LoadingEmitter"
+    )
 }
 
 >>>

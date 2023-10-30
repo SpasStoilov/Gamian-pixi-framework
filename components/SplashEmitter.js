@@ -7,7 +7,6 @@ export class SplashEmitter extends GenericEmitter{
     }
     async render(){
         console.log("SplashEmitter >>> render");
-        //this.tree.show_components.splash_container = true
         return ()=>{}
     }
 }

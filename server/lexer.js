@@ -1,7 +1,7 @@
 const fs = require("fs")
 
 // vars:
-const componentEnds = "<"
+const componentEnds = /<$/
 const componentsDir = "../components/"
 const logicComponentSeparator = ">>>"
 const logicFunctionsSeparator = "#"
@@ -54,6 +54,8 @@ function normalizeJsLogic(){
         let endIndx = null
         let emitterName = null
         let functionName = null
+        let emitType = null
+        let functionDeclaration = null
         let normalizedLogic = []
         console.log("chunkLogic:", chunkLogic);
 
@@ -73,8 +75,18 @@ function normalizeJsLogic(){
             const lenOfWhiteSpace = getLenOfWhiteSpaceAtFrontOfLine(line)
 
             if(lineHasEmitterName){
-                emitterName = line.match(/^\w+(?=\s+)/)[0]
+                /**
+                 * Patterns
+                 */
+                emitterName = line.match(/^\w+(?=\.\w+\s+)/)[0]
+                emitType = line.match(/(?<=\.)\w+/)[0]
                 functionName = line.match(/[\w\d_]+(?=\()/)[0]
+                functionDeclaration = line.match(/\(.*\)\{.*/)[0]
+
+                normalizedLogic.push(
+                    `function${functionDeclaration}`
+                )
+
                 if (!ComponentsJsLogic[emitterName]){
                     ComponentsJsLogic[emitterName] = {}
                 }
@@ -98,7 +110,11 @@ function normalizeJsLogic(){
         }
 
         console.log("normalizedLogic:", normalizedLogic);
-        ComponentsJsLogic[emitterName][functionName] = normalizedLogic.join("\n")
+        ComponentsJsLogic[emitterName][functionName] = {
+            name: functionName,
+            emitType,
+            logic:normalizedLogic.join("\n")
+        }
     }
 
 }
@@ -180,7 +196,8 @@ function getLenOfWhiteSpaceAtFrontOfLine(line) {
 function extractChild(
     i,
     splitByLineComponents,
-    lenOfWhiteSpace
+    lenOfWhiteSpace,
+    endPattern=componentEnds
 ) {
     let child = []
     let skipLineToIndex = null
@@ -191,7 +208,7 @@ function extractChild(
             child.push(line)
             skipLineToIndex = indx
             let lenOf = getLenOfWhiteSpaceAtFrontOfLine(line)
-            if (lenOfWhiteSpace == lenOf && line.endsWith(componentEnds)) break
+            if (lenOfWhiteSpace == lenOf && line.match(endPattern)) break
         }
     }
     return [child, skipLineToIndex]
