@@ -12,7 +12,33 @@ export const emitter = new EventEmitter();
  *  Create an instance of TreeBuilder
  */
 export const tree = new TreeBuilder()
-//-------------------------------------------------------^
+ /**
+ *  Window states & values
+ */
+export let currentWindowWidth = window.innerWidth;
+export let currentWindowHeight = window.innerHeight;
+export let howMuchWindowWidthChange = window.innerWidth / currentWindowWidth;
+export let howMuchWindowHeightChange = window.innerHeight / currentWindowHeight;
+
+export let initialWindowWidth = window.innerWidth;
+export let initialWindowHeight = window.innerHeight;
+/**
+ * Grid:
+ * - Preserves geometry of the stage:
+ *   innerWidth / totalGridPointsX = innerHeight * totalGridPointsY
+ *    =>
+ *   innerWidth * totalGridPointsY = innerHeight * totalGridPointsX
+ */
+export const totalGridPointsX = 1000
+export const totalGridPointsY = window.innerHeight * totalGridPointsX / window.innerWidth
+export const gridConverter = 100000000000
+
+/**
+ * WorldRation:
+ * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
+ */
+export const worldRation = window.innerWidth / window.innerHeight
+//----------------------------------------------------------------------------^
 
  /**
  *  Start Application
@@ -23,8 +49,6 @@ async function START_APP(){
      */
     const app = new PIXI.Application(
         {
-            width: 800,
-            height: 800,
             backgroundColor: 0xAAAAAA
         }
     )
@@ -33,6 +57,32 @@ async function START_APP(){
      *  Dock Application to index.html
      */
     document.body.appendChild(app.view)
+    /**
+     * Keep track of screen size
+     */
+    function resizeAppView() {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        console.log("Window current demension >>>", currentWindowWidth, currentWindowHeight);
+        console.log("Window new demension >>>", newWidth, newHeight);
+        console.log("Current change in size >>>", currentWindowWidth/newWidth, currentWindowHeight/newHeight);
+        /**
+         * Rerender App
+         */
+        app.renderer.resize(newWidth, newHeight);
+        /**
+         * Set change values. We need amount not direction (.abs)
+         */
+        howMuchWindowWidthChange = Math.abs(currentWindowWidth - newWidth);
+        howMuchWindowHeightChange = Math.abs(currentWindowHeight - newHeight);
+        /**
+         * Set new demensions
+         */
+        currentWindowWidth = newWidth;
+        currentWindowHeight = newHeight;
+    }
+    window.addEventListener('resize', resizeAppView);
+    resizeAppView()
     /**
      *  Get Tree information from back-end
      */

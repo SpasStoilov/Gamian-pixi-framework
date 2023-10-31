@@ -319,7 +319,9 @@ export class TreeBuilder{
              * First Render of the asset we set all params of it.
              * NOTE: on life-state "re-render or destroy" we use "ignore" & "update" to define what to be used from the params.
              */
-            if (!assetReRendered || update.includes(key)){
+            console.log("update", key, update, update.indexOf(key));
+
+            if (!assetReRendered || update.indexOf(key)){
                 /**
                  * Eval the prop with the correct context
                  */
