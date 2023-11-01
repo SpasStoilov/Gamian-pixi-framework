@@ -2,39 +2,46 @@ import { ongoingEvent } from "./OngoingEvent.js"
 import { getPosition3, getScale } from "./DemensionCalculators.js"
 // NOTE: it is visible at components (don't delete)
 
-export function evalProp(asset, key, value, assetReRendered){
-    /**            ******** Demensions ********
-     * Mange position
+export function evalProp(asset, key, value, treeData){
+    //console.log("evalProp >>> asset, key, value :", asset.name, key, value);
+
+    /**************** Demensions ********************
+     * 
+     * Mange position of asset on the screen
      */
-    if (key == "x" || key == "y" || key == "model_x" || key == "model_y"){
+    if (key == "x" || key == "y" || key == "^^x" || key == "^^y"){
         let tag = "default"
-        let upKey = key
+        let assetInitPosition = null
         /**
-         * Check if key ++model_
+         * Check if key is ^^model_tag
          */
-        if (key.match(/model_/)){
-            upKey = key.match(/model_x/) ? "x" : "x"
-            tag = "++"
+        if (key.match(/\^\^/)){
+            key = key.match(/\^\^x/) ? "x" : "y"
+            tag = "^^"
         }
         /**
-         * Check if value is ++
+         * Check if value is ^^model_tag
+         * TODO: Not shure that i need this?
          */
-        if (value.match(/\+\+/)){
-            console.log(value);
-            value = value.match(/(?<=\+\+).+/)[0]
-            tag = "++"
+        if (value.match(/\^\^/)){
+            value = value.match(/(?<=\^\^).+/)[0]
+            tag = "^^"
+        }
+        /**
+         * If we have ^^model_tag we need asset start position
+         */
+        if(tag=="^^"){
+            let initX = eval(treeData.assets_params[asset.name].x) || 0
+            let initY = eval(treeData.assets_params[asset.name].y) || 0
+            assetInitPosition = {x:initX,y:initY}
         }
 
         let v = eval(value)
-        console.log(asset.x);
-        console.log(upKey);
-        console.log(tag);
-        asset[upKey] = getPosition3(upKey, Number(v), tag, asset)
-        console.log(asset.x);
+        asset[key] = getPosition3(key, Number(v), tag, asset, assetInitPosition)
         return
     }
     /**
-     * Mange scale
+     * Mange scale of the asset on the screen
      */
     if (key == "scale" || key == "scale.set"){
         if (key == "scale.set"){
@@ -47,9 +54,8 @@ export function evalProp(asset, key, value, assetReRendered){
         asset.scale.set(getScale(Number(v)))
         return
     }
-    //--------------------------------------------------------------^
-
-    /**               ******** Others ********
+    /******************* Others ***********************
+     * 
      * Eval function()
      */
     if (value.constructor.name == "Function"){

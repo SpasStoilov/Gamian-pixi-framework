@@ -5,8 +5,8 @@
             name ~ player_3;
             x ~ 0.2;
             y ~ 0.2;
-            scale.set(1);
-            update ~ ["x", "y", "scale.set"];
+            scale ~ 1;
+            update ~ ["x", "y", "scale"];
         <
         ,
         this.tree.get("loading_container"),
@@ -22,10 +22,9 @@
         args ~ ../assets/sprites/player.png;
         name ~ player_1;
         x ~ 0.5;
+        ^^x ~ 0.001;
         y ~ 0.5;
-        scale.set(1);
-        anchor.set(0);
-        model_x ~ 0.1;
-        update ~ ["model_x" ,"y", "scale.set"];
+        scale ~ 1;
+        update ~ ["^^x" ,"y", "scale"];
     <
 <

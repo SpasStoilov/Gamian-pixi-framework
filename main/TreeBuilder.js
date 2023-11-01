@@ -142,7 +142,7 @@ export class TreeBuilder{
          * type: string[]
          */
         if (component.update){
-            this.on_update[asset.name] = component.update
+            this.on_update[asset.name] = eval(component.update)
         }
         /**
          * Handle visible property
@@ -241,10 +241,14 @@ export class TreeBuilder{
         return this.assets_current_life_state[assetName]
     }
     showNeededAssets(){
+        //console.log("showNeededAssets >>> this.show_components:", this.show_components);
         for (
             let [assetName, value] of Object.entries(this.show_components)
         ){
             const asset = this.assets_register[assetName]
+
+            //console.log("showNeededAssets >>> asset.name:", asset.name);
+            
             if (asset){
                 /**
                  * Set the correct context for the components.
@@ -278,6 +282,9 @@ export class TreeBuilder{
             let [assetName, params] of Object.entries(this.assets_params)
         ){
             const asset = this.assets_register[assetName]
+
+            //console.log("hookTreeParams >>> asset.name",asset.name);
+
             /**
             * Hook parameters of asset
             */
@@ -290,10 +297,16 @@ export class TreeBuilder{
         const parentChainVisible = ParentChainVisibility(asset)
         //....
         if (asset && asset.visible && parentChainVisible){
+
+            //console.log("hookParams >>> eval all props of:", asset.name);
+
             /**
             * Update life-state of the asset
             */
             const asset_life_state = this.updateAssetLifeState(asset.name)
+
+            //console.log("hookParams >>> asset_life_state:", asset_life_state);
+
             const assetReRendered = asset_life_state != "first-render"
             /**
             * Eval all the parameters
@@ -308,6 +321,9 @@ export class TreeBuilder{
         }
     }
     evalParams(asset, params, ignore=[], update=[], assetReRendered){
+
+        //console.log("EvalParams >>> assetReRendered:", assetReRendered);
+
         for (let [key, value] of Object.entries(params)){
             /**
              * Set the correct context for the components.
@@ -319,13 +335,23 @@ export class TreeBuilder{
              * First Render of the asset we set all params of it.
              * NOTE: on life-state "re-render or destroy" we use "ignore" & "update" to define what to be used from the params.
              */
-            console.log("update", key, update, update.indexOf(key));
 
-            if (!assetReRendered || update.indexOf(key)){
+            //console.log("EvalParams >>> key, update", key, update, update.includes(key));
+
+            if (!assetReRendered || update.includes(key)){
                 /**
                  * Eval the prop with the correct context
                  */
-                evalProp.call(this.props, asset, key, value, assetReRendered)
+                evalProp.call(
+                    this.props, 
+                    asset, 
+                    key, 
+                    value, 
+                    {
+                        assets_params: this.assets_params,
+                        assetReRendered
+                    }
+                )
             }
         }
     }

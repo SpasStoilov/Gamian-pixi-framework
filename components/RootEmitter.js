@@ -13,7 +13,7 @@ export class RootEmitter extends GenericEmitter{
         await new Promise((resolve)=>{
             setTimeout(() => {
                 resolve()
-            }, 500)
+            }, 1000)
         })
         return ()=>{}
     }

@@ -8,7 +8,7 @@
         name ~ player_2;
         x ~ 0;
         y ~ 0;
-        scale ~ 1.1;
-        update ~ ["x", "y","scale.set"];
+        scale ~ 1;
+        update ~ ["x", "y", "scale"];
     <
 <

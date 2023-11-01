@@ -220,8 +220,8 @@ function lexer(
     console.log("splitByLineComponents >>>", splitByLineComponents);
 
     let asset = {
-        children: [], 
-        params:{}
+        children:[], 
+        params:{},
     }
     let endIndx = null
 

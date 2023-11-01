@@ -17,8 +17,8 @@ export const tree = new TreeBuilder()
  */
 export let currentWindowWidth = window.innerWidth;
 export let currentWindowHeight = window.innerHeight;
-export let howMuchWindowWidthChange = window.innerWidth / currentWindowWidth;
-export let howMuchWindowHeightChange = window.innerHeight / currentWindowHeight;
+export let howMuchWindowWidthChange = 0;
+export let howMuchWindowHeightChange = 0;
 
 export let initialWindowWidth = window.innerWidth;
 export let initialWindowHeight = window.innerHeight;
@@ -31,13 +31,12 @@ export let initialWindowHeight = window.innerHeight;
  */
 export const totalGridPointsX = 1000
 export const totalGridPointsY = window.innerHeight * totalGridPointsX / window.innerWidth
-export const gridConverter = 100000000000
-
 /**
  * WorldRation:
  * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
  */
 export const worldRation = window.innerWidth / window.innerHeight
+export const wordlRatioScaleConstant = 0.001
 //----------------------------------------------------------------------------^
 
  /**
@@ -63,9 +62,8 @@ async function START_APP(){
     function resizeAppView() {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
-        console.log("Window current demension >>>", currentWindowWidth, currentWindowHeight);
-        console.log("Window new demension >>>", newWidth, newHeight);
-        console.log("Current change in size >>>", currentWindowWidth/newWidth, currentWindowHeight/newHeight);
+        console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
+        console.log("resize >>> Window new demension:", newWidth, newHeight);
         /**
          * Rerender App
          */
@@ -73,8 +71,13 @@ async function START_APP(){
         /**
          * Set change values. We need amount not direction (.abs)
          */
-        howMuchWindowWidthChange = Math.abs(currentWindowWidth - newWidth);
-        howMuchWindowHeightChange = Math.abs(currentWindowHeight - newHeight);
+        howMuchWindowWidthChange = newWidth - currentWindowWidth;
+        howMuchWindowHeightChange = newHeight - currentWindowHeight;
+        console.log(
+            "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
+            howMuchWindowWidthChange, 
+            howMuchWindowHeightChange
+        );
         /**
          * Set new demensions
          */
