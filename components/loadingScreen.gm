@@ -26,5 +26,8 @@
         y ~ 0.5;
         scale ~ 1;
         update ~ ["^^x" ,"y", "scale"];
+        !customProp ~ {
+            console.log("custom call:", asset)
+        };
     <
 <

@@ -3,34 +3,34 @@ import { getPosition3, getScale } from "./DemensionCalculators.js"
 // NOTE: it is visible at components (don't delete)
 
 export function evalProp(asset, key, value, treeData){
-    //console.log("evalProp >>> asset, key, value :", asset.name, key, value);
 
+    let tag = "default"
+
+    /*************** Manage tags ********************
+     *
+     * Check if key is ^^model_tag
+     */
+    if (key.match(/\^\^/)){
+        tag = "^^"
+    }
+    /* 
+    *  Check if key is !custom_prop_tag
+    */
+    if (key.startsWith("!")){
+        console.log("DOOOONT BELONG TO ASSET!!!!", key);
+        tag = "!"
+    }
     /**************** Demensions ********************
      * 
      * Mange position of asset on the screen
      */
     if (key == "x" || key == "y" || key == "^^x" || key == "^^y"){
-        let tag = "default"
         let assetInitPosition = null
         /**
-         * Check if key is ^^model_tag
+         * If we have ^^model_tag we need asset start position and remove ^^ from key.
          */
-        if (key.match(/\^\^/)){
+        if(tag == "^^"){
             key = key.match(/\^\^x/) ? "x" : "y"
-            tag = "^^"
-        }
-        /**
-         * Check if value is ^^model_tag
-         * TODO: Not shure that i need this?
-         */
-        if (value.match(/\^\^/)){
-            value = value.match(/(?<=\^\^).+/)[0]
-            tag = "^^"
-        }
-        /**
-         * If we have ^^model_tag we need asset start position
-         */
-        if(tag=="^^"){
             let initX = eval(treeData.assets_params[asset.name].x) || 0
             let initY = eval(treeData.assets_params[asset.name].y) || 0
             assetInitPosition = {x:initX,y:initY}
@@ -55,14 +55,19 @@ export function evalProp(asset, key, value, treeData){
         return
     }
     /******************* Others ***********************
-     * 
+    /* 
      * Eval function()
      */
     if (value.constructor.name == "Function"){
         asset[key] = value.call(this)
     }
     else if (value.constructor.name == "String" && value.startsWith("(")){
-        eval(`asset.`+ key + value)
+        if (tag == "!"){
+            eval(`(function customProp(asset)`+ value + ').call(this, asset)')
+        }
+        else{
+            eval(`asset.`+ key + value)
+        }
     }
     /**
      * Eval = value

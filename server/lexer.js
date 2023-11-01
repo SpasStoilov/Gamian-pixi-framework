@@ -9,24 +9,16 @@ let ComponentsJsLogic = {}
 let componentJsLogic = []
 //-----------------------------------------------------------------------^
 
-// function executeJsLogic(jsLogic) {
-//     // Manage logic js:
-//     console.log("jsLogic --->", jsLogic)
-//     // 1. Evaluate js logic
-//     eval(jsLogic)
-//     // 2. Call the functions inside jsLogic
-//     anime1()
-//     anime2()
-// }
 function returnFileDataSplitByLines(link = componentsDir + "root.gm") {
     /**
      * Get Data
      */
-    let [jsLogic, componentsLogic] = fs.readFileSync(link).toString().split(logicComponentSeparator)
+    let DATA_FILE = fs.readFileSync(link).toString()
+    let [jsLogic, componentsLogic, rest] = DATA_FILE.split(logicComponentSeparator)
     /**
      * Handle components functions logic
      */
-    console.log("jsLogic", jsLogic);
+    console.log("returnFileDataSplitByLines >>> raw-jsLogic :", jsLogic);
     if (jsLogic){
         componentJsLogic = jsLogic.split(logicFunctionsSeparator)
         componentJsLogic = componentJsLogic.filter(line => line)
@@ -38,6 +30,7 @@ function returnFileDataSplitByLines(link = componentsDir + "root.gm") {
     /**
      * Handle components structure
      */
+    console.log("returnFileDataSplitByLines >>> raw-componentsLogic:", componentsLogic);
     let splitByLineComponents = componentsLogic.split("\n")
     splitByLineComponents = splitByLineComponents.map(line => line.replaceAll("\r", ""))
     splitByLineComponents = splitByLineComponents.filter(line => line)
@@ -119,6 +112,10 @@ function normalizeJsLogic(){
 
 }
 function checkIsPropOneLine(line, lineEnd) {
+    console.log(
+        "checkIsPropOneLine >>> line:", line, "\n",
+        "checkIsPropOneLine >>> pattern for how line ends:", lineEnd, "\n"
+    );
     line = line.trimEnd()
     if (line.endsWith(lineEnd)) {
         return true
@@ -134,13 +131,11 @@ function extractEntireProp(
     lineEnd
 ) {
     console.log(
-        "extractEntireProp i >>>", i, "\n",
-        "extractEntireProp line >>>", line, "\n",
-        "extractEntireProp lineEnd >>>", lineEnd, "\n"
+        "extractEntireProp >>> start from index:", i, "\n",
     );
 
     const isPropOneLine = checkIsPropOneLine(line, lineEnd)
-    console.log("isPropOneLine >>>", isPropOneLine)
+    console.log("extractEntireProp >>> isPropOneLine:", isPropOneLine)
 
     if (isPropOneLine) {
         return [line, null]
@@ -148,13 +143,14 @@ function extractEntireProp(
 
     let endIndx;
     splitByLineComponents.find((line, indx) => {
+        console.log(`${indx}-| `, line);
         if (line.endsWith(lineEnd) && i < indx) {
             endIndx = indx
             return line
         }
     })
 
-    console.log("EndIndex >>>", endIndx);
+    console.log("extractEntireProp >>> prop value ends at index:", endIndx);
 
     let extrProp = splitByLineComponents.slice(i, endIndx + 1)
     return [extrProp, endIndx]
@@ -172,13 +168,13 @@ function extraxtPropValue(
     if (prop.constructor.name == "Array") {
         prop = prop.join("")
     }
-    console.log("extraxtPropValue / prop >>>", prop);
-    console.log("extraxtPropValue / skipLineToIndex >>>", skipLineToIndex);
+    console.log("extraxtPropValue >>> prop :", prop);
+    console.log("extraxtPropValue >>> skipLineToIndex:", skipLineToIndex);
     prop = prop.replaceAll(" ", "")
-    console.log("extraxtPropValue / replaceAll prop >>>", prop);
-    console.log("extraxtPropValue / pettern >>>", pettern);
+    console.log("extraxtPropValue >>> remove white space from prop:", prop);
+    console.log("extraxtPropValue >>> search pettern for prop value:", pettern);
     let value = prop.match(pettern) ? prop.match(pettern)[0] : null;
-    console.log("extraxtPropValue / value >>>", value);
+    console.log("extraxtPropValue >>> value found:", value);
 
     return [value, skipLineToIndex]
 }
@@ -217,7 +213,7 @@ function lexer(
     splitByLineComponents = returnFileDataSplitByLines(),
     whiteSpaceLenTree = 0
 ) {
-    console.log("splitByLineComponents >>>", splitByLineComponents);
+    console.log("lexer >>> splitByLineComponents:", splitByLineComponents);
 
     let asset = {
         children:[], 
@@ -265,6 +261,7 @@ function lexer(
                     splitByLineComponents,
                     lenOfWhiteSpace
                 )
+                console.log("lexer >>> typeAsignPresent -> CHIL Found:", chldComponent);
                 // Normalize the child in order whiteSpaceLenTree == 0
                 chldComponent = chldComponent.map(line => line.slice(lenOfWhiteSpace))
                 //---------------------------------------------------------------------^
@@ -288,7 +285,9 @@ function lexer(
                  * We need to parse the file and break the loop
                  */
                 if (value.match(/\.gm/)){
-                    console.log(componentsDir + value);
+                    console.log(
+                        "lexer >>> typeAsignPresent -> Handle file:", componentsDir + value
+                    );
                     let data  = returnFileDataSplitByLines(componentsDir + value)
                     asset = lexer(data)
                     break
@@ -309,7 +308,11 @@ function lexer(
                 /(?<=~).+(?=;$)/
             )
             endIndx = skipLineToIndex
-            console.log("propName/value >>>", propName, value);
+
+            console.log(
+                "lexer >>> equalAsignPresent -> propName=value:", propName, value
+            );
+
             if (
                 ["emitter", "args", "name", "mask", "ignore", "update", "visible", "animations"].includes(propName)
             ){
@@ -324,7 +327,7 @@ function lexer(
         **/
         if (functionAsignPresent) {
             let propName = line.replaceAll(" ", "").match(/^.+(?=\()/)[0]
-            console.log("propName >>>", propName);
+            console.log("lexer >>> functionAsignPresent -> propName:", propName);
             let [value, skipLineToIndex] = extraxtPropValue(
                 i,
                 splitByLineComponents,
@@ -339,6 +342,7 @@ function lexer(
     
     return asset
 
+   
 }
 
 module.exports = {lexer, ComponentsJsLogic}
