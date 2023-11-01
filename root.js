@@ -23,15 +23,6 @@ export let howMuchWindowHeightChange = 0;
 export let initialWindowWidth = window.innerWidth;
 export let initialWindowHeight = window.innerHeight;
 /**
- * Grid:
- * - Preserves geometry of the stage:
- *   innerWidth / totalGridPointsX = innerHeight * totalGridPointsY
- *    =>
- *   innerWidth * totalGridPointsY = innerHeight * totalGridPointsX
- */
-export const totalGridPointsX = 1000
-export const totalGridPointsY = window.innerHeight * totalGridPointsX / window.innerWidth
-/**
  * WorldRation:
  * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
  */

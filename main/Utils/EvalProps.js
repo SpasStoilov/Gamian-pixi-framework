@@ -1,43 +1,104 @@
 import { ongoingEvent } from "./OngoingEvent.js" 
-import { getPosition3, getScale } from "./DemensionCalculators.js"
+import { 
+    use_geometry_based_upone_procent,
+    use_geometry_based_upone_square_grid,
+    scaling_relative_to_screen 
+} from "../../library/index.js"
+
 // NOTE: it is visible at components (don't delete)
 
 export function evalProp(asset, key, value, treeData){
 
     let tag = "default"
-
-    /*************** Manage tags ********************
+    /* ----------------------------------------------------------
+     *                      Manage tags
      *
      * Check if key is ^^model_tag
      */
     if (key.match(/\^\^/)){
         tag = "^^"
     }
+    /*
+    * Check if key is fun_tag
+    */
+    if (key.match(/fun\^/)){
+        tag = "fun^"
+    }
     /* 
     *  Check if key is !custom_prop_tag
     */
     if (key.startsWith("!")){
-        console.log("DOOOONT BELONG TO ASSET!!!!", key);
         tag = "!"
     }
-    /**************** Demensions ********************
+    /* 
+    *  Check if key is function_call_tag
+    */
+    if (value.constructor.name == "String" && value.startsWith("(")){
+        tag = "(*)"
+    }
+    /*  ----------------------------------------------------------
+     *                      Eval Demensions Values
      * 
      * Mange position of asset on the screen
      */
     if (key == "x" || key == "y" || key == "^^x" || key == "^^y"){
-        let assetInitPosition = null
-        /**
-         * If we have ^^model_tag we need asset start position and remove ^^ from key.
-         */
-        if(tag == "^^"){
-            key = key.match(/\^\^x/) ? "x" : "y"
-            let initX = eval(treeData.assets_params[asset.name].x) || 0
-            let initY = eval(treeData.assets_params[asset.name].y) || 0
-            assetInitPosition = {x:initX,y:initY}
+        /** ----------------------------------------------------------
+         *                      Select Geometry
+        */
+        const geometryHelper = {
+            "%" : use_geometry_based_upone_procent,
+            "sq": use_geometry_based_upone_square_grid
         }
-
-        let v = eval(value)
-        asset[key] = getPosition3(key, Number(v), tag, asset, assetInitPosition)
+        //-----
+        let geometrySelector = "sq"
+        //-----
+        if (value.match(/^%/)){
+            value = value.match(/(?<=^%).+/)
+            geometrySelector = "%"
+        }
+        //------
+        const geometry = geometryHelper[geometrySelector]
+        //------------------------------------------------------------^
+        /**
+         *               Define args for the geometry
+         */
+        let assetInitPosition = null
+        let v = null
+        /**------------------------------------------------------------
+         *              Manage tags based upone geometry
+         * %
+         */
+        if (geometrySelector == "%"){
+            /**
+             * If we have ^^model_tag 
+             * we need asset start position and remove "^^" from key.
+             */
+            if(tag == "^^"){
+                key = key.match(/\^\^x/) ? "x" : "y"
+                let initX = eval(treeData.assets_params[asset.name].x) || 0
+                let initY = eval(treeData.assets_params[asset.name].y) || 0
+                assetInitPosition = {x:initX,y:initY}
+            }
+            else {
+                v = eval(value)
+            }
+        }
+        /**
+         * sq
+         */
+        else if(geometrySelector == "sq"){
+            v = eval(value)
+        }
+         /**
+         * fun^
+         */
+        else if (tag == "fun^"){
+            v = eval(`(function funCall(asset)`+ value + ').call(this, asset)')
+        }
+        /**------------------------------------------------------------
+         *                      Calc new axis
+         */
+        asset[key] = geometry(key, Number(v), tag, asset, assetInitPosition)
         return
     }
     /**
@@ -51,26 +112,46 @@ export function evalProp(asset, key, value, treeData){
             value = value.match(/(?<=\().*(?=\))/)[0]
         }
         let v = eval(value)
-        asset.scale.set(getScale(Number(v)))
+        asset.scale.set(scaling_relative_to_screen(Number(v)))
         return
     }
-    /******************* Others ***********************
-    /* 
+    /* ----------------------------------------------------------
+     *                      Eval Other Values
      * Eval function()
+     * coming - classEmitter
+     * ex: 
+     *   key = scale
+     *   value = () => number
      */
     if (value.constructor.name == "Function"){
         asset[key] = value.call(this)
     }
-    else if (value.constructor.name == "String" && value.startsWith("(")){
-        if (tag == "!"){
-            eval(`(function customProp(asset)`+ value + ').call(this, asset)')
-        }
-        else{
-            eval(`asset.`+ key + value)
-        }
+    /* 
+     * Eval !custom_props
+     * coming - server
+     * ex: 
+     *   key = !customProp
+     *   value = {logic}
+     */
+    else if (tag == "!"){
+        eval(`(function customProp(asset)`+ value + ').call(this, asset)')
+    }
+    /* 
+     * Eval function_call(*)
+     * coming - server
+     * ex: 
+     *   key = scale.set
+     *   value = (1)
+     */
+    else if (tag == "(*)"){
+        eval(`asset.`+ key + value)
     }
     /**
      * Eval = value
+     * coming - server
+     * ex: 
+     *   key = visible
+     *   value = object | array | () => any | string | number ...
      */
     else {
         let propChain = key.split(".")
