@@ -1,7 +1,6 @@
 import { 
     howMuchWindowWidthChange, 
     howMuchWindowHeightChange,
-    wordlRatioScaleConstant
 } from "../../root.js"
 
 let prevChangeX = 0

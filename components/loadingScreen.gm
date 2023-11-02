@@ -3,8 +3,8 @@
         @omponent Sprite; 
             args ~ ../assets/sprites/player3.png;
             name ~ player_3;
-            x ~ 100;
-            y ~ 100;
+            x ~ {sq:1000, n:100};
+            y ~ {sq:1000, n:100};
             scale ~ 1;
             update ~ ["x", "y", "scale"];
         <
@@ -21,8 +21,8 @@
     @omponent Sprite; 
         args ~ ../assets/sprites/player.png;
         name ~ player_1;
-        x ~ 500;
-        y ~ 250;
+        x ~ {sq:1000, n:500};
+        y ~ {sq:1000, n:500};
         scale ~ 1;
         update ~ ["x" ,"y", "scale"];
         !customProp ~ {

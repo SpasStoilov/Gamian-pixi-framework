@@ -2,7 +2,9 @@ import { ongoingEvent } from "./OngoingEvent.js"
 import { 
     use_geometry_based_upone_procent,
     use_geometry_based_upone_square_grid,
-    scaling_relative_to_screen 
+    use_geometry_based_upone_proportional_coordinates,
+    scaling_relative_to_screen,
+    geometry_grid
 } from "../../library/index.js"
 
 // NOTE: it is visible at components (don't delete)
@@ -47,14 +49,22 @@ export function evalProp(asset, key, value, treeData){
         */
         const geometryHelper = {
             "%" : use_geometry_based_upone_procent,
-            "sq": use_geometry_based_upone_square_grid
+            "sq": use_geometry_based_upone_square_grid,
+            "px": use_geometry_based_upone_proportional_coordinates,
+            "grd": geometry_grid
         }
         //-----
-        let geometrySelector = "sq"
-        //-----
+        let geometrySelector = "px"
+        //----- 
         if (value.match(/^%/)){
-            value = value.match(/(?<=^%).+/)
+            value = value.match(/(?<=^%).+/)[0]
             geometrySelector = "%"
+        }
+        if (value.match(/\{\s*sq/)){
+            geometrySelector = "sq"
+        }
+        if (value.match(/\{\s*grd/)){
+            geometrySelector = "grd"
         }
         //------
         const geometry = geometryHelper[geometrySelector]
@@ -65,8 +75,9 @@ export function evalProp(asset, key, value, treeData){
         let assetInitPosition = null
         let v = null
         /**------------------------------------------------------------
-         *              Manage tags based upone geometry
-         * %
+         *          Manage key & values based upone geometry and tags
+         * 
+         * x ~ %0.5
          */
         if (geometrySelector == "%"){
             /**
@@ -79,15 +90,28 @@ export function evalProp(asset, key, value, treeData){
                 let initY = eval(treeData.assets_params[asset.name].y) || 0
                 assetInitPosition = {x:initX,y:initY}
             }
-            else {
-                v = eval(value)
-            }
+            v = eval(value)
+            v = Number(v)
         }
         /**
-         * sq
+         * x ~ 1000
+         */
+        else if(geometrySelector == "px"){
+            v = eval(value)
+            v = Number(v)
+        }
+        /**
+         * x ~ {grd:1000, n:500};
+         */
+        else if(geometrySelector == "grd"){
+            eval("v =" + value)
+        }
+        /**
+         * x ~ {sq:1000, n:50}
+         * y ~ {sq:1000, n:5}
          */
         else if(geometrySelector == "sq"){
-            v = eval(value)
+            eval("v =" + value)
         }
          /**
          * fun^
@@ -98,7 +122,7 @@ export function evalProp(asset, key, value, treeData){
         /**------------------------------------------------------------
          *                      Calc new axis
          */
-        asset[key] = geometry(key, Number(v), tag, asset, assetInitPosition)
+        asset[key] = geometry(key, v, tag, asset, assetInitPosition)
         return
     }
     /**

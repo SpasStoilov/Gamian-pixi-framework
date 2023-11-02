@@ -15,13 +15,14 @@ export const tree = new TreeBuilder()
  /**
  *  Window states & values
  */
+export let initialWindowWidth = window.innerWidth;
+export let initialWindowHeight = window.innerHeight;
 export let currentWindowWidth = window.innerWidth;
 export let currentWindowHeight = window.innerHeight;
 export let howMuchWindowWidthChange = 0;
 export let howMuchWindowHeightChange = 0;
-
-export let initialWindowWidth = window.innerWidth;
-export let initialWindowHeight = window.innerHeight;
+export let totalWindowWidthChange = 0;
+export let totalWindowHeightChange = 0;
 /**
  * WorldRation:
  * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
@@ -64,6 +65,9 @@ async function START_APP(){
          */
         howMuchWindowWidthChange = newWidth - currentWindowWidth;
         howMuchWindowHeightChange = newHeight - currentWindowHeight;
+        totalWindowHeightChange = initialWindowWidth - newWidth
+        totalWindowHeightChange = initialWindowHeight - newHeight
+        
         console.log(
             "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
             howMuchWindowWidthChange, 
