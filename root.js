@@ -54,8 +54,8 @@ async function START_APP(){
     function resizeAppView() {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
-        console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
-        console.log("resize >>> Window new demension:", newWidth, newHeight);
+        // console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
+        // console.log("resize >>> Window new demension:", newWidth, newHeight);
         /**
          * Rerender App
          */
@@ -68,11 +68,11 @@ async function START_APP(){
         totalWindowHeightChange = initialWindowWidth - newWidth
         totalWindowHeightChange = initialWindowHeight - newHeight
         
-        console.log(
-            "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
-            howMuchWindowWidthChange, 
-            howMuchWindowHeightChange
-        );
+        // console.log(
+        //     "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
+        //     howMuchWindowWidthChange, 
+        //     howMuchWindowHeightChange
+        // );
         /**
          * Set new demensions
          */

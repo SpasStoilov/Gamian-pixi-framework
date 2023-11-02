@@ -49,19 +49,18 @@ export function evalProp(asset, key, value, treeData){
         */
         const geometryHelper = {
             "%" : use_geometry_based_upone_procent,
-            "sq": use_geometry_based_upone_square_grid,
+            "sqr": use_geometry_based_upone_square_grid,
             "px": use_geometry_based_upone_proportional_coordinates,
             "grd": geometry_grid
         }
-        //-----
+        //----- Default Geometry
         let geometrySelector = "px"
         //----- 
-        if (value.match(/^%/)){
-            value = value.match(/(?<=^%).+/)[0]
+        if (value.match(/%/)){
             geometrySelector = "%"
         }
-        if (value.match(/\{\s*sq/)){
-            geometrySelector = "sq"
+        if (value.match(/\{\s*sqr/)){
+            geometrySelector = "sqr"
         }
         if (value.match(/\{\s*grd/)){
             geometrySelector = "grd"
@@ -77,6 +76,7 @@ export function evalProp(asset, key, value, treeData){
         /**------------------------------------------------------------
          *          Manage key & values based upone geometry and tags
          * 
+         * Procent:
          * x ~ %0.5
          */
         if (geometrySelector == "%"){
@@ -86,31 +86,37 @@ export function evalProp(asset, key, value, treeData){
              */
             if(tag == "^^"){
                 key = key.match(/\^\^x/) ? "x" : "y"
-                let initX = eval(treeData.assets_params[asset.name].x) || 0
-                let initY = eval(treeData.assets_params[asset.name].y) || 0
+                let rawX = treeData.assets_params[asset.name].x.replaceAll("%", "")
+                let rawY = treeData.assets_params[asset.name].y.replaceAll("%", "")
+                let initX = eval(rawX) || 0
+                let initY = eval(rawY) || 0
                 assetInitPosition = {x:initX,y:initY}
             }
+            value = value.replaceAll("%", "")
             v = eval(value)
             v = Number(v)
         }
         /**
-         * x ~ 1000
+         *                     Grids                    Pixels
+         * x ~ {grd:1000, n:500} | {sqr:10000, n:10} | x ~ 1000
          */
-        else if(geometrySelector == "px"){
-            v = eval(value)
-            v = Number(v)
-        }
-        /**
-         * x ~ {grd:1000, n:500};
-         */
-        else if(geometrySelector == "grd"){
-            eval("v =" + value)
-        }
-        /**
-         * x ~ {sq:1000, n:50}
-         * y ~ {sq:1000, n:5}
-         */
-        else if(geometrySelector == "sq"){
+        else if(
+            geometrySelector == "grd" || 
+            geometrySelector == "sqr" || 
+            geometrySelector == "px"
+        ){
+            /**
+             * If we have ^^model_tag 
+             * we need asset start position and remove "^^" from key.
+             */
+            if(tag == "^^"){
+                key = key.match(/\^\^x/) ? "x" : "y"
+                let initX = null
+                let initY = null
+                eval("initX =" + treeData.assets_params[asset.name].x)
+                eval("initY =" + treeData.assets_params[asset.name].y)
+                assetInitPosition = {x:initX, y:initY}
+            }
             eval("v =" + value)
         }
          /**

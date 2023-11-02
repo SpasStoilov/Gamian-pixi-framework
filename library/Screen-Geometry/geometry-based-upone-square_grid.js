@@ -4,23 +4,25 @@ import {
     initialWindowWidth,
     initialWindowHeight
 } from "../../root.js"
+import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
 /**
  * Initial screen change state
  */
 let initChangeState = "|W,H>"
 
-export function use_geometry_based_upone_square_grid(axis, gridData, ...args){
+export function use_geometry_based_upone_square_grid(
+    axis, gridData, tag, asset, assetInitPosition
+){
     let abstractW = 1
     let abstractH = 1
-    let value = gridData.n
     /**
      * Grid:
-     * - Preserves geometry of the stage:
+     * - Preserves geometry of the stage in squers:
      *   innerWidth / totalGridPointsX = innerHeight / totalGridPointsY
      *    =>
      *   innerWidth * totalGridPointsY = innerHeight * totalGridPointsX
      */
-    const totalGridPointsX = gridData.sq
+    const totalGridPointsX = gridData.sqr
     const totalGridPointsY = initialWindowHeight * totalGridPointsX / initialWindowWidth
     let AmountWindowWidthChange = Math.abs(howMuchWindowWidthChange) 
     let AmountWindowHeightChange = Math.abs(howMuchWindowHeightChange)
@@ -61,15 +63,26 @@ export function use_geometry_based_upone_square_grid(axis, gridData, ...args){
         abstractH = totalGridPointsY
     }
     /**
-     * Get values
-     * Note: values depend on initChangeState
+     * Convert grid values in % values
+     * x ~ {sqr:1000, n:500};
+     * ^^x ~ {sqr:1000, n:5};
      */
+    let value = null
     if (axis == "x"){
-        const dx = window.innerWidth/abstractW
-        return dx*value
+        value = gridData.n / abstractW
+       
     }
     if (axis == "y"){
-        const dy = window.innerHeight / abstractH
-        return dy*value
+        value = gridData.n / abstractH
     }
+    if (tag == "^^"){
+        assetInitPosition[axis] = assetInitPosition[axis].n / assetInitPosition[axis].sqr
+    }
+    /**
+     * Extract new value
+     */
+    const newValue = use_geometry_based_upone_procent(
+        axis, value, tag, asset, assetInitPosition
+    )
+    return newValue
 }

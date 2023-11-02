@@ -4,18 +4,31 @@ import {
     currentWindowWidth,
     currentWindowHeight
 } from "../../root.js"
-
-
-export function use_geometry_based_upone_proportional_coordinates(axis, value, ...args){
-    const initialXratio = value / initialWindowWidth
-    const initialYration = value / initialWindowHeight
-
+import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
+let once = false
+export function use_geometry_based_upone_proportional_coordinates(
+    axis, value, tag, asset, assetInitPosition
+){
+    /**
+     * Convert pixel values in % values
+     * x ~ 1000
+     * ^^x ~ 10
+     */
     if (axis == "x"){
-        const newX = initialXratio * currentWindowWidth
-        return newX
+        value = value / initialWindowWidth
     }
-    if (axis == "y"){
-        const newY = initialYration * currentWindowHeight
-        return newY
+    else if (axis == "y"){
+        value = value / initialWindowHeight
     }
+    if (tag == "^^"){
+        assetInitPosition.x = assetInitPosition.x / initialWindowWidth
+        assetInitPosition.y = assetInitPosition.y / initialWindowHeight
+    }
+    /**
+     * Extract new value
+     */
+    const newValue = use_geometry_based_upone_procent(
+        axis, value, tag, asset, assetInitPosition
+    )
+    return newValue
 }
