@@ -5,8 +5,7 @@ export class SplashEmitter extends GenericEmitter{
     constructor(){
         super()
     }
-    async render(){
-        console.log("SplashEmitter >>> render");
-        return ()=>{}
+    async beforeRender(){
+        this.emitter.emit("LoadingEmitter-destroy")
     }
 }

@@ -1,8 +1,9 @@
 import {emitter, tree} from "../root.js"
-import { setOngoingEvent } from "./Utils/OngoingEvent.js";
+import { setOngoingEvent, ongoingEvent } from "./Utils/OngoingEvent.js";
 
 export class GenericEmitter{
     emitter = emitter
+    ongoingEvent = ongoingEvent
     tree = tree
     data = {}
     emitterName = null
@@ -15,58 +16,77 @@ export class GenericEmitter{
          */
         this.emitterName = this.constructor.name
         /**
-         * Set current ongoingEvent
-         * NOTE: this.emitterName == nngoingEvent
+         * Set event helper - current initiatedEmitter
          * For more see -> ./Utils/OngoingEvent.js
          */
-        setOngoingEvent(this.emitterName)
+        setOngoingEvent("initiatedEmitter", this.emitterName)
         /**
          * Init all live hooks
-         * 1. Render Scope
+         * 1. Destroy Scope
          * 2. Update Scope
-         * 3. Destroy Scope
+         * 3. Render Scope
          */
         // 1.
+        this.emitter.once(this.emitterName + "-destroy", async function(){
+            await this.beforeDestroy();
+            await this.destroy();
+            await this.afterDestroy();
+        }.bind(this))
+        // 2.
+        this.emitter.on(this.emitterName + "-beforeUpdate", async function(){
+            await this.beforeUpdate();
+        }.bind(this))
+        this.emitter.on(this.emitterName + "-afterUpdate", async function(){
+            await this.afterUpdate();
+        }.bind(this))
+        // 3.
         await this.beforeRender();
         await this.render();
         await this.afterRender();
-        // 2.
-        await this.beforeUpdate();
-        await this.update();
-        await this.afterUpdate();
-        // 3.
-        await this.beforeDestroy();
-        await this.destroy();
-        await this.afterDestroy();
     }
     // Hooks:
     async beforeRender(asset=null){
+        console.log(`${this.emitterName} >>> beforeRender`);
         return ()=>{}
     }
+    /**
+     * Hook the params of the assets that belong to calssEmitter
+     * @param {*} asset 
+     * @returns 
+     */
     async render(asset=null){
+        console.log(`${this.emitterName} >>> render`);
+        this.tree.hookEmitterComponentsParams(this.emitterName)
         return ()=>{}
     }
     async afterRender(asset=null){
+        console.log(`${this.emitterName} >>> afterRender`);
         return ()=>{}
     }
     //
     async beforeUpdate(asset=null){
+        console.log(`${this.emitterName} >>> beforeUpdate`);
         return ()=>{}
     }
     async update(asset=null){
+        console.log(`${this.emitterName} >>> update`);
         return ()=>{}
     }
     async afterUpdate(asset=null){
+        console.log(`${this.emitterName} >>> afterUpdate`);
         return ()=>{}
     }
     //
     async beforeDestroy(asset=null){
+        console.log(`${this.emitterName} >>> beforeDestroy`);
         return ()=>{}
     }
     async destroy(asset=null){
+        console.log(`${this.emitterName} >>> destroy`);
         return ()=>{}
     }
     async afterDestroy(asset=null){
+        console.log(`${this.emitterName} >>> afterDestroy`);
         return ()=>{}
     }
 } 

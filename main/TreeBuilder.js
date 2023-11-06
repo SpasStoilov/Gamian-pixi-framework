@@ -3,9 +3,13 @@ import {fetchME}  from "./Utils/fetch.js"
 import {classEmitterRegister} from "./GlobalEmitterRegister.js"
 import {evalArgs, evalProp} from "./Utils/EvalProps.js"
 import {ParentChainVisibility} from "./Utils/ParentChainVisibility.js"
-import {ongoingEvent} from "./Utils/OngoingEvent.js"
+import { emitter } from '../root.js';
 
 export class TreeBuilder{
+    /**
+     * Current Calss Emitter
+     */
+    currentEmitterName = null
     /**
      * Select the proper classEmitter
      */
@@ -269,6 +273,8 @@ export class TreeBuilder{
         const emmiterName = this.asset_emitter_mapper[assetName]
         //....
         this.props = classEmitterRegister[emmiterName]
+        //....
+        return emmiterName
     }
     hookTreeParams(){
         /**
@@ -282,9 +288,6 @@ export class TreeBuilder{
             let [assetName, params] of Object.entries(this.assets_params)
         ){
             const asset = this.assets_register[assetName]
-
-            //console.log("hookTreeParams >>> asset.name",asset.name);
-
             /**
             * Hook parameters of asset
             */
@@ -292,6 +295,21 @@ export class TreeBuilder{
         }
 
     };
+    hookEmitterComponentsParams(targetEmitter){
+        /**
+        * Show needed assets
+        */
+        this.showNeededAssets()
+        /**
+        * Hook the params of the target emitter
+        */
+        for (let [assetName, emitterName] of Object.entries(this.asset_emitter_mapper)){
+            if (targetEmitter != emitterName)continue;
+            const asset = this.assets_register[assetName]
+            const params  = this.assets_params[assetName]
+            this.hookParams(asset, params)
+        }
+    }
     hookParams(asset, params){
         //....
         const parentChainVisible = ParentChainVisibility(asset)
@@ -309,6 +327,18 @@ export class TreeBuilder{
 
             const assetReRendered = asset_life_state != "first-render"
             /**
+             * Set the correct context for the components.
+             * In this way we are shure that at evalProp function is passing
+             * the corect classEmitter (this.props).
+             */
+            const emmiterName = this.setContext(asset.name)
+            /**
+             * Call Hook - beforeUpdate only once
+             */
+            if (this.currentEmitterName != emmiterName && assetReRendered){
+                emitter.emit(emmiterName + "-beforeUpdate")
+            }
+            /**
             * Eval all the parameters
             */
             this.evalParams(
@@ -318,6 +348,13 @@ export class TreeBuilder{
                 assetReRendered ? this.on_update[asset.name] : [],
                 assetReRendered
             )
+            /**
+             * Call Hook - afterUpdate only once
+             */
+            if (this.currentEmitterName != emmiterName && assetReRendered){
+                emitter.emit(emmiterName + "-afterUpdate")
+                this.currentEmitterName = emmiterName
+            }
         }
     }
     evalParams(asset, params, ignore=[], update=[], assetReRendered){
@@ -325,12 +362,6 @@ export class TreeBuilder{
         //console.log("EvalParams >>> assetReRendered:", assetReRendered);
 
         for (let [key, value] of Object.entries(params)){
-            /**
-             * Set the correct context for the components.
-             * In this way we are shure that at evalProp function is passing
-             * the corect classEmitter (this.props).
-             */
-            this.setContext(asset.name)
             /**
              * First Render of the asset we set all params of it.
              * NOTE: on life-state "re-render or destroy" we use "ignore" & "update" to define what to be used from the params.
@@ -367,7 +398,11 @@ export class TreeBuilder{
         return asset
     }
     pos(component, parent, parentEmitter){
-        return this.prepareComponent(component, parent, parentEmitter)
+        const asset = this.prepareComponent(component, parent, parentEmitter)
+        this.showNeededAssets()
+        const params  = this.assets_params[asset.name]
+        this.hookParams(asset, params)
+        return asset
     }
     del(assetName){
         /**

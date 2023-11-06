@@ -1,11 +1,13 @@
 /**
- *  Current event
+ *  Events helpers
  */
-export let ongoingEvent = "";
+export const ongoingEvent = {}
 /**
- * Set current ongoingEvent
- * @param {string} value 
+ * Register event helper.
+ * You may use it in components.
+ * @param {string} name 
+ * @param {any} value 
  */
-export function setOngoingEvent(value){
-    ongoingEvent = value
+export function setOngoingEvent(name, value){
+    ongoingEvent[name] = value
 }

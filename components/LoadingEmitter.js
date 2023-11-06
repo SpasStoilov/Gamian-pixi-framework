@@ -9,27 +9,17 @@ export class LoadingEmitter extends GenericEmitter{
     constructor(){
         super()
     }
-    async render(){
-        console.log("LoadingEmitter >>> render");
-        this.tree
-        return ()=>{}
-    }
-    async update(){
-        console.log("LoadingEmitter >>> update");
+    async afterRender(){
+        console.log("LoadingEmitter >>> afterRender");
         await new Promise((resolve)=>{
             this.emitter.emit("posAsset")
             setTimeout(() => {
                 resolve()
-            }, 10000)
+            }, 3000)
         })
-        return ()=>{}
-    }
-    async destroy(){
-        console.log("LoadingEmitter >>> destroy");
-        return ()=>{}
-    }
-    async afterDestroy(){
-        console.log("LoadingEmitter >>> afterDestroy");
+        /**
+         * Hook the params of SplashEmitter
+         */
         this.emitter.emit("SplashEmitter")
         return ()=>{}
     }

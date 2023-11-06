@@ -4,22 +4,16 @@ export class RootEmitter extends GenericEmitter{
     constructor(){
         super()
     }
-    async render(){
-        console.log("RootEmitter >>> render");
-        return ()=>{}
-    }
-    async update(){
-        console.log("RootEmitter >>> update");
-        await new Promise((resolve)=>{
-            setTimeout(() => {
-                resolve()
-            }, 1000)
-        })
+    async afterRender(){
+        console.log("RootEmitter >>> afterRender");
+        this.emitter.emit("RootEmitter-destroy")
         return ()=>{}
     }
     async afterDestroy(){
         console.log("RootEmitter >>> afterDestroy");
+        /**
+         * Hook params of LoadingEmitter
+         */
         this.emitter.emit("LoadingEmitter")
-        return ()=>{}
     }
 }

@@ -1,6 +1,7 @@
 import { 
     howMuchWindowWidthChange, 
     howMuchWindowHeightChange,
+    Model
 } from "../../root.js"
 import {updateAssetAnimationPosition} from "../Utils/update-asset-animation-position.js"
 
@@ -19,19 +20,31 @@ let prevChangeY = 0
 export function use_geometry_based_upone_procent(
     axis, value, tag, asset=null, assetInitPosition
 ){
+    //console.log(asset.name, axis, value);
     /**
      * If animation is presnet (^^x/^^y)
      */
     if (tag == "^^"){
-        const newValue = updateAssetAnimationPosition(
-            axis == "x" ? window.innerWidth : window.innerHeight,
-            axis, 
-            value, 
-            asset, 
-            assetInitPosition[axis],
-            axis == "x" ? howMuchWindowWidthChange : howMuchWindowHeightChange,
-            axis == "x" ? prevChangeX : prevChangeY
-        )
+        // Model.callAnimation(
+        //     asset,
+        //     axis,
+        //     {duration: value.time},
+        //     // animation executor (constant look):
+        //     function(model, animeData){
+        //         // by returning we save state
+        //         return updateAssetAnimationPosition(
+        //             axis == "x" ? window.innerWidth : window.innerHeight,
+        //             axis, 
+        //             value.amount, 
+        //             asset, 
+        //             assetInitPosition[axis],
+        //             axis == "x" ? howMuchWindowWidthChange : howMuchWindowHeightChange,
+        //             axis == "x" ? prevChangeX : prevChangeY,
+        //             model, 
+        //             animeData
+        //         )
+        //     }
+        // )
         /**
         * Declair window is not resizing
         */
@@ -41,12 +54,21 @@ export function use_geometry_based_upone_procent(
         else {
             prevChangeY = howMuchWindowHeightChange
         }
-        return newValue
+        let newValue = updateAssetAnimationPosition(
+            axis == "x" ? window.innerWidth : window.innerHeight,
+            axis, 
+            value, 
+            asset, 
+            assetInitPosition[axis],
+            axis == "x" ? howMuchWindowWidthChange : howMuchWindowHeightChange,
+            axis == "x" ? prevChangeX : prevChangeY,
+        )
+        asset[axis] = newValue
     }
     else if (axis == "x"){
-        return window.innerWidth*value
+        asset[axis] =  window.innerWidth*value
     }
     else if (axis == "y"){
-        return window.innerHeight*value
+        asset[axis] = window.innerHeight*value
     }
 }

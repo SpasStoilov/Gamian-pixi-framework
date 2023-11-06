@@ -2,13 +2,13 @@
 @omponent Container; 
     name ~ splash_container;
     emitter ~ SplashEmitter;
-    visible ~ this.emitterName == ongoingEvent;
+    visible ~ this.emitterName == ongoingEvent.initiatedEmitter;
     @omponent Sprite; 
         args ~ ../assets/sprites/player2.png;
         name ~ player_2;
-        x ~ 0;
-        y ~ 0;
-        scale ~ 1;
+        x ~ %0;
+        y ~ %0;
+        scale ~ {x:1, y:1};
         update ~ ["x", "y", "scale"];
     <
 <

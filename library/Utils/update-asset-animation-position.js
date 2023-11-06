@@ -1,3 +1,6 @@
+
+let finalState = null
+
 /**
  * Update animation position when screen is resized or not.
  * @param {*} ScreenAxis - Current Screen axis
@@ -49,7 +52,13 @@ export function updateAssetAnimationPosition(
     * Update asset init position with animation coordinate
     */
     asset[axis] += animationAxisUpdate
+    finalState = {axis, value:asset[axis]}
     //...
-    return asset[axis]
+    return saveFinalState
+    //return asset[axis]
 }
 //-------------------------------------------------------------------------------
+
+function saveFinalState(asset){
+    asset[finalState.axis] = finalState.value
+}

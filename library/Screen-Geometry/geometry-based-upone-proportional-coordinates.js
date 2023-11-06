@@ -1,11 +1,9 @@
 import {
     initialWindowWidth,
     initialWindowHeight,
-    currentWindowWidth,
-    currentWindowHeight
 } from "../../root.js"
 import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
-let once = false
+
 export function use_geometry_based_upone_proportional_coordinates(
     axis, value, tag, asset, assetInitPosition
 ){

@@ -84,5 +84,5 @@ export function use_geometry_based_upone_square_grid(
     const newValue = use_geometry_based_upone_procent(
         axis, value, tag, asset, assetInitPosition
     )
-    return newValue
+    //return newValue
 }

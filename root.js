@@ -2,7 +2,8 @@ import * as PIXI from './node_modules/pixi.js/dist/pixi.mjs';
 import { TreeBuilder } from '/main/TreeBuilder.js';
 import { EventEmitter } from './node_modules/events/events.mjs';
 import { emitterFactory } from "./main/GlobalEmitterRegister.js"
-
+import { Modelator} from './main/Modelator.js'
+import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
 //------------------ GLOBAL PARAMS ---------------------//
 /**
  *  Create an instance of EventEmitter
@@ -12,6 +13,10 @@ export const emitter = new EventEmitter();
  *  Create an instance of TreeBuilder
  */
 export const tree = new TreeBuilder()
+ /**
+ *  Create an instance of Modelator
+ */
+ export const Model = new Modelator()
  /**
  *  Window states & values
  */
@@ -28,7 +33,6 @@ export let totalWindowHeightChange = 0;
  * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
  */
 export const worldRation = window.innerWidth / window.innerHeight
-export const wordlRatioScaleConstant = 0.001
 //----------------------------------------------------------------------------^
 
  /**
@@ -40,14 +44,33 @@ async function START_APP(){
      */
     const app = new PIXI.Application(
         {
+            width: window.innerWidth,
+            height: window.innerHeight,
             backgroundColor: 0xAAAAAA
         }
     )
     console.log("gamian >>> app:", app);
     /**
-     *  Dock Application to index.html
+     *  Get Tree information from back-end
      */
-    document.body.appendChild(app.view)
+    const root_gm = await tree.getTreeInformation()
+    console.log("gamian >>> back-end-response: ", root_gm);
+    /**
+     *  Add Tree Root to stage
+     */
+    const structure = tree.prepareComponent(root_gm, app.stage)
+    console.log("gamian >>> Assets Register:", tree.assets_register);
+    console.log("gamian >>> Tree Structure:", structure);
+    /**
+     *  Get all components emitters
+     */
+    await emitterFactory()
+    /**
+     *  Start world ticker
+     */
+    app.ticker.add((delta)=>{
+        Model.TIME += 1
+    })
     /**
      * Keep track of screen size
      */
@@ -67,7 +90,6 @@ async function START_APP(){
         howMuchWindowHeightChange = newHeight - currentWindowHeight;
         totalWindowHeightChange = initialWindowWidth - newWidth
         totalWindowHeightChange = initialWindowHeight - newHeight
-        
         // console.log(
         //     "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
         //     howMuchWindowWidthChange, 
@@ -78,34 +100,20 @@ async function START_APP(){
          */
         currentWindowWidth = newWidth;
         currentWindowHeight = newHeight;
+        /**
+         * Refresh the tree params on resize
+         */
+        tree.hookTreeParams()
     }
     window.addEventListener('resize', resizeAppView);
-    resizeAppView()
     /**
-     *  Get Tree information from back-end
-     */
-    const root_gm = await tree.getTreeInformation()
-    console.log("gamian >>> back-end-response: ", root_gm);
-    /**
-     *  Render Tree Root
-     */
-    const structure = tree.prepareComponent(root_gm, app.stage)
-    console.log("gamian >>> Assets Register:", tree.assets_register);
-    console.log("gamian >>> Tree Structure:", structure);
-    /**
-     *  Get all components emitters
-     */
-    await emitterFactory()
-    /**
-     *  On Update
-     */
-    app.ticker.add((delta)=>{
-        tree.hookTreeParams()
-    })
-    /**
-     * Render root componet
+     * Hook the params of root componet
      */
     emitter.emit("RootEmitter")
+    /**
+     *  Dock Application to index.html
+     */
+    document.body.appendChild(app.view)
 }
 
 START_APP()
