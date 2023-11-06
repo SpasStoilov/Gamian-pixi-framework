@@ -3,15 +3,18 @@
         @omponent Sprite; 
             args ~ ../assets/sprites/player3.png;
             name ~ player_3;
-            x ~ %0.2;
+            x ~ %0.5;
             y ~ %0.2;
             scale ~ {x:1, y:1};
-            update ~ ["x", "y"];
+            update ~ ["x", "y", "scale"];
         <
         ,
         this.tree.get("loading_container"),
         "LoadingEmitter"
     )
+}
+#LoadingEmitter.once anime(){
+    this.model.shift("player_3", "x", 0.005, 0.7)
 }
 
 >>>

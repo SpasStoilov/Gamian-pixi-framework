@@ -377,11 +377,7 @@ export class TreeBuilder{
                     this.props, 
                     asset, 
                     key, 
-                    value, 
-                    {
-                        assets_params: this.assets_params,
-                        assetReRendered
-                    }
+                    value
                 )
             }
         }
@@ -453,5 +449,4 @@ export class TreeBuilder{
          */
         delete this.assets_register[assetName]
     }
-    animate(){};
 }

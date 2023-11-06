@@ -11,7 +11,7 @@ import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.j
 let initChangeState = "|W,H>"
 
 export function use_geometry_based_upone_square_grid(
-    axis, gridData, tag, asset, assetInitPosition
+    axis, gridData, tag=null, asset=null, assetInitPosition=null
 ){
     let abstractW = 1
     let abstractH = 1
@@ -75,14 +75,10 @@ export function use_geometry_based_upone_square_grid(
     if (axis == "y"){
         value = gridData.n / abstractH
     }
-    if (tag == "^^"){
-        assetInitPosition[axis] = assetInitPosition[axis].n / assetInitPosition[axis].sqr
-    }
     /**
      * Extract new value
      */
-    const newValue = use_geometry_based_upone_procent(
-        axis, value, tag, asset, assetInitPosition
-    )
-    //return newValue
+    const newValue = use_geometry_based_upone_procent(axis, value)
+
+    return newValue
 }

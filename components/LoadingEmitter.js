@@ -20,6 +20,7 @@ export class LoadingEmitter extends GenericEmitter{
         /**
          * Hook the params of SplashEmitter
          */
+        this.emitter.emit("anime")
         this.emitter.emit("SplashEmitter")
         return ()=>{}
     }

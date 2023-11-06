@@ -1,5 +1,3 @@
-import { ongoingEvent } from "./OngoingEvent.js" 
-// NOTE: it is visible at components (don't delete it!)
 import { 
     use_geometry_based_upone_procent,
     use_geometry_based_upone_square_grid,
@@ -9,23 +7,15 @@ import {
     procent_of_screen,
 } from "../../library/index.js"
 
-export function evalProp(asset, key, value, treeData){
+export function evalProp(asset, key, value, upV=null, toV=null){
     //console.log("evalProp >>>",asset.name, key, value);
-    
-                                                  //----- Default tag
+
     let tag = "default"
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *                       Manage tags
      *---------------------------------------------------------------
-     * Check if key is ^^model_tag
+     *  Check if key is !custom_prop_tag
      */
-    if (key.match(/\^\^/)){
-        tag = "^^"
-        key = key.replaceAll("^", "")
-    }
-    /* 
-    *  Check if key is !custom_prop_tag
-    */
     if (key.startsWith("!")){
         tag = "!"
         key = key.replaceAll("!", "")
@@ -38,122 +28,112 @@ export function evalProp(asset, key, value, treeData){
      * y ~ number
      */
     if (key == "x" || key == "y"){
-                                               //-----Select Geometry
+        let v = null
         const geometryHelper = {
             "%" : use_geometry_based_upone_procent,
             "sqr": use_geometry_based_upone_square_grid,
             "px": use_geometry_based_upone_proportional_coordinates,
             "grd": geometry_grid
         }
-                                               //----- Default Geometry
-        let geometrySelector = "px"
-                                                                //----- 
-        if (value.match(/%/)){
-            geometrySelector = "%"
-        }
-        if (value.match(/\{\s*sqr/)){
-            geometrySelector = "sqr"
-        }
-        if (value.match(/\{\s*grd/)){
-            geometrySelector = "grd"
-        }
-                                                                //-----
-        const geometry = geometryHelper[geometrySelector]
-       
-                                    //----- Define args for the geometry
         
-        let assetInitPosition = null
-        let v = null
-       
-                   //----- Manage key & values based upone geometry and tags
+        let geometrySelector = "px"
+        
         /* 
         * Procent:
         * x ~ %0.5
-        */
-        if (geometrySelector == "%"){
-            /**
-             * If we have ^^model_tag 
-             * we need asset start position and remove "^^" from key.
-             */
-            if(tag == "^^"){
-                let rawX = treeData.assets_params[asset.name].x.replaceAll("%", "")
-                let rawY = treeData.assets_params[asset.name].y.replaceAll("%", "")
-                let initX = eval(rawX) || 0
-                let initY = eval(rawY) || 0
-                assetInitPosition = {x:initX,y:initY}
-            }
+        */ 
+        if (value.match(/%/)){
+            geometrySelector = "%"
             value = value.replaceAll("%", "")
-            v = eval(value)
-            v = Number(v)
+            eval("v =" + value)
+            if (!toV || v <= toV){
+                v = upV ? v + upV : v
+                this.tree.assets_params[asset.name][key] = `%${v}`
+            }
         }
         /**
-         *                     Grids                    Pixels
-         * x ~ {grd:1000, n:500} | {sqr:10000, n:10} | x ~ 1000
+         *          
+         * {sqr:10000, n:10}
          */
-        else if(
-            geometrySelector == "grd" || 
-            geometrySelector == "sqr" || 
-            geometrySelector == "px"
-        ){
+        else if (value.match(/\{\s*sqr/)){
+            geometrySelector = "sqr"
             eval("v =" + value)
-            /**
-             * If we have ^^model_tag 
-             * we need asset start position and remove "^^" from key.
-             * ^^x ~ {amount:0.01, time:100};
-             */
-            if(tag == "^^"){
-                let initX = null
-                let initY = null
-                eval("initX =" + treeData.assets_params[asset.name].x)
-                eval("initY =" + treeData.assets_params[asset.name].y)
-                assetInitPosition = {x:initX, y:initY}
+            if (!toV || v.sqr <= toV.sqr){
+                v = upV ? {sqr: v.sqr + upV.sqr, n: v.n + upV.n} : v
+                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+            }
+
+        }
+        /**                             
+         * x ~ {grd:1000, n:500}  
+         */
+        else if (value.match(/\{\s*grd/)){
+            geometrySelector = "grd"
+            eval("v =" + value)
+            if (!toV || v.grd <= toV.grd){
+                v = upV ? {sqr: v.grd + upV.grd, n: v.n + upV.n} : v
+                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
             }
         }
-        
-                                                   //----- Calculate new axis
-        geometry(key, v, tag, asset, assetInitPosition)
+        /**
+         * x ~ 1000
+         */
+        else {
+            eval("v =" + value)
+            if (!toV || v <= toV){
+                v = upV ? v + upV : v
+                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+            }
+        }
+        const geometry = geometryHelper[geometrySelector]
+
+        asset[key] = geometry(key, v)
     }
     /**
      * Mange scale of the asset on the screen
-     * scale ~ {x:number, y:number}
-     * ^^scale ~ {x:number, y:number, time:number};
      */
     else if (key == "scale"){
-                                                 //----- Select Scaler
+
+        let v = null
+
         const scalerHelper = {
-            "default" : scaling_relative_to_screen,
+            "srts" : scaling_relative_to_screen,
             "%": procent_of_screen
         }
-                                                 //----- Default Scaler
-        let scalerSelector = "default"
-                                                                //----- 
-        if (value.match(/%/)){
-            scalerSelector = "%"
-        }
-                                                                //-----
-        const scaler = scalerHelper[scalerSelector]
-        
-                                      //----- Define args for the scalers
-        
-        let v = null
-        let initScale = null
-                          //------ Manage key & values based upone scaler
+
+        let scalerSelector = "srts"
         /**
-         * scale ~ {x:1, y:1}
-         */
-        if (scalerSelector == "default"){
-            eval("v =" + value)
-            eval("initScale =" + treeData.assets_params[asset.name].scale)
-        }
-        /**
+         * scalerSelector = "%"
          * scale ~ {x:%0.005, y:%0.005}
          */
-        else if (scalerSelector == "%"){
+        if (value.match(/%/)){
+            scalerSelector = "%"
             value = value.replaceAll("%", "")
             eval("v =" + value)
+            if (!toV || v <= toV){
+                v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
+                this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
+            }
+            // if (!toV || v <= toV){
+            //     v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
+            //     this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
+            // }
         }
-                                                //----- Calculate new scale
-        scaler("x", v, tag, asset, initScale)
+        /**
+         * scalerSelector = srts
+         * scale ~ {x:1, y:1}
+         */
+        else{
+            eval("v =" + value)
+            v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
+            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+        }
+
+        const scaler = scalerHelper[scalerSelector]
+        
+        const [newX, newY] = scaler(v, "x")
+        asset.scale.x = newX
+        asset.scale.y = newY
     }
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *            Eval Static Props that can not be animated

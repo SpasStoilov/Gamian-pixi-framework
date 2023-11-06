@@ -13,16 +13,14 @@ import {update_asset_animation_scale} from "../Utils/update-asset-animation-scal
  * @returns 
  */
 export function scaling_relative_to_screen(
-    axis, value, tag, asset, initScale
+    value, axis
 ){
-    let initScaleX = initScale.x == undefined ? 1 : initScale.x
-    let initScaleY = initScale.y == undefined ? 1 : initScale.y
     /**
      * Set constant rations
      */
-    let assetInitScaleValuesRation = initScaleX / initScaleY
+    let assetInitScaleValuesRation = value.x / value.y
     let initScreenScaleRation = 
-        axis == "x" ? initialWindowWidth / initScaleX : initialWindowHeight / initScaleY
+        axis == "x" ? initialWindowWidth / value.x : initialWindowHeight / value.y
     /**
      * New values for resize
      */
@@ -30,39 +28,22 @@ export function scaling_relative_to_screen(
     let newScaleY = null
     /**
      * We Calc scale on resize using Width of the screen
+     * TODO: keep track of what axis change by default is "x"!!!
      */
     if (axis == "x"){
         newScaleX = currentWindowWidth / initScreenScaleRation
-        asset.scale.x = newScaleX 
         // Make y proportional
         newScaleY = newScaleX / assetInitScaleValuesRation
-        asset.scale.y = newScaleY
     }
     /**
      * We Calc scale on resize using Height of the screen
      */
     else if (axis == "y"){
         newScaleY = currentWindowHeight / initScreenScaleRation
-        asset.scale.y = newScaleY
         // Make x proportional
         newScaleX = newScaleY * assetInitScaleValuesRation
-        asset.scale.x = newScaleX
     }
-    /**
-     * Animate scale
-     * NOTE: value is used only when we have animations
-     * The proportional scaling is handle by initScales of the asset
-     */
-    if (tag == "^^"){
-        Model.callAnimation(
-            asset,
-            "scale",
-            {duration: value.time},
-            // animation executor (constant look):
-            function(model, animeData){
-                // by returning we save state
-                return update_asset_animation_scale(value, asset, model, animeData)
-            }
-        )
-    }
+    
+    return [newScaleX, newScaleY]
+
 }

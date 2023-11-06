@@ -19,7 +19,9 @@ export function updateAssetAnimationPosition(
     asset, 
     animationStartPosition,
     amountOfScreenAxisChange,
-    prevChangeOfAxis
+    prevChangeOfAxis,
+    howMuchWindowWidthChange,
+    howMuchWindowHeightChange
 ){
     /**
      * dL - amount of window change.
@@ -53,7 +55,15 @@ export function updateAssetAnimationPosition(
     */
     asset[axis] += animationAxisUpdate
     finalState = {axis, value:asset[axis]}
-    //...
+    /**
+    * Declair window is not resizing
+    */
+    if (axis == "x"){
+        prevChangeOfAxis = howMuchWindowWidthChange
+    }
+    else {
+        prevChangeOfAxis = howMuchWindowHeightChange
+    }
     return saveFinalState
     //return asset[axis]
 }

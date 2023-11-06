@@ -2,7 +2,7 @@
 @omponent Container; 
     name ~ splash_container;
     emitter ~ SplashEmitter;
-    visible ~ this.emitterName == ongoingEvent.initiatedEmitter;
+    visible ~ this.emitterName == this.ongoingEvent.initiatedEmitter;
     @omponent Sprite; 
         args ~ ../assets/sprites/player2.png;
         name ~ player_2;

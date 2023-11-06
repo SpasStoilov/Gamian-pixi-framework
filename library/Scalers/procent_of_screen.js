@@ -4,8 +4,7 @@
  * @returns 
  */
 export function procent_of_screen(
-    axis, value, tag, asset, initScale
+    value, axis
 ){
-    asset.scale.x = window.innerWidth * value.x
-    asset.scale.y = window.innerHeight * value.y
+    return [window.innerWidth * value.x, window.innerHeight * value.y]
 }

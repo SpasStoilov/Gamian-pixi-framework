@@ -1,3 +1,5 @@
+import { tree } from "../root.js"
+import { evalProp } from "./Utils/EvalProps.js"
 /**
  * Manages Animations
  */
@@ -8,41 +10,47 @@ export class Modelator{
 
     constructor(){}
 
-    callAnimation(
-        asset,
-        animeName,
-        animationProps,
-        animationExecutor
-    ){
-        let currentTime = this.TIME
-        let assetName = asset.name
-        /**
-         * Register animation data of asset
-         */
-        if (!this.animations[assetName]){
-            this.animations[assetName] = {}
-            this.currentAnimationsState[assetName] = {}
-        }
-        if (!this.animations[assetName][animeName]){
-            this.animations[assetName][animeName] = {
-                ...animationProps, 
-                animationExecutor, 
-                startTime: currentTime,
-                endAnimationTime: currentTime + animationProps.duration
+    /**
+     * Execute all animation
+     */
+    animate(){
+        const animationsToDelete = []
+        for (let [assetName, animations] of Object.entries(this.animations)){
+            for (let [paramName, animeData] of Object.entries(animations)){
+                // position
+                tree.setContext(assetName) 
+                /**
+                 * Eval the prop with the correct context
+                 */
+                evalProp.call(
+                    tree.props, // emitter context
+                    tree.assets_register[assetName], // asset
+                    paramName,  // parameter to update
+                    tree.assets_params[assetName][paramName], // current value
+                    animeData.value, // update value
+                    animeData.toValue
+                )
             }
         }
-        /**
-         * Execute the animation
-         */
-        let animeData = this.animations[assetName][animeName]
-
-        if (this.TIME <= animeData.endAnimationTime){
-            this.currentAnimationsState[assetName][animeName] = 
-                animeData.animationExecutor(this, animeData)
+        for (let [assetName, paramName] of animationsToDelete){
+            delete this.animations[assetName][paramName]
         }
-        else {
-            // Call final state of animation:
-            this.currentAnimationsState[assetName][animeName](asset)
-        } 
+    }
+    /**
+     * Register animation data of asset
+     */
+    shift(
+        assetName,
+        param,
+        value,
+        toValue
+    ){
+        if (!this.animations[assetName]){
+            this.animations[assetName] = {}
+        }
+        this.animations[assetName][param] = {
+            value, 
+            toValue
+        }
     }
 }

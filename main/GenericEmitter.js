@@ -1,10 +1,13 @@
-import {emitter, tree} from "../root.js"
+import {emitter, tree, Model} from "../root.js"
 import { setOngoingEvent, ongoingEvent } from "./Utils/OngoingEvent.js";
+import { gsap } from "../node_modules/gsap/gsap-core.js";
 
 export class GenericEmitter{
     emitter = emitter
     ongoingEvent = ongoingEvent
     tree = tree
+    gsap = gsap
+    model = Model
     data = {}
     emitterName = null
 
