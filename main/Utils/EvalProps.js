@@ -7,6 +7,7 @@ import {
     procent_of_screen,
 } from "../../library/index.js"
 
+
 /**
  * 
  * @param {*} asset 
@@ -31,7 +32,7 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
     /*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *         Eval Demensions & Values that can be animated
      * ---------------------------------------------------------------
-     * Mange position of asset on the screen
+     * Mange axis of asset on the screen
      * x ~ number
      * y ~ number
      */
@@ -43,9 +44,10 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
             "px": use_geometry_based_upone_proportional_coordinates,
             "grd": geometry_grid
         }
-        
+        /**
+         * x ~ 1000
+         */
         let geometrySelector = "px"
-        
         /* 
         * Procent:
         * x ~ %0.5
@@ -53,20 +55,6 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         if (value.match(/%/)){
             geometrySelector = "%"
             value = value.replaceAll("%", "")
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
-                    v = v + upV
-                }
-                else{
-                    v = toV
-                }
-                this.tree.assets_params[asset.name][key] = `%${v}`
-            }
-            
         }
         /**
          *          
@@ -74,78 +62,70 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
          */
         else if (value.match(/\{\s*sqr/)){
             geometrySelector = "sqr"
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                // sqr
-                if ((sign[0] == "-" && v.sqr > toV[0]) || (sign[0] == "+" && v.sqr < toV[0])){
-                    v = {sqr: v.sqr + upV[0], n: v.n}
-                }
-                else{
-                    v = {sqr: toV[0], n: v.n}
-                }
-                // n
-                if ((sign[1] == "-" && v.n > toV[1]) || (sign[1] == "+" && v.n < toV[1])){
-                    v = {sqr: v.sqr, n: v.n + upV[1]}
-                }
-                else{
-                    v = {sqr: v.sqr, n: toV[1]}
-                }
-
-                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-            }
         }
         /**                             
          * x ~ {grd:1000, n:500}  
          */
         else if (value.match(/\{\s*grd/)){
             geometrySelector = "grd"
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                // grd
-                if ((sign[0] == "-" && v.grd > toV[0]) || (sign[0] == "+" && v.grd < toV[0])){
-                    v = {grd: v.grd + upV[0], n: v.n}
-                }
-                else{
-                    v = {grd: toV[0], n: v.n}
-                }
-                // n
-                if ((sign[1] == "-" && v.n > toV[1]) || (sign[1] == "+" && v.n < toV[1])){
-                    v = {grd: v.grd, n: v.n + upV[1]}
-                }
-                else{
-                    v = {grd: v.grd, n: toV[1]}
-                }
-
-                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-            }
         }
+       
+        eval("v =" + value)
         /**
-         * x ~ 1000
+         * Manage Animations
          */
-        else {
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
-                    v = v + upV
-                }
-                else{
-                    v = toV
-                }
-                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-            }
-        }
-
+        v = updateStateOfParam.call(this, key, asset, v, geometrySelector, toV, upV, sign)
         const geometry = geometryHelper[geometrySelector]
         asset[key] = geometry(key, v)
+    }
+    /* Mange position of asset on the screen
+     * position ~ {x: value, y: value}
+     * value = 1010 | %0.5 | {sqr:10000, n:10} | {grd:1000, n:500}
+     */
+    else if (key == "position"){
+        let v = null
+        const geometryHelper = {
+            "%" : use_geometry_based_upone_procent,
+            "sqr": use_geometry_based_upone_square_grid,
+            "px": use_geometry_based_upone_proportional_coordinates,
+            "grd": geometry_grid
+        }
+        /**
+         *  position ~ {x:1000, y:2352}
+         */
+        let geometrySelector = "px"
+        
+        /* 
+        * Procent:
+        * position ~ {x: %0.5, y: %0.5}
+        */ 
+        if (value.match(/%/)){
+            geometrySelector = "%"
+            value = value.replaceAll("%", "")
+        }
+        /**
+         *          
+         * position ~ {x: {sqr:10000, n:10}, x: {sqr:10000, n:10} }
+         */
+        else if (value.match(/\{\s*sqr/)){
+            geometrySelector = "sqr"
+        }
+        /**                             
+         * position ~ {x: {grd:10000, n:10}, x: {grd:10000, n:10} }  
+         */
+        else if (value.match(/\{\s*grd/)){
+            geometrySelector = "grd"
+        }
+        eval("v =" + value)
+        /**
+         * Manage Animations
+         */
+        v = updateStateOfParam.call(this, key, asset, v, geometrySelector, toV, upV, sign)
+       
+        for (let [propName, propValue] of Object.entries(v)){
+            const geometry = geometryHelper[geometrySelector]
+            asset[propName] = geometry(propName, propValue)
+        }
     }
     /**
      * Mange scale of the asset on the screen
@@ -158,7 +138,10 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
             "srts" : scaling_relative_to_screen,
             "%": procent_of_screen
         }
-
+        /**
+         * scalerSelector = srts
+         * scale ~ {x:1, y:1}
+         */
         let scalerSelector = "srts"
         /**
          * scalerSelector = "%"
@@ -167,60 +150,16 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         if (value.match(/%/)){
             scalerSelector = "%"
             value = value.replaceAll("%", "")
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                // scale.x
-                if ((sign[0] == "-" && v.x > toV[0]) || (sign[0] == "+" && v.x < toV[0])){
-                    v = {x: v.x + upV[0], y: v.y}
-                }
-                else{
-                    v = {x: toV[0], y: v.y}
-                }
-                // scale.y
-                if ((sign[1] == "-" && v.y > toV[1]) || (sign[1] == "+" && v.y < toV[1])){
-                    v = {x: v.x, y: v.y + upV[1]}
-                }
-                else{
-                    v = {x: v.x, y: toV[1]}
-                }
-
-                this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
-            }
         }
+    
+        eval("v =" + value)
         /**
-         * scalerSelector = srts
-         * scale ~ {x:1, y:1}
+         * Manage Animations
          */
-        else{
-            eval("v =" + value)
-            /**
-             * Manage Animation
-             */
-            if (toV != null && upV != null){
-                // scale.x
-                if ((sign[0] == "-" && v.x > toV[0]) || (sign[0] == "+" && v.x < toV[0])){
-                    v = {x: v.x + upV[0], y: v.y}
-                }
-                else{
-                    v = {x: toV[0], y: v.y}
-                }
-                // scale.y
-                if ((sign[1] == "-" && v.y > toV[1]) || (sign[1] == "+" && v.y < toV[1])){
-                    v = {x: v.x, y: v.y + upV[1]}
-                }
-                else{
-                    v = {x: v.x, y: toV[1]}
-                }
-
-                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-            }
-        }
+        v = updateStateOfParam.call(this, key, asset, v, scalerSelector, toV, upV, sign)
 
         const scaler = scalerHelper[scalerSelector]
-        
+
         const [newX, newY] = scaler(v, "x")
         asset.scale.x = newX
         asset.scale.y = newY
@@ -275,6 +214,110 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         }
 
     }
+}
+
+function updateStateOfParam(key, asset, v, selector, toV, upV, sign){
+    function recursiveValueChager(vIn, to, up, s, i=0){
+        console.log("comming >>", vIn, to, up, s);
+        /**
+         * Manage Animation
+         */
+        if (to != null && up != null){
+            if (vIn.constructor.name == "Number"){
+                if ((s == "-" && vIn > to) || (s == "+" && vIn < to)){
+                    vIn = vIn + up
+                }
+                else {
+                    vIn = to
+                }
+            }
+            else {
+                /** 
+                 * vIn  = {grd:10000, n:10}
+                 * to = [1,2]
+                 * up = [1,2]
+                 * s  = [+,-]
+                 * ---------------------------------------------------
+                 * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} } 
+                 * to = [ [1,2], [1,2] ] 
+                 * up = [ [1,2], [1,2] ]
+                 * s  = [ [+,+], [+,-] ]
+                 */
+                for (let [key, value] of Object.entries(vIn)){
+                    let newV = recursiveValueChager.call(this, value, to[i], up[i], s[i])
+                    vIn[key] = newV
+                    i+=1
+                }
+            }
+        }
+        console.log("out >>", vIn);
+        return vIn
+    }
+    /**
+     * Manage Animation
+     */
+    if (toV != null && upV != null){
+        /**
+         * Update value of param
+         * */  
+        // if (v.constructor.name == "Number"){
+        //     if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
+        //         v = v + upV
+        //     }
+        //     else{
+        //         v = toV
+        //     }
+        // }
+        // else {
+        //     /**
+        //      * { key_0: value_0, key_1: value_1 }
+        //      * key = sqr / grd / x
+        //      */
+        //     const [value_0, value_1] = Object.values(v)
+        //     const [key_0, key_1] = Object.keys(v)
+
+        //     if ((sign[0] == "-" && value_0 > toV[0]) || (sign[0] == "+" && value_0 < toV[0])){
+        //         v = {[key_0]: value_0 + upV[0], [key_1]: v[key_1]}
+        //     }
+        //     else{
+        //         v = {[key_0]: toV[0], [key_1]: v[key_1]}
+        //     }
+        //     // n / y
+        //     if ((sign[1] == "-" && value_1 > toV[1]) || (sign[1] == "+" && value_1 < toV[1])){
+        //         v = {[key_0]: v[key_0], [key_1]: value_1 + upV[1]}
+        //     }
+        //     else{
+        //         v = {[key_0]: v[key_0], [key_1]: toV[1]}
+        //     }
+        // }
+        v = recursiveValueChager.call(this, v, toV, upV, sign)
+        /**
+         * Change state of param
+         */
+        // x & y
+        if (selector == "%" && key == "x" || key == "y"){
+            this.tree.assets_params[asset.name][key] = `%${v}`
+        }
+        else if (selector == "grd" || selector == "sqr" ||  selector == "px" && key == "x" || key == "y"){
+            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+        }
+        // position
+        else if (selector == "%" && key == "position"){
+            this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
+        }
+        else if (selector == "grd" || selector == "sqr" ||  selector == "px" && key == "position"){
+            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+        }
+        // scale
+        else if (selector == "%" && key == "scale"){
+            this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
+        }
+        else if (selector == "srts" && key == "scale"){
+            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+        }
+
+    }
+    return v
 }
 
 function managePropChain(key, asset){

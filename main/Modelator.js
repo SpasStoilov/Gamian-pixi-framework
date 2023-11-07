@@ -29,7 +29,7 @@ export class Modelator{
                     tree.assets_params[assetName][paramName], // current value
                     animeData.upV, // update value
                     animeData.toV, // max value to reach
-                    animeData.sign,
+                    animeData.sign, // animation direction
                 )
                 const newValue = tree.assets_params[assetName][paramName]
                 /**
@@ -77,10 +77,17 @@ export class Modelator{
          * are pass in array with no units.
          */
         if(from.constructor.name == "Array"){
-            sign = []
-            let var1 = (to[0] - from[0]) / steps[0]
-            let var2 = (to[1] - from[1]) / steps[1]
+            /**
+             * Calc with how much to update animation
+             */
+            let var1 = (to[0] - from[0]) / steps[0] || 1
+            let var2 = (to[1] - from[1]) / steps[1] || 1
             upV = [var1, var2]
+            /**
+             * Get sign of animation
+            */
+            sign = []
+            //
             if (var1 < 0){
                 sign.push("-")
             }
@@ -95,7 +102,13 @@ export class Modelator{
             }
         }
         else {
-            upV = (to - from) / steps
+            /**
+             * Calc with how much to update animation
+             */
+            upV = (to - from) / steps || 1
+            /**
+             * Get sign of animation
+             */
             if (upV < 0){
                 sign = "-"
             }
