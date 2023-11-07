@@ -17,8 +17,8 @@ export class Modelator{
         const animationsToDelete = []
         for (let [assetName, animations] of Object.entries(this.animations)){
             for (let [paramName, animeData] of Object.entries(animations)){
-                // position
-                tree.setContext(assetName) 
+                //
+                tree.setContext(assetName)
                 /**
                  * Eval the prop with the correct context
                  */
@@ -27,30 +27,92 @@ export class Modelator{
                     tree.assets_register[assetName], // asset
                     paramName,  // parameter to update
                     tree.assets_params[assetName][paramName], // current value
-                    animeData.value, // update value
-                    animeData.toValue
+                    animeData.upV, // update value
+                    animeData.toV, // max value to reach
+                    animeData.sign,
                 )
+                const newValue = tree.assets_params[assetName][paramName]
+                /**
+                 * Check when to stop animation
+                 */
+                if (
+                    animeData.currentValue == newValue
+                ){
+                    animationsToDelete.push([assetName, paramName])
+                    continue
+                }
+                /**
+                 * Update current value of animation
+                 */
+                animeData.currentValue = newValue
+
             }
         }
+        /**
+         * Delete animation we do not need
+         */
         for (let [assetName, paramName] of animationsToDelete){
             delete this.animations[assetName][paramName]
         }
     }
     /**
-     * Register animation data of asset
+     * 
+     * @param {String} assetName 
+     * @param {String} param 
+     * @param {object} data - {from: number | array, steps: number | array, to: number | array }
      */
     shift(
         assetName,
         param,
-        value,
-        toValue
+        data
     ){
+        let {from, steps, to} = data
+
+        let upV = null
+        let sign = null
+        /**
+         * Calculate update value
+         * NOTE: By default we assume that user will pass values in desire units, 
+         * so we do not bother to check what units are and that is why values 
+         * are pass in array with no units.
+         */
+        if(from.constructor.name == "Array"){
+            sign = []
+            let var1 = (to[0] - from[0]) / steps[0]
+            let var2 = (to[1] - from[1]) / steps[1]
+            upV = [var1, var2]
+            if (var1 < 0){
+                sign.push("-")
+            }
+            else {
+                sign.push("+")
+            }
+            if (var2 < 0){
+                sign.push("-")
+            }
+            else{
+                sign.push("+")
+            }
+        }
+        else {
+            upV = (to - from) / steps
+            if (upV < 0){
+                sign = "-"
+            }
+            else {
+                sign = "+"
+            }
+        }
+        /**
+         * Register animation
+         */
         if (!this.animations[assetName]){
             this.animations[assetName] = {}
         }
         this.animations[assetName][param] = {
-            value, 
-            toValue
+            upV, 
+            toV: to,
+            sign
         }
     }
 }

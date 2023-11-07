@@ -39,8 +39,9 @@ export const worldRation = window.innerWidth / window.innerHeight
  *  Start Application
  */
 async function START_APP(){
-    /**
-     *  Create Application
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *              Create Application
+     * -----------------------------------------------
      */
     const app = new PIXI.Application(
         {
@@ -50,23 +51,27 @@ async function START_APP(){
         }
     )
     console.log("gamian >>> app:", app);
-    /**
-     *  Get Tree information from back-end
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *       Get Tree information from back-end
+     * -----------------------------------------------
      */
     const root_gm = await tree.getTreeInformation()
     console.log("gamian >>> back-end-response: ", root_gm);
-    /**
-     *  Add Tree Root to stage
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *             Add Tree Root to stage
+     * -----------------------------------------------
      */
     const structure = tree.prepareComponent(root_gm, app.stage)
     console.log("gamian >>> Assets Register:", tree.assets_register);
     console.log("gamian >>> Tree Structure:", structure);
-    /**
-     *  Get all components emitters
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *           Get all components emitters
+     * -----------------------------------------------
      */
     await emitterFactory()
-    /**
-     *  Start world ticker
+    /**^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *               Start world ticker
+     * -----------------------------------------------
      */
     app.ticker.add((delta)=>{
         Model.TIME += 1
@@ -75,8 +80,9 @@ async function START_APP(){
          */
         Model.animate()
     })
-    /**
-     * Keep track of screen size
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *           Keep track of screen size
+     * -----------------------------------------------
      */
     function resizeAppView() {
         const newWidth = window.innerWidth;
@@ -110,12 +116,14 @@ async function START_APP(){
         tree.hookTreeParams()
     }
     window.addEventListener('resize', resizeAppView);
-    /**
-     * Hook the params of root componet
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *       Hook the params of root componet
+     * -----------------------------------------------
      */
     emitter.emit("RootEmitter")
-    /**
-     *  Dock Application to index.html
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *        Dock Application to index.html
+     * -----------------------------------------------
      */
     document.body.appendChild(app.view)
 }

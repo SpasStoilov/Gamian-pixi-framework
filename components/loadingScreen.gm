@@ -14,7 +14,15 @@
     )
 }
 #LoadingEmitter.once anime(){
-    this.model.shift("player_3", "x", 0.005, 0.7)
+    this.model.shift(
+        "player_1", "y", {from:0.5, steps:100, to:0.7}
+    )
+    this.model.shift(
+        "player_3", "x", {from:0.5, steps:110, to:0.7}
+    )
+    this.model.shift(
+        "player_3", "scale", {from:[1, 1], steps:[100, 100], to:[1.5, 1.5]}
+    )
 }
 
 >>>
@@ -26,7 +34,7 @@
         name ~ player_1;
         x ~ %0.5;
         y ~ %0.5;
-        scale ~ {x:%0.005, y:%0.005};
+        scale ~ {x:1, y:1};
         update ~ ["x", "y", "scale"];
     <
 <

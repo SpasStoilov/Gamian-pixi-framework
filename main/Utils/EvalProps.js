@@ -7,12 +7,20 @@ import {
     procent_of_screen,
 } from "../../library/index.js"
 
-export function evalProp(asset, key, value, upV=null, toV=null){
+/**
+ * 
+ * @param {*} asset 
+ * @param {*} key 
+ * @param {*} value 
+ * @param {*} upV 
+ * @param {*} toV 
+ */
+export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
     //console.log("evalProp >>>",asset.name, key, value);
 
     let tag = "default"
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     *                       Manage tags
+     *                         Manage tags
      *---------------------------------------------------------------
      *  Check if key is !custom_prop_tag
      */
@@ -46,10 +54,19 @@ export function evalProp(asset, key, value, upV=null, toV=null){
             geometrySelector = "%"
             value = value.replaceAll("%", "")
             eval("v =" + value)
-            if (!toV || v <= toV){
-                v = upV ? v + upV : v
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
+                    v = v + upV
+                }
+                else{
+                    v = toV
+                }
                 this.tree.assets_params[asset.name][key] = `%${v}`
             }
+            
         }
         /**
          *          
@@ -58,11 +75,27 @@ export function evalProp(asset, key, value, upV=null, toV=null){
         else if (value.match(/\{\s*sqr/)){
             geometrySelector = "sqr"
             eval("v =" + value)
-            if (!toV || v.sqr <= toV.sqr){
-                v = upV ? {sqr: v.sqr + upV.sqr, n: v.n + upV.n} : v
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                // sqr
+                if ((sign[0] == "-" && v.sqr > toV[0]) || (sign[0] == "+" && v.sqr < toV[0])){
+                    v = {sqr: v.sqr + upV[0], n: v.n}
+                }
+                else{
+                    v = {sqr: toV[0], n: v.n}
+                }
+                // n
+                if ((sign[1] == "-" && v.n > toV[1]) || (sign[1] == "+" && v.n < toV[1])){
+                    v = {sqr: v.sqr, n: v.n + upV[1]}
+                }
+                else{
+                    v = {sqr: v.sqr, n: toV[1]}
+                }
+
                 this.tree.assets_params[asset.name][key] = JSON.stringify(v)
             }
-
         }
         /**                             
          * x ~ {grd:1000, n:500}  
@@ -70,8 +103,25 @@ export function evalProp(asset, key, value, upV=null, toV=null){
         else if (value.match(/\{\s*grd/)){
             geometrySelector = "grd"
             eval("v =" + value)
-            if (!toV || v.grd <= toV.grd){
-                v = upV ? {sqr: v.grd + upV.grd, n: v.n + upV.n} : v
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                // grd
+                if ((sign[0] == "-" && v.grd > toV[0]) || (sign[0] == "+" && v.grd < toV[0])){
+                    v = {grd: v.grd + upV[0], n: v.n}
+                }
+                else{
+                    v = {grd: toV[0], n: v.n}
+                }
+                // n
+                if ((sign[1] == "-" && v.n > toV[1]) || (sign[1] == "+" && v.n < toV[1])){
+                    v = {grd: v.grd, n: v.n + upV[1]}
+                }
+                else{
+                    v = {grd: v.grd, n: toV[1]}
+                }
+
                 this.tree.assets_params[asset.name][key] = JSON.stringify(v)
             }
         }
@@ -80,13 +130,21 @@ export function evalProp(asset, key, value, upV=null, toV=null){
          */
         else {
             eval("v =" + value)
-            if (!toV || v <= toV){
-                v = upV ? v + upV : v
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
+                    v = v + upV
+                }
+                else{
+                    v = toV
+                }
                 this.tree.assets_params[asset.name][key] = JSON.stringify(v)
             }
         }
-        const geometry = geometryHelper[geometrySelector]
 
+        const geometry = geometryHelper[geometrySelector]
         asset[key] = geometry(key, v)
     }
     /**
@@ -110,14 +168,27 @@ export function evalProp(asset, key, value, upV=null, toV=null){
             scalerSelector = "%"
             value = value.replaceAll("%", "")
             eval("v =" + value)
-            if (!toV || v <= toV){
-                v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                // scale.x
+                if ((sign[0] == "-" && v.x > toV[0]) || (sign[0] == "+" && v.x < toV[0])){
+                    v = {x: v.x + upV[0], y: v.y}
+                }
+                else{
+                    v = {x: toV[0], y: v.y}
+                }
+                // scale.y
+                if ((sign[1] == "-" && v.y > toV[1]) || (sign[1] == "+" && v.y < toV[1])){
+                    v = {x: v.x, y: v.y + upV[1]}
+                }
+                else{
+                    v = {x: v.x, y: toV[1]}
+                }
+
                 this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
             }
-            // if (!toV || v <= toV){
-            //     v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
-            //     this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
-            // }
         }
         /**
          * scalerSelector = srts
@@ -125,8 +196,27 @@ export function evalProp(asset, key, value, upV=null, toV=null){
          */
         else{
             eval("v =" + value)
-            v = upV ? {x: v.x + upV.x, y: v.y + upV.y} : v
-            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+            /**
+             * Manage Animation
+             */
+            if (toV != null && upV != null){
+                // scale.x
+                if ((sign[0] == "-" && v.x > toV[0]) || (sign[0] == "+" && v.x < toV[0])){
+                    v = {x: v.x + upV[0], y: v.y}
+                }
+                else{
+                    v = {x: toV[0], y: v.y}
+                }
+                // scale.y
+                if ((sign[1] == "-" && v.y > toV[1]) || (sign[1] == "+" && v.y < toV[1])){
+                    v = {x: v.x, y: v.y + upV[1]}
+                }
+                else{
+                    v = {x: v.x, y: toV[1]}
+                }
+
+                this.tree.assets_params[asset.name][key] = JSON.stringify(v)
+            }
         }
 
         const scaler = scalerHelper[scalerSelector]
