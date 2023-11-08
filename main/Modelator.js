@@ -30,6 +30,7 @@ export class Modelator{
                     animeData.upV, // update value
                     animeData.toV, // max value to reach
                     animeData.sign, // animation direction
+                    animeData.model // model
                 )
                 const newValue = tree.assets_params[assetName][paramName]
                 /**
@@ -66,40 +67,26 @@ export class Modelator{
         param,
         data
     ){
-        let {from, steps, to} = data
-
-        let upV = null
-        let sign = null
+        let {from, steps, to, model} = data
+        let upV = [] 
+        let sign = []
         /**
          * Calculate update value
          * NOTE: By default we assume that user will pass values in desire units, 
          * so we do not bother to check what units are and that is why values 
          * are pass in array with no units.
+         * vIn  = {grd:10000, n:10}
+         * to    = [1,2]
+         * from  = [1,2]
+         * steps = [1,2]
+         * ---------------------------------------------------
+         * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} } 
+         * to    = [ [1,2], [1,2] ] 
+         * from  = [ [1,2], [1,2] ] 
+         * steps = [ [1,2], [1,2] ]
          */
         if(from.constructor.name == "Array"){
-            /**
-             * Calc with how much to update animation
-             */
-            let var1 = (to[0] - from[0]) / steps[0] || 1
-            let var2 = (to[1] - from[1]) / steps[1] || 1
-            upV = [var1, var2]
-            /**
-             * Get sign of animation
-            */
-            sign = []
-            //
-            if (var1 < 0){
-                sign.push("-")
-            }
-            else {
-                sign.push("+")
-            }
-            if (var2 < 0){
-                sign.push("-")
-            }
-            else{
-                sign.push("+")
-            }
+            this.calcUpValueAndSignsMatrix(upV, sign, to, from, steps)
         }
         else {
             /**
@@ -125,7 +112,47 @@ export class Modelator{
         this.animations[assetName][param] = {
             upV, 
             toV: to,
-            sign
+            sign, 
+            model
+        }
+    }
+    /**
+     * 
+     * @param {array} upH 
+     * @param {array} signH 
+     * @param {array} toValues 
+     * @param {array} fromValues 
+     * @param {array} stepsValues 
+     */
+    calcUpValueAndSignsMatrix(upH, signH, toValues, fromValues, stepsValues){
+        for(let i = 0; i < toValues.length; i++){
+            let toE = toValues[i]
+            let fromE = fromValues[i]
+            let stepsE = stepsValues[i]
+            /**
+             * Deep array
+             */
+            if (Array.isArray(toE)){
+                upH.push([])
+                signH.push([])
+                this.calcUpValueAndSigns(upH[0], signH[0], toE, fromE, stepsE)
+                continue
+            }
+            /**
+             * Calc with how much to update animation
+             */
+            let upValue = (toE - fromE) / stepsE || 1
+            upH.push(upValue)
+            /**
+             * Get sign of animation
+             */
+            if (upValue < 0){
+                signH.push("-")
+            }
+            else {
+                signH.push("+")
+            }
+
         }
     }
 }

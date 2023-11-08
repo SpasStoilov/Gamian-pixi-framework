@@ -5,6 +5,7 @@ import {
     geometry_grid,
     scaling_relative_to_screen,
     procent_of_screen,
+    modelLib
 } from "../../library/index.js"
 
 
@@ -16,7 +17,7 @@ import {
  * @param {*} upV 
  * @param {*} toV 
  */
-export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
+export function evalProp(asset, key, value, upV=null, toV=null, sign=null, model=null){
     //console.log("evalProp >>>",asset.name, key, value);
 
     let tag = "default"
@@ -74,7 +75,9 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         /**
          * Manage Animations
          */
-        v = updateStateOfParam.call(this, key, asset, v, geometrySelector, toV, upV, sign)
+        v = updateStateOfParam.call(
+            this, key, asset, v, geometrySelector, toV, upV, sign, model
+        )
         const geometry = geometryHelper[geometrySelector]
         asset[key] = geometry(key, v)
     }
@@ -120,7 +123,9 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         /**
          * Manage Animations
          */
-        v = updateStateOfParam.call(this, key, asset, v, geometrySelector, toV, upV, sign)
+        v = updateStateOfParam.call(
+            this, key, asset, v, geometrySelector, toV, upV, sign, model
+        )
        
         for (let [propName, propValue] of Object.entries(v)){
             const geometry = geometryHelper[geometrySelector]
@@ -156,7 +161,7 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
         /**
          * Manage Animations
          */
-        v = updateStateOfParam.call(this, key, asset, v, scalerSelector, toV, upV, sign)
+        v = updateStateOfParam.call(this, key, asset, v, scalerSelector, toV, upV, sign, model)
 
         const scaler = scalerHelper[scalerSelector]
 
@@ -216,43 +221,7 @@ export function evalProp(asset, key, value, upV=null, toV=null, sign=null){
     }
 }
 
-function updateStateOfParam(key, asset, v, selector, toV, upV, sign){
-    function recursiveValueChager(vIn, to, up, s, i=0){
-        console.log("comming >>", vIn, to, up, s);
-        /**
-         * Manage Animation
-         */
-        if (to != null && up != null){
-            if (vIn.constructor.name == "Number"){
-                if ((s == "-" && vIn > to) || (s == "+" && vIn < to)){
-                    vIn = vIn + up
-                }
-                else {
-                    vIn = to
-                }
-            }
-            else {
-                /** 
-                 * vIn  = {grd:10000, n:10}
-                 * to = [1,2]
-                 * up = [1,2]
-                 * s  = [+,-]
-                 * ---------------------------------------------------
-                 * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} } 
-                 * to = [ [1,2], [1,2] ] 
-                 * up = [ [1,2], [1,2] ]
-                 * s  = [ [+,+], [+,-] ]
-                 */
-                for (let [key, value] of Object.entries(vIn)){
-                    let newV = recursiveValueChager.call(this, value, to[i], up[i], s[i])
-                    vIn[key] = newV
-                    i+=1
-                }
-            }
-        }
-        console.log("out >>", vIn);
-        return vIn
-    }
+function updateStateOfParam(key, asset, v, selector, toV, upV, sign, model){
     /**
      * Manage Animation
      */
@@ -290,7 +259,7 @@ function updateStateOfParam(key, asset, v, selector, toV, upV, sign){
         //         v = {[key_0]: v[key_0], [key_1]: toV[1]}
         //     }
         // }
-        v = recursiveValueChager.call(this, v, toV, upV, sign)
+        v = recursiveValueChanger.call(this, key, v, toV, upV, sign, model)
         /**
          * Change state of param
          */
@@ -318,6 +287,49 @@ function updateStateOfParam(key, asset, v, selector, toV, upV, sign){
 
     }
     return v
+}
+/**
+ * 
+ * @param {number} vIn 
+ * @param {any} to 
+ * @param {any} up 
+ * @param {any} s 
+ * @param {number} i 
+ * @returns {number}
+ */
+function recursiveValueChanger(paramName, vIn, to, up, s, m, i=0){
+    console.log("comming >>", paramName, vIn, to, up, s);
+    /**
+     * Manage Animation
+    */
+   if (vIn.constructor.name == "Object") {
+       /** 
+        * vIn  = {grd:10000, n:10}
+        * to = [1,2]
+        * up = [1,2]
+        * s  = [+,-]
+        * ---------------------------------------------------
+        * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} } 
+        * to = [ [1,2], [1,2] ] 
+        * up = [ [1,2], [1,2] ]
+        * s  = [ [+,+], [+,-] ]
+        */
+       for (let [key, value] of Object.entries(vIn)){
+           let newV = recursiveValueChanger.call(this, paramName, value, to[i], up[i], s[i], m[i])
+           vIn[key] = newV
+           i+=1
+       }
+   }
+   else {
+        /**
+         * Execute a modelator function
+         * this - classEmitter
+         */
+        console.log(paramName, m, modelLib[paramName]);
+        vIn = modelLib[paramName][m].call(this, vIn, up, to, s)
+    }
+    //console.log("out >>", vIn);
+    return vIn
 }
 
 function managePropChain(key, asset){
