@@ -1,5 +1,5 @@
 /**
- * Scale
+ * Scale % of screen axis
  * @param {number} value 
  * @returns 
  */

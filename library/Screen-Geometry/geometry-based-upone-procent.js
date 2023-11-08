@@ -1,13 +1,3 @@
-import { 
-    howMuchWindowWidthChange, 
-    howMuchWindowHeightChange,
-    Model
-} from "../../root.js"
-import {updateAssetAnimationPosition} from "../Utils/update-asset-animation-position.js"
-
-let prevChangeX = 0
-let prevChangeY = 0
-
 /**
  * Position of asset is defined in procent of the sreen
  * @param {string} axis 

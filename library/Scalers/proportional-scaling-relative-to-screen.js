@@ -3,12 +3,10 @@ import {
     currentWindowHeight,
     currentWindowWidth,
     initialWindowHeight,
-    Model
 } from "../../root.js"
-import {update_asset_animation_scale} from "../Utils/update-asset-animation-scale.js"
 
 /**
- * Scale
+ * Scale relative to screen.
  * @param {number} value 
  * @returns 
  */

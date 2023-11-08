@@ -13,39 +13,39 @@
     )
 }
 #LoadingEmitter.once anime(){
-    this.model.shift(
-        "player_1", "x", 
-        {
-            from:  0.5, 
-            steps: 100, 
-            to:    0.7, 
-            model:"LVR"
-        }
-    )
-    this.model.shift(
-        "player_3", "scale",
-        {
-            from: [1, 1], 
-            steps:[100, 100], 
-            to:   [1.5, 1.5], 
-            model:["LVR", "LVR"]
-        }
-    )
+    // this.model.shift(
+    //     "player_1", "x", 
+    //     {
+    //         from:  0.5, 
+    //         steps: 100, 
+    //         to:    0.7, 
+    //         model:"LR"
+    //     }
+    // )
+    // this.model.shift(
+    //     "player_3", "scale",
+    //     {
+    //         from: [1, 1], 
+    //         steps:[100, 100], 
+    //         to:   [1.5, 1.5], 
+    //         model:["LR", "LR"]
+    //     }
+    // )
     // two ways:
     this.model.shift(
         "player_3", "position", 
         {
             from: [0.5, 0.2], 
-            steps:[100, 100], 
+            steps:[100, 20 ], 
             to:   [0.7, 0.5],
-            model:["LVR", "LVR"]
+            model:["OR", "OR"]
         }
     )
     // this.model.shift(
-    //     "player_3", "x", {from:0.5, steps:100, to:0.7, model:"LVR"}
+    //     "player_3", "x", {from:0.5, steps:100, to:0.7, model:"LR"}
     // )
     // this.model.shift(
-    //     "player_3", "y", {from:0.2, steps:110, to:0.5, model:"LVR"}
+    //     "player_3", "y", {from:0.2, steps:110, to:0.5, model:"LR"}
     // )
 }
 

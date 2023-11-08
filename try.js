@@ -1,1 +1,1 @@
-console.log({}.constructor.name)
+console.log(Math.cos(1.57079632679))

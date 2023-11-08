@@ -1,6 +1,6 @@
 import { positionModels } from './position-models.js'
 
-export const modelLib = {
+export const LibModels = {
     x:{
         ...positionModels
     },
@@ -11,7 +11,7 @@ export const modelLib = {
         ...positionModels
     },
     scale: {
-        LVR : positionModels.LVR
+        LR : positionModels.LR
     },
     alpha:{},
     rotation:{},
