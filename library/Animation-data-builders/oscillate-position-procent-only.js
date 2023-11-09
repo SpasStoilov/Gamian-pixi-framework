@@ -2,7 +2,7 @@
  * Function that build animation data.
  * @param {String} assetName 
  * @param {String} param 
- * @param {object} data - {from: number | array, steps: number | array, to: number | array }
+ * @param {any} data
  */
 export function oscillatePositionProcentOnly(
     assetName,

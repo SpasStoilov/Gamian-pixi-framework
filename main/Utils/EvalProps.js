@@ -1,11 +1,7 @@
 import { 
-    use_geometry_based_upone_procent,
-    use_geometry_based_upone_square_grid,
-    use_geometry_based_upone_proportional_coordinates,
-    geometry_grid,
-    scaling_relative_to_screen,
-    procent_of_screen,
-    Animators
+    LibGeometry,
+    LibScalers,
+    LibAnimators
 } from "../../library/index.js"
 
 /**
@@ -22,16 +18,6 @@ export function evalProp(
     //console.log("evalProp >>>",asset.name, key, value);
 
     let tag = "default"
-    const geometryHelper = {
-        "%" : use_geometry_based_upone_procent,
-        "sqr": use_geometry_based_upone_square_grid,
-        "px": use_geometry_based_upone_proportional_coordinates,
-        "grd": geometry_grid
-    }
-    const scalerHelper = {
-        "srts" : scaling_relative_to_screen,
-        "%": procent_of_screen
-    }
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *                         Manage tags
      *---------------------------------------------------------------
@@ -78,7 +64,7 @@ export function evalProp(
             /**
              * Set Position based upone geometry
              */
-            const geometry = geometryHelper[geometrySelector]
+            const geometry = LibGeometry[geometrySelector]
             let newV = geometry(key, v)
             asset[key] = newV
         }
@@ -92,7 +78,7 @@ export function evalProp(
                     /**
                      * Set Position based upone geometry
                      */
-                    const geometry = geometryHelper[geometrySelector]
+                    const geometry = LibGeometry[geometrySelector]
                     let newV = geometry(propName, propValue)
                     asset[propName] = newV
                 }
@@ -104,7 +90,7 @@ export function evalProp(
                     /**
                      * Set Position based upone geometry
                      */
-                    const scaler = scalerHelper[scalerSelector]
+                    const scaler = LibScalers[scalerSelector]
                     let newV = scaler(propName, v)
                     asset.scale[propName] = newV
                 }
@@ -181,7 +167,7 @@ function updateStateOfParam(key, asset, v, animationData){
          * Animate the parameter
          * this - emitterCalss
          */
-        v = Animators[animationData.animatorName].call(this, asset, v, animationData)
+        v = LibAnimators[animationData.animatorName].call(this, asset, v, animationData)
         /**
          * Refresh the state of the parameter value with new value.
          */

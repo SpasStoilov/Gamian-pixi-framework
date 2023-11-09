@@ -1,6 +1,6 @@
 import { tree } from "../root.js"
 import { evalProp } from "./Utils/EvalProps.js"
-import {AnimationDataBuilders} from "../library/index.js"
+import {LibAnimationDataBuilders} from "../library/index.js"
 /**
  * Manages Animations
  */
@@ -69,7 +69,7 @@ export class Modelator{
         animationDataBuilder = "shift",
         animatorName = "shift"
     ){
-        let animeData = AnimationDataBuilders[animationDataBuilder](
+        let animeData = LibAnimationDataBuilders[animationDataBuilder](
             assetName,
             param,
             data,
