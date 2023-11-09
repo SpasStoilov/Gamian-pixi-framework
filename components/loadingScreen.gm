@@ -41,14 +41,34 @@
     //         model:[["OR"],["OR"]]
     //     }
     // )
-    //custom anime:
+    // custom anime:
     this.model.shift(
         "player_3", 
         "position", 
-        {from: [0.5, 0.2]},
-        "testBld",
-        "test",
+        {
+            movingAlong: "x",
+            from:0.2,
+            to:0.7,
+            step: 0.01,
+            os: {
+                use:"cos",
+                from:0.2,
+                to:0.1,
+            },
+            model: "SinCos"      
+        },
+        "SinCosProcentMid",
+        "SinCosProcent",
     )
+    // this.model.shift(
+    //     "player_3", 
+    //     "position", 
+    //     {
+    //         no:"Data!"     
+    //     },
+    //     "testMid",
+    //     "testAnimator",
+    // )
 }
 
 >>>

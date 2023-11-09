@@ -1,5 +1,6 @@
+import {testAnimator} from './test.js'
 import {shift} from "./shift.js"
-import {oscillatePositionProcentOnly} from "./oscillate-position-procent-only.js"
+import {SinCosProcentOnly} from "./sin-cos-procent-only.js"
 
 /**
 * Set key for your new animator.
@@ -13,6 +14,10 @@ import {oscillatePositionProcentOnly} from "./oscillate-position-procent-only.js
 *     )
 */
 export const LibAnimators = {
+    //default:
     shift,
-    test: oscillatePositionProcentOnly
+    //new:
+    testAnimator: testAnimator,
+    SinCosProcent: SinCosProcentOnly
+
 }

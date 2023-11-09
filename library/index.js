@@ -1,5 +1,5 @@
 export * from "./Screen-Geometry/index.js"
 export * from "./Scalers/index.js"
 export * from "./Models/index.js"
-export * from "./Animation-data-builders/index.js"
+export * from "./Animation-middlewares/index.js"
 export * from "./Animators/index.js"

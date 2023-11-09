@@ -26,28 +26,38 @@ import {
  */
 export const LibModels = {
     x:{
+        TEST: test,
         LR : linearRangeModel,
         OR : oscillationRangeModel,
-        BFR: backFowardRangeModel
+        BFR: backFowardRangeModel,
     },
     y:{
+        TEST: test,
         LR : linearRangeModel,
         OR : oscillationRangeModel,
-        BFR: backFowardRangeModel
+        BFR: backFowardRangeModel,
     },
     position:{
+        TEST: test,
         LR : linearRangeModel,
         OR : oscillationRangeModel,
         BFR: backFowardRangeModel,
         SinCos: sinCos,
         "PP%": positionParabulaProcent,
-        TEST: test,
     },
     scale: {
         LR : linearRangeModel,
     },
-    alpha:{},
-    rotation:{},
-    anchor:{},
-    pivot:{}
+    alpha:{
+        TEST: test,
+    },
+    rotation:{
+        TEST: test,
+    },
+    anchor:{
+        TEST: test,
+    },
+    pivot:{
+        TEST: test,
+    }
 }
