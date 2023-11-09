@@ -11,18 +11,20 @@ import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.j
 let initChangeState = "|W,H>"
 
 export function use_geometry_based_upone_square_grid(
-    axis, gridData, tag=null, asset=null, assetInitPosition=null
+    axis, value, tag=null, asset=null, assetInitPosition=null
 ){
+
     let abstractW = 1
     let abstractH = 1
     /**
+     * 
      * Grid:
      * - Preserves geometry of the stage in squers:
      *   innerWidth / totalGridPointsX = innerHeight / totalGridPointsY
      *    =>
      *   innerWidth * totalGridPointsY = innerHeight * totalGridPointsX
      */
-    const totalGridPointsX = gridData.sqr
+    const totalGridPointsX = value.sqr
     const totalGridPointsY = initialWindowHeight * totalGridPointsX / initialWindowWidth
     let AmountWindowWidthChange = Math.abs(howMuchWindowWidthChange) 
     let AmountWindowHeightChange = Math.abs(howMuchWindowHeightChange)
@@ -64,16 +66,14 @@ export function use_geometry_based_upone_square_grid(
     }
     /**
      * Convert grid values in % values
-     * x ~ {sqr:1000, n:500};
-     * ^^x ~ {sqr:1000, n:5};
+     * value ~ {sqr:1000, n:500};
      */
-    let value = null
     if (axis == "x"){
-        value = gridData.n / abstractW
+        value["%"] = value.n / abstractW
        
     }
     if (axis == "y"){
-        value = gridData.n / abstractH
+        value["%"] = value.n / abstractH
     }
     /**
      * Extract new value

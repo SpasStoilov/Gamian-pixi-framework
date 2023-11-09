@@ -22,6 +22,16 @@ export function evalProp(
     //console.log("evalProp >>>",asset.name, key, value);
 
     let tag = "default"
+    const geometryHelper = {
+        "%" : use_geometry_based_upone_procent,
+        "sqr": use_geometry_based_upone_square_grid,
+        "px": use_geometry_based_upone_proportional_coordinates,
+        "grd": geometry_grid
+    }
+    const scalerHelper = {
+        "srts" : scaling_relative_to_screen,
+        "%": procent_of_screen
+    }
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *                         Manage tags
      *---------------------------------------------------------------
@@ -32,145 +42,74 @@ export function evalProp(
         key = key.replaceAll("!", "")
     }
     /*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     *         Eval Demensions & Values that can be animated
-     * ---------------------------------------------------------------
-     * Mange axis of asset on the screen
-     * x ~ number
-     * y ~ number
-     */
-    if (key == "x" || key == "y"){
+    *         Eval Demensions & Values that can be animated
+    * ---------------------------------------------------------------
+    * Options:
+    * ---------------------------------------------------------------
+    * KEY |       VALUE 
+    *  x  ~  {"%":0.5}
+    *  y  ~  {"%":0.5}
+    *  x  ~  {px:1000}
+    *  x  ~  {grd:1000, n:0.5}
+    *  y  ~  {grd:1000, n:0.5}
+    *  x  ~  {sqr:1000, n:0.5}
+    * scale ~ { x:{srts:0.005}, y:{srts:0.005} }
+    * scale ~ { x:{"%":0.005}, y:{"%":0.005} }                             
+    * position ~ { x:{"%":0.5}, y:{"%":0.5} }
+    * position ~ { x:{grd:1000, n:0.5}, y:{sqr:1000, n:0.5} }
+    */ 
+    if (key == "position" || key == "scale" || key == "x" || key == "y"){
         let v = null
-        const geometryHelper = {
-            "%" : use_geometry_based_upone_procent,
-            "sqr": use_geometry_based_upone_square_grid,
-            "px": use_geometry_based_upone_proportional_coordinates,
-            "grd": geometry_grid
-        }
-        /**
-         * x ~ 1000
-         */
-        let geometrySelector = "px"
-        /* 
-        * Procent:
-        * x ~ %0.5
-        */ 
-        if (value.match(/%/)){
-            geometrySelector = "%"
-            value = value.replaceAll("%", "")
-        }
-        /**
-         *          
-         * {sqr:10000, n:10}
-         */
-        else if (value.match(/\{\s*sqr/)){
-            geometrySelector = "sqr"
-        }
-        /**                             
-         * x ~ {grd:1000, n:500}  
-         */
-        else if (value.match(/\{\s*grd/)){
-            geometrySelector = "grd"
-        }
-       
         eval("v =" + value)
+        // console.log("scale - old >>", asset.name, v);
         /**
-         * Manage Animations
+         * Updates value and its state in the tree if we have animation
          */
         v = updateStateOfParam.call(
-            this, key, asset, v, geometrySelector, animationData
+            this, key, asset, v, animationData
         )
-        const geometry = geometryHelper[geometrySelector]
-        asset[key] = geometry(key, v)
-    }
-    /* Mange position of asset on the screen
-     * position ~ {x: value, y: value}
-     * value = 1010 | %0.5 | {sqr:10000, n:10} | {grd:1000, n:500}
-     */
-    else if (key == "position"){
-        let v = null
-        const geometryHelper = {
-            "%" : use_geometry_based_upone_procent,
-            "sqr": use_geometry_based_upone_square_grid,
-            "px": use_geometry_based_upone_proportional_coordinates,
-            "grd": geometry_grid
-        }
-        /**
-         *  position ~ {x:1000, y:2352}
-         */
-        let geometrySelector = "px"
-        
-        /* 
-        * Procent:
-        * position ~ {x: %0.5, y: %0.5}
-        */ 
-        if (value.match(/%/)){
-            geometrySelector = "%"
-            value = value.replaceAll("%", "")
-        }
-        /**
-         *          
-         * position ~ {x: {sqr:10000, n:10}, x: {sqr:10000, n:10} }
-         */
-        else if (value.match(/\{\s*sqr/)){
-            geometrySelector = "sqr"
-        }
-        /**                             
-         * position ~ {x: {grd:10000, n:10}, x: {grd:10000, n:10} }  
-         */
-        else if (value.match(/\{\s*grd/)){
-            geometrySelector = "grd"
-        }
-        eval("v =" + value)
-        /**
-         * Manage Animations
-         */
-        v = updateStateOfParam.call(
-            this, key, asset, v, geometrySelector, animationData
-        )
-       
-        for (let [propName, propValue] of Object.entries(v)){
+        // console.log("scale - new >>", asset.name, v);
+
+        if (key == "x" || key == "y"){
+            /**
+             * Select geometry
+             */
+            let geometrySelector = Object.keys(v)[0]
+            /**
+             * Set Position based upone geometry
+             */
             const geometry = geometryHelper[geometrySelector]
-            asset[propName] = geometry(propName, propValue)
+            let newV = geometry(key, v)
+            asset[key] = newV
         }
-    }
-    /**
-     * Mange scale of the asset on the screen
-     */
-    else if (key == "scale"){
-
-        let v = null
-
-        const scalerHelper = {
-            "srts" : scaling_relative_to_screen,
-            "%": procent_of_screen
+        else {
+            for (let [propName, propValue] of Object.entries(v)){
+                if (key == "position"){
+                    /**
+                     * Select geometry
+                     */
+                    let geometrySelector = Object.keys(propValue)[0]
+                    /**
+                     * Set Position based upone geometry
+                     */
+                    const geometry = geometryHelper[geometrySelector]
+                    let newV = geometry(propName, propValue)
+                    asset[propName] = newV
+                }
+                else if (key == "scale"){
+                    /**
+                    * Select scaler
+                    */
+                    let scalerSelector = Object.keys(propValue)[0]
+                    /**
+                     * Set Position based upone geometry
+                     */
+                    const scaler = scalerHelper[scalerSelector]
+                    let newV = scaler(propName, v)
+                    asset.scale[propName] = newV
+                }
+            }
         }
-        /**
-         * scalerSelector = srts
-         * scale ~ {x:1, y:1}
-         */
-        let scalerSelector = "srts"
-        /**
-         * scalerSelector = "%"
-         * scale ~ {x:%0.005, y:%0.005}
-         */
-        if (value.match(/%/)){
-            scalerSelector = "%"
-            value = value.replaceAll("%", "")
-        }
-    
-        eval("v =" + value)
-        /**
-         * Manage Animations
-         */
-        v = updateStateOfParam.call(
-            this, key, asset, v, scalerSelector, animationData
-        )
-
-        const scaler = scalerHelper[scalerSelector]
-
-        const [newX, newY] = scaler(v, "x")
-        asset.scale.x = newX
-        asset.scale.y = newY
     }
     /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *            Eval Static Props that can not be animated
@@ -233,44 +172,11 @@ export function evalProp(
  * @param {any} animationData - animation data for the param value
  * @returns 
  */
-function updateStateOfParam(key, asset, v, selector, animationData){
+function updateStateOfParam(key, asset, v, animationData){
     /**
      * Manage Animation
      */
     if (animationData != null){
-        /**
-         * Update value of param
-         * */  
-        // if (v.constructor.name == "Number"){
-        //     if ((sign == "-" && v > toV) || (sign == "+" && v < toV)){
-        //         v = v + upV
-        //     }
-        //     else{
-        //         v = toV
-        //     }
-        // }
-        // else {
-        //     /**
-        //      * { key_0: value_0, key_1: value_1 }
-        //      * key = sqr / grd / x
-        //      */
-        //     const [value_0, value_1] = Object.values(v)
-        //     const [key_0, key_1] = Object.keys(v)
-
-        //     if ((sign[0] == "-" && value_0 > toV[0]) || (sign[0] == "+" && value_0 < toV[0])){
-        //         v = {[key_0]: value_0 + upV[0], [key_1]: v[key_1]}
-        //     }
-        //     else{
-        //         v = {[key_0]: toV[0], [key_1]: v[key_1]}
-        //     }
-        //     // n / y
-        //     if ((sign[1] == "-" && value_1 > toV[1]) || (sign[1] == "+" && value_1 < toV[1])){
-        //         v = {[key_0]: v[key_0], [key_1]: value_1 + upV[1]}
-        //     }
-        //     else{
-        //         v = {[key_0]: v[key_0], [key_1]: toV[1]}
-        //     }
-        // }
         /**
          * Animate the parameter
          * this - emitterCalss
@@ -279,28 +185,7 @@ function updateStateOfParam(key, asset, v, selector, animationData){
         /**
          * Refresh the state of the parameter value with new value.
          */
-        // x & y
-        if (selector == "%" && key == "x" || key == "y"){
-            this.tree.assets_params[asset.name][key] = `%${v}`
-        }
-        else if (selector == "grd" || selector == "sqr" ||  selector == "px" && key == "x" || key == "y"){
-            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-        }
-        // position
-        else if (selector == "%" && key == "position"){
-            this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
-        }
-        else if (selector == "grd" || selector == "sqr" ||  selector == "px" && key == "position"){
-            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-        }
-        // scale
-        else if (selector == "%" && key == "scale"){
-            this.tree.assets_params[asset.name][key] = `{x:%${v.x}, y:%${v.y}}`
-        }
-        else if (selector == "srts" && key == "scale"){
-            this.tree.assets_params[asset.name][key] = JSON.stringify(v)
-        }
-
+        this.tree.assets_params[asset.name][key] = JSON.stringify(v)
     }
     return v
 }

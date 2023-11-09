@@ -3,7 +3,13 @@ import {
     currentWindowHeight,
     currentWindowWidth,
     initialWindowHeight,
+    totalWindowHeightChange,
+    totalWindowWidthChange,
+    worldRation,
+    worldArea
 } from "../../root.js"
+
+let initChangeState = undefined
 
 /**
  * Scale relative to screen.
@@ -11,37 +17,43 @@ import {
  * @returns 
  */
 export function scaling_relative_to_screen(
-    value, axis
+    axis, value
 ){
+    // console.log("scaling_relative_to_screen >> ",axis, value);
+
+    /* Options:
+    *---------------------------------------------------------------                           
+    * value ~ { x:{srts:0.005}, y:{srts:0.005} }
+    * 
+    * Ratios
+    */
+    let assetInitArea = value.x.srts * value.y.srts 
+    let initWorldAssetAreaRation = worldArea / assetInitArea
+    let currentWorldArea = currentWindowWidth * currentWindowHeight
+    let newAssetArea = currentWorldArea / initWorldAssetAreaRation
     /**
-     * Set constant rations
+     * New values for resize:
+     * R = a/b
+     * R*b = a
+     * b = a/R
+     * a*b = A
+     * => 
+     * b = A/a = a/R
+     * a = A/b = R*b
+     * =>
+     * a^2 = A*R
+     * b^2 = A/R 
      */
-    let assetInitScaleValuesRation = value.x / value.y
-    let initScreenScaleRation = 
-        axis == "x" ? initialWindowWidth / value.x : initialWindowHeight / value.y
+    let assetInitScaleValuesRation = value.x.srts / value.y.srts
+    let newScaleX = Math.sqrt(newAssetArea * assetInitScaleValuesRation)
+    let newScaleY = Math.sqrt(newAssetArea / assetInitScaleValuesRation)
     /**
-     * New values for resize
-     */
-    let newScaleX = null
-    let newScaleY = null
-    /**
-     * We Calc scale on resize using Width of the screen
-     * TODO: keep track of what axis change by default is "x"!!!
+     * Return new values
      */
     if (axis == "x"){
-        newScaleX = currentWindowWidth / initScreenScaleRation
-        // Make y proportional
-        newScaleY = newScaleX / assetInitScaleValuesRation
+        return newScaleX
     }
-    /**
-     * We Calc scale on resize using Height of the screen
-     */
-    else if (axis == "y"){
-        newScaleY = currentWindowHeight / initScreenScaleRation
-        // Make x proportional
-        newScaleX = newScaleY * assetInitScaleValuesRation
+    if (axis == "y"){
+        return newScaleY
     }
-    
-    return [newScaleX, newScaleY]
-
 }

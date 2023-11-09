@@ -33,6 +33,7 @@ export let totalWindowHeightChange = 0;
  * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
  */
 export const worldRation = window.innerWidth / window.innerHeight
+export const worldArea = window.innerWidth * window.innerHeight
 //----------------------------------------------------------------------------^
 
  /**

@@ -1,12 +1,11 @@
 import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
 
-export function geometry_grid(axis, gridData, tag=null, asset=null, assetInitPosition=null){
+export function geometry_grid(axis, value, tag=null, asset=null, assetInitPosition=null){
     /**
      * Convert grid values in % values
-     * x ~ {grd:10000, n:10}
-     * ^^x ~ {grd:10000, n:1}
+     * value ~ {grd:10000, n:10}
      */
-    let value = gridData.n / gridData.grd
+    value["%"] = value.n / value.grd
     /**
      * Extract new value
      */

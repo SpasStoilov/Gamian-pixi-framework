@@ -6,9 +6,9 @@
     @omponent Sprite; 
         args ~ ../assets/sprites/player2.png;
         name ~ player_2;
-        x ~ %0;
-        y ~ %0;
-        scale ~ {x:1, y:1};
+        x ~ {"%":0};
+        y ~ {"%":0};
+        scale ~ {x:{srts:1}, y:{srts:1}};
         update ~ ["x", "y", "scale"];
     <
 <

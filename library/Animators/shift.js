@@ -1,12 +1,11 @@
 import { LibModels } from '../index.js'
 
 /**
- * Animator.
- * @param {number} vIn - current value of the prop
- * @param {any} to 
- * @param {any} up 
- * @param {any} s 
- * @param {number} i 
+ * 
+ * @param {DisplayObject} asset 
+ * @param {any} vIn 
+ * @param {any} animationData 
+ * @param {number} i - default -> 0
  * @returns {number}
  */
 export function shift(asset, vIn, animationData, i=0){
@@ -18,19 +17,30 @@ export function shift(asset, vIn, animationData, i=0){
     let model = animationData.model
     //console.log("comming >>", paramName, vIn, from, upV, toV, sign, model);
 
+    /* 
+    * Options:
+    * ------------------------------------------------------
+    * KEY |                     vIn                        |
+    *  x  ~  {"%":0.5}
+    *  y  ~  {"%":0.5}
+    *  x  ~  {px:0.5}
+    *  x  ~  {grd:1000, n:0.5}
+    *  y  ~  {grd:1000, n:0.5}
+    *  x  ~  {sqr:1000, n:0.5}
+    * ------------------------------------------------------
+    * position ~ { x:{"%":0.5}, y:{"%":0.5} }
+    * position ~ { x:{grd:1000, n:0.5}, y:{sqr:1000, n:0.5} }
+    */ 
     if (vIn.constructor.name == "Object") {
        /** 
-        * vIn  = {grd:10000, n:10}
-        * from = [10000, 10]
-        * toV = [1,2]
-        * upV = [1,2]
-        * sign  = [+,-]
-        * ---------------------------------------------------
-        * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} }
-        * from = [ [10000, 10], [10000, 10] ]
-        * toV = [ [1,2], [1,2] ] 
-        * upV = [ [1,2], [1,2] ]
-        * sign  = [ [+,+], [+,-] ]
+        * When we pass -> from, upV, toV, sign, model in shift function,
+        * every {} there must be [].
+        * And element of [] must be the values of {} ({k1:v1, k2:v2} -> [v1, v2])
+        * ex: 
+        *   {"%":0.5} -> [0.5]
+        *   {grd:1000, n:0.5} -> [1000, 0.5]
+        *   { x:{grd:1000, n:0.5}, y:{sqr:1000, n:0.5}} 
+        *     -> [ [1000, 0.5], [1000, n:0.5] ]
         */
         for (let [key, value] of Object.entries(vIn)){
             let reducedAnimationData = {
@@ -49,7 +59,7 @@ export function shift(asset, vIn, animationData, i=0){
         }
     }
     else {
-        //console.log(paramName, m, LibModels[paramName]);
+        //console.log(paramName, vIn, from, upV, toV, sign);
         /**
          * Execute a modelator function
          * this - classEmitter

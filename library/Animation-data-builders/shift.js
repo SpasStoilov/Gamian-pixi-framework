@@ -18,34 +18,8 @@ export function shift(
      * NOTE: By default we assume that user will pass values in desire units, 
      * so we do not bother to check what units are and that is why values 
      * are pass in array with no units.
-     * vIn  = {grd:10000, n:10}
-     * to    = [1,2]
-     * from  = [1,2]
-     * steps = [1,2]
-     * ---------------------------------------------------
-     * vIn  = { x: {grd:10000, n:10}, y: {grd:10000, n:10} } 
-     * to    = [ [1,2], [1,2] ] 
-     * from  = [ [1,2], [1,2] ] 
-     * steps = [ [1,2], [1,2] ]
      */
-    if(from.constructor.name == "Array"){
-        calcUpValueAndSignsMatrix(upV, sign, to, from, steps)
-    }
-    else {
-        /**
-         * Calc with how much to update animation
-         */
-        upV = (to - from) / steps || 1
-        /**
-         * Get sign of animation
-         */
-        if (upV < 0){
-            sign = "-"
-        }
-        else {
-            sign = "+"
-        }
-    }
+    calcUpValueAndSignsMatrix(upV, sign, to, from, steps)
     /**
      * Deside what to put in animation Data
      */
@@ -71,6 +45,10 @@ export function shift(
  * @param {array} stepsValues 
  */
 function calcUpValueAndSignsMatrix(upH, signH, toValues, fromValues, stepsValues){
+    // fromValues: [[1],[1]], 
+    // stepsValues:[[100], [100]], 
+    // toValues:   [[1.5], [1.5]], 
+    // model:[["LR"], ["LR"]]
     for(let i = 0; i < toValues.length; i++){
         let toE = toValues[i]
         let fromE = fromValues[i]
@@ -81,7 +59,7 @@ function calcUpValueAndSignsMatrix(upH, signH, toValues, fromValues, stepsValues
         if (Array.isArray(toE)){
             upH.push([])
             signH.push([])
-            calcUpValueAndSignsMatrix(upH[0], signH[0], toE, fromE, stepsE)
+            calcUpValueAndSignsMatrix(upH[i], signH[i], toE, fromE, stepsE)
             continue
         }
         /**
@@ -98,6 +76,5 @@ function calcUpValueAndSignsMatrix(upH, signH, toValues, fromValues, stepsValues
         else {
             signH.push("+")
         }
-
     }
 }

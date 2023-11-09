@@ -4,7 +4,16 @@
  * @returns 
  */
 export function procent_of_screen(
-    value, axis
+    axis, value
 ){
-    return [window.innerWidth * value.x, window.innerHeight * value.y]
+    /* Options:
+    *---------------------------------------------------------------  
+    * value ~ { x:{"%":0.005}, y:{"%":0.005} }
+    */
+    if (axis == "x"){
+        return window.innerWidth * value.x["%"]
+    }
+    if (axis == "y"){
+        return window.innerHeight * value.y["%"]
+    }
 }

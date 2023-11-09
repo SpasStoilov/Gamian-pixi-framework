@@ -9,14 +9,13 @@ export function use_geometry_based_upone_proportional_coordinates(
 ){
     /**
      * Convert pixel values in % values
-     * x ~ 1000
-     * ^^x ~ 10
+     * value ~ {px: 1000}
      */
     if (axis == "x"){
-        value = value / initialWindowWidth
+        value["%"] = value["px"] / initialWindowWidth
     }
     else if (axis == "y"){
-        value = value / initialWindowHeight
+        value["%"] = value["px"] / initialWindowHeight
     }
     /**
      * Extract new value

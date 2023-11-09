@@ -1,1 +1,1 @@
-console.log(Math.cos(1.57079632679))
+console.log(Number.isFinite("1"))
