@@ -1,0 +1,14 @@
+>>>
+@omponent Container;
+    name ~ background_container;
+    emitter ~ BackgroundEmitter;
+    @omponent Sprite; 
+        args ~ ../assets/sprites/backgrounds/loading.jpg;
+        name ~ loading_background;
+        x ~ {"%":0.5};
+        y ~ {"%":0};
+        anchor.set ~ [0.5, 0];
+        scale ~ {x:{bs:1}, y:{bs:1}};
+        update ~ ["x", "y", "scale"];
+    <
+<

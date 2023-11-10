@@ -1,5 +1,5 @@
 >>>
-@omponent Container; 
+@omponent Container;
     name ~ splash_container;
     emitter ~ SplashEmitter;
     visible ~ this.emitterName == this.ongoingEvent.initiatedEmitter;
@@ -8,7 +8,7 @@
         name ~ player_2;
         x ~ {"%":0};
         y ~ {"%":0};
-        scale ~ {x:{srts:1}, y:{srts:1}};
+        scale ~ {x:{bs:0.1}, y:{bs:0.1}};
         update ~ ["x", "y", "scale"];
     <
 <

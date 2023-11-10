@@ -12,7 +12,8 @@ export function SinCosProcentOnly(asset, vIn, animationData){
     */
     const model = animationData.data.model
     const [newX,newY] = 
-        LibModels[animationData.paramName][model](
+        LibModels[animationData.paramName][model].call(
+            this,
             vIn.x["%"],
             vIn.y["%"],
             animationData.data,

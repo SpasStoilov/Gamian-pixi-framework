@@ -1,33 +1,31 @@
 import { 
-    initialWindowWidth,
     currentWindowHeight,
     currentWindowWidth,
     initialWindowHeight,
-    totalWindowHeightChange,
-    totalWindowWidthChange,
-    worldRation,
+    initialWindowWidth,
     worldArea
 } from "../../root.js"
-
-let initChangeState = undefined
 
 /**
  * Scale relative to screen.
  * @param {number} value 
  * @returns 
  */
-export function scaling_relative_to_screen(
-    axis, value
+export function relative_scaler(
+    axis, value, asset
 ){
-    // console.log("scaling_relative_to_screen >> ",axis, value);
+    // console.log("scaling_relative_to_screen >> ",
+    //     asset.name,
+    //     axis, value, asset.width, asset.height
+    // );
 
     /* Options:
-    *---------------------------------------------------------------                           
-    * value ~ { x:{srts:0.005}, y:{srts:0.005} }
+    *---------------------------------------------------------------
+    * value ~ { x:{rs:0.005}, y:{rs:0.005} }
     * 
     * Ratios
     */
-    let assetInitArea = value.x.srts * value.y.srts 
+    let assetInitArea = value.x.rs * value.y.rs 
     let initWorldAssetAreaRation = worldArea / assetInitArea
     let currentWorldArea = currentWindowWidth * currentWindowHeight
     let newAssetArea = currentWorldArea / initWorldAssetAreaRation
@@ -44,7 +42,7 @@ export function scaling_relative_to_screen(
      * a^2 = A*R
      * b^2 = A/R 
      */
-    let assetInitScaleValuesRation = value.x.srts / value.y.srts
+    let assetInitScaleValuesRation = value.x.rs / value.y.rs
     let newScaleX = Math.sqrt(newAssetArea * assetInitScaleValuesRation)
     let newScaleY = Math.sqrt(newAssetArea / assetInitScaleValuesRation)
     /**

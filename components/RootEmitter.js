@@ -14,6 +14,7 @@ export class RootEmitter extends GenericEmitter{
         /**
          * Hook params of LoadingEmitter
          */
+        this.emitter.emit("BackgroundEmitter")
         this.emitter.emit("LoadingEmitter")
     }
 }

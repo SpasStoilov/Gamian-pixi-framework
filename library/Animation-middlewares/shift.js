@@ -2,7 +2,21 @@
  * Function that build animation data.
  * @param {String} assetName 
  * @param {String} param 
- * @param {object} data - {from: number | array, steps: number | array, to: number | array }
+ * @param {object} data - 
+ *  ex:
+ *      {
+            from: [[0.2], [0.2]], 
+            steps:[[100], [20] ], 
+            to:   [[0.7], [0.5]],
+            model:[["OR"],["OR"]]
+        }
+    ex:
+        {
+            from:  [0.5], 
+            steps: [100], 
+            to:    [0.7], 
+            model: ["LR"]
+        }
  */
 export function shift(
     assetName,

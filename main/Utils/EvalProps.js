@@ -32,7 +32,7 @@ export function evalProp(
     * ---------------------------------------------------------------
     * Options:
     * ---------------------------------------------------------------
-    * KEY |       VALUE 
+    * KEY |    VALUE 
     *  x  ~  {"%":0.5}
     *  y  ~  {"%":0.5}
     *  x  ~  {px:1000}
@@ -65,7 +65,7 @@ export function evalProp(
              * Set Position based upone geometry
              */
             const geometry = LibGeometry[geometrySelector]
-            let newV = geometry(key, v)
+            let newV = geometry.call(this, key, v, asset)
             asset[key] = newV
         }
         else {
@@ -79,7 +79,7 @@ export function evalProp(
                      * Set Position based upone geometry
                      */
                     const geometry = LibGeometry[geometrySelector]
-                    let newV = geometry(propName, propValue)
+                    let newV = geometry.call(this, propName, propValue, asset)
                     asset[propName] = newV
                 }
                 else if (key == "scale"){
@@ -91,7 +91,7 @@ export function evalProp(
                      * Set Position based upone geometry
                      */
                     const scaler = LibScalers[scalerSelector]
-                    let newV = scaler(propName, v)
+                    let newV = scaler.call(this, propName, v, asset)
                     asset.scale[propName] = newV
                 }
             }
@@ -107,14 +107,15 @@ export function evalProp(
     else {
         let [obj, propKey, typeOfProp] = managePropChain(key, asset)
         /* 
-        * Eval !custom_props
         * coming - server
         * ex: 
         *   propKey = any
         *   value = [arg1, arg2, ...]
         */
         if (typeOfProp == 'function'){
-            eval(`obj.`+ propKey + "(...value)")
+            let v = null
+            eval(`v =`+ value)
+            obj[propKey](...v)
             return
         }
         /* 
@@ -177,6 +178,7 @@ function updateStateOfParam(key, asset, v, animationData){
 }
 
 function managePropChain(key, asset){
+    //console.log("managePropChain >>>",asset.name, key);
     let currnetProp = null
     let propChain = key.split(".")
     let propToSet = asset
@@ -188,6 +190,7 @@ function managePropChain(key, asset){
         propToSet = propToSet[currnetProp]
     }
     let type = typeof propToSet[currnetProp]
+    //console.log("managePropChain >>>",propToSet, currnetProp, type);
     return [propToSet, currnetProp, type]
 }
 

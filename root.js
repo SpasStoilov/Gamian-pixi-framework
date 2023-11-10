@@ -28,10 +28,6 @@ export let howMuchWindowWidthChange = 0;
 export let howMuchWindowHeightChange = 0;
 export let totalWindowWidthChange = 0;
 export let totalWindowHeightChange = 0;
-/**
- * WorldRation:
- * W/H = worldRation ; W = H*worldRation ; W / worldRation = H
- */
 export const worldRation = window.innerWidth / window.innerHeight
 export const worldArea = window.innerWidth * window.innerHeight
 //----------------------------------------------------------------------------^
@@ -51,20 +47,20 @@ async function START_APP(){
             backgroundColor: 0xAAAAAA
         }
     )
-    console.log("gamian >>> app:", app);
+    console.log("app >>>", app);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *       Get Tree information from back-end
      * -----------------------------------------------
      */
     const root_gm = await tree.getTreeInformation()
-    console.log("gamian >>> back-end-response: ", root_gm);
+    console.log("app >>> back-end-response: ", root_gm);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *             Add Tree Root to stage
      * -----------------------------------------------
      */
     const structure = tree.prepareComponent(root_gm, app.stage)
-    console.log("gamian >>> Assets Register:", tree.assets_register);
-    console.log("gamian >>> Tree Structure:", structure);
+    console.log("app >>> Assets Register:", tree.assets_register);
+    console.log("app >>> Tree Structure:", structure);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *           Get all components emitters
      * -----------------------------------------------

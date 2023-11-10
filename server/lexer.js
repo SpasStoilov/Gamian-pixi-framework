@@ -170,10 +170,14 @@ function extraxtPropValue(
     }
     console.log("extraxtPropValue >>> prop :", prop);
     console.log("extraxtPropValue >>> skipLineToIndex:", skipLineToIndex);
-    prop = prop.replaceAll(" ", "")
-    console.log("extraxtPropValue >>> remove white space from prop:", prop);
+    prop = prop.trimEnd()
+    prop = prop.trimStart()
+    console.log("extraxtPropValue >>> trimed(end, start) prop:", prop);
     console.log("extraxtPropValue >>> search pettern for prop value:", pettern);
     let value = prop.match(pettern) ? prop.match(pettern)[0] : null;
+    value = value.trimEnd()
+    value = value.trimStart()
+    value = value.replaceAll(" ", "\n")
     console.log("extraxtPropValue >>> value found:", value);
 
     return [value, skipLineToIndex]

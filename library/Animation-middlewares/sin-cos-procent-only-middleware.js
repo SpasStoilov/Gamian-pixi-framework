@@ -3,10 +3,12 @@
  * @param {String} assetName 
  * @param {String} param 
  * @param {any} data -
+ *  ex:
  *      movingAlong: "x",
         from:0.2,
         to:0.7,
         step: 0.01,
+        repeat: true,
         os: {
             use:"cos",
             from:0.2,

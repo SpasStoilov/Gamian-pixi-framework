@@ -3,17 +3,17 @@
  * @param {number} value 
  * @returns 
  */
-export function procent_of_screen(
+export function procent_scaler(
     axis, value
 ){
     /* Options:
     *---------------------------------------------------------------  
-    * value ~ { x:{"%":0.005}, y:{"%":0.005} }
+    * value ~ { x:{"%s":0.005}, y:{"%s":0.005} }
     */
     if (axis == "x"){
-        return window.innerWidth * value.x["%"]
+        return window.innerWidth * value.x["%s"]
     }
     if (axis == "y"){
-        return window.innerHeight * value.y["%"]
+        return window.innerHeight * value.y["%s"]
     }
 }

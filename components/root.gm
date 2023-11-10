@@ -2,6 +2,8 @@
 @omponent Container;
     name ~ ROOT_CONTAINER;
     emitter ~ RootEmitter;
+    @omponent backgrounds.gm; 
+    <
     @omponent loadingScreen.gm; 
     <
     @omponent splashScreen.gm; 

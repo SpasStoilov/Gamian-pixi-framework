@@ -107,10 +107,10 @@ export function sinCos(vInX, vInY, data){
 
     if(
        (data.to != false || data.to != undefined) && 
-        movingAlongAxis > data.to    
+        movingAlongAxis >= data.to   
     ){
-        movingAlongAxis = data.from
-        oscillationAxis = data.os.from
+        movingAlongAxis = data.repeat ? data.from: data.to
+        oscillationAxis = data.repeat ? data.os.from: data.os.to
         if (movingAlongAxis == "x"){
             return [movingAlongAxis, oscillationAxis]
         }
@@ -118,7 +118,6 @@ export function sinCos(vInX, vInY, data){
             return [oscillationAxis, movingAlongAxis]
         }
     }
-
     /**
      * Update the main axis
      */

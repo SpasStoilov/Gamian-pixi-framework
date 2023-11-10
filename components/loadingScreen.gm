@@ -4,7 +4,7 @@
             args ~ ../assets/sprites/player3.png;
             name ~ player_3;
             position ~ {x:{"%":0.2}, y:{"%":0.2}};
-            scale ~ {x:{srts:1}, y:{srts:1}};
+            scale ~ {x:{bs:0.001}, y:{bs:0.001}};
             update ~ ["position", "scale"];
         <
         ,
@@ -15,19 +15,19 @@
 #LoadingEmitter.once anime(){
     // this.model.shift(
     //     "player_1", "x", 
-    //     {
-    //         from:  [0.5], 
-    //         steps: [100], 
-    //         to:    [0.7], 
-    //         model: ["LR"]
-    //     }
+        // {
+        //     from:  [0.5], 
+        //     steps: [100], 
+        //     to:    [0.7], 
+        //     model: ["LR"]
+        // }
     // )
     // this.model.shift(
     //     "player_3", "scale",
     //     {
-    //         from: [[1],[1]], 
+    //         from: [[0.001],[0.001]], 
     //         steps:[[100], [100]], 
-    //         to:   [[1.5], [1.5]], 
+    //         to:   [[0.01], [0.01]], 
     //         model:[["LR"], ["LR"]]
     //     }
     // )
@@ -42,24 +42,25 @@
     //     }
     // )
     // custom anime:
-    this.model.shift(
-        "player_3", 
-        "position", 
-        {
-            movingAlong: "x",
-            from:0.2,
-            to:0.7,
-            step: 0.01,
-            os: {
-                use:"cos",
-                from:0.2,
-                to:0.1,
-            },
-            model: "SinCos"      
-        },
-        "SinCosProcentMid",
-        "SinCosProcent",
-    )
+    // this.model.shift(
+    //     "player_3", 
+    //     "position", 
+    //     {
+    //         movingAlong: "x",
+    //         from:0.2,
+    //         to:0.7,
+    //         repeat: true,
+    //         step: 0.01,
+    //         os: {
+    //             use:"cos",
+    //             from:0.2,
+    //             to:0.1,
+    //         },
+    //         model: "SinCos"      
+    //     },
+    //     "SinCosProcentMid",
+    //     "SinCosProcent",
+    // )
     // this.model.shift(
     //     "player_3", 
     //     "position", 
@@ -78,9 +79,14 @@
     @omponent Sprite; 
         args ~ ../assets/sprites/player.png;
         name ~ player_1;
-        x ~ {"%":0.5};
-        y ~ {"%":0.5};
-        scale ~ {x:{srts:1}, y:{srts:1}};
+        !setter ~ {
+            let r = 0.25 + 0.25
+            this.x = r
+            this.y = r
+        };
+        x ~ {"%":this.x};
+        y ~ {"%":this.y};
+        scale ~ {x:{bs:0.1}, y:{bs:0.1}};
         update ~ ["x", "y", "scale"];
     <
 <

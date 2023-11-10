@@ -12,7 +12,6 @@ export let classEmitterRegister = {}
  */
 export async function emitterFactory(){
     let functionalLogic = await fetchME("js-logic")
-    console.log("functionalLogic", functionalLogic);
     /**
      * Loop over all emitterClass in components dir
      */
@@ -50,6 +49,5 @@ export async function emitterFactory(){
             }
         }
     }
-
     return Promise.resolve()
 }

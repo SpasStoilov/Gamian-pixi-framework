@@ -1,7 +1,11 @@
-import {scaling_relative_to_screen} from "./proportional-scaling-relative-to-screen.js"
-import {procent_of_screen} from "./procent_of_screen.js"
+import {relative_scaler} from "./relative-scaler.js"
+import {procent_scaler} from "./procent-scaler.js"
+import {background_scaler} from "./background-scaler.js"
+import {test_scaler} from "./test.js"
 
 export const LibScalers = {
-    "srts" : scaling_relative_to_screen,
-    "%": procent_of_screen
+    "rs": relative_scaler,
+    "%s": procent_scaler,
+    "bs": background_scaler,
+    "ts": test_scaler
 }
