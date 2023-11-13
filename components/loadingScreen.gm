@@ -1,92 +1,51 @@
-#LoadingEmitter.once posAsset(){
-    this.tree.pos(
+#LoadingEmitter.once loadLoadingAssets(){
+    const lodingAssets = [
         @omponent Sprite; 
-            args ~ ../assets/sprites/player3.png;
-            name ~ player_3;
-            position ~ {x:{"%":0.2}, y:{"%":0.2}};
-            scale ~ {x:{bs:0.001}, y:{bs:0.001}};
+            args ~ ../assets/sprites/loading-bar/loading-frame.png;
+            name ~ loading_frame;
+            position ~ {x:{"%":0.437}, y:{"%":0.8}};
+            scale ~ {x:{bs:0.0002}, y:{bs:0.0002}};
             update ~ ["position", "scale"];
         <
         ,
-        this.tree.get("loading_container"),
-        "LoadingEmitter"
-    )
+        @omponent Sprite;
+            args ~ ../assets/sprites/loading-bar/loading-amount.png;
+            name ~ loading_amount;
+            position ~ {
+                x:{"%":0.441},
+                y:{"%":0.806, dh:{w:0.0008, h:0.002}, rel:{W:1500, H:800}}
+            };
+            scale ~ {x:{bs:0}, y:{bs:0.0002}};
+            update ~ ["position", "scale"];
+        <
+
+    ]
+    for (let comp of lodingAssets){
+        this.tree.pos(
+            comp
+            ,
+            this.tree.get("loading_container"),
+            "LoadingEmitter"
+        )
+    }
 }
-#LoadingEmitter.once anime(){
-    // this.model.shift(
-    //     "player_1", "x", 
-        // {
-        //     from:  [0.5], 
-        //     steps: [100], 
-        //     to:    [0.7], 
-        //     model: ["LR"]
-        // }
-    // )
-    // this.model.shift(
-    //     "player_3", "scale",
-    //     {
-    //         from: [[0.001],[0.001]], 
-    //         steps:[[100], [100]], 
-    //         to:   [[0.01], [0.01]], 
-    //         model:[["LR"], ["LR"]]
-    //     }
-    // )
-    // two ways:
-    // this.model.shift(
-    //     "player_3", "position", 
-    //     {
-    //         from: [[0.2], [0.2]], 
-    //         steps:[[100], [20] ], 
-    //         to:   [[0.7], [0.5]],
-    //         model:[["OR"],["OR"]]
-    //     }
-    // )
-    // custom anime:
-    // this.model.shift(
-    //     "player_3", 
-    //     "position", 
-    //     {
-    //         movingAlong: "x",
-    //         from:0.2,
-    //         to:0.7,
-    //         repeat: true,
-    //         step: 0.01,
-    //         os: {
-    //             use:"cos",
-    //             from:0.2,
-    //             to:0.1,
-    //         },
-    //         model: "SinCos"      
-    //     },
-    //     "SinCosProcentMid",
-    //     "SinCosProcent",
-    // )
-    // this.model.shift(
-    //     "player_3", 
-    //     "position", 
-    //     {
-    //         no:"Data!"     
-    //     },
-    //     "testMid",
-    //     "testAnimator",
-    // )
+#LoadingEmitter.once loadingAnimation(){
+    this.model.shift(
+        "loading_amount", "scale",
+        {
+            from: [[0],[0.0002]], 
+            steps:[[10], [1]], 
+            to:   [[0.0002], [0.0002]], 
+            model:[["LR"], ["LR"]],
+            onComplate(){
+                this.emitter.emit("LoadingEmitter-destroy")
+            }
+        }
+    )
 }
 
 >>>
 @omponent Container;
     name ~ loading_container;
     emitter ~ LoadingEmitter;
-    @omponent Sprite; 
-        args ~ ../assets/sprites/player.png;
-        name ~ player_1;
-        !setter ~ {
-            let r = 0.25 + 0.25
-            this.x = r
-            this.y = r
-        };
-        x ~ {"%":this.x};
-        y ~ {"%":this.y};
-        scale ~ {x:{bs:0.1}, y:{bs:0.1}};
-        update ~ ["x", "y", "scale"];
-    <
 <

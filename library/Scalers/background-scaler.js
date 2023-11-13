@@ -14,7 +14,6 @@ const assetScalerRecord = {}
 export function background_scaler(
     axis, value, asset
 ){
-    console.log("BSSSS");
     
     /* Options:
     *---------------------------------------------------------------  

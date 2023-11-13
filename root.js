@@ -24,6 +24,8 @@ export let initialWindowWidth = window.innerWidth;
 export let initialWindowHeight = window.innerHeight;
 export let currentWindowWidth = window.innerWidth;
 export let currentWindowHeight = window.innerHeight;
+export let prevWindowWidth = window.innerWidth;
+export let prevWindowHeight = window.innerHeight;
 export let howMuchWindowWidthChange = 0;
 export let howMuchWindowHeightChange = 0;
 export let totalWindowWidthChange = 0;
@@ -93,6 +95,8 @@ async function START_APP(){
         /**
          * Set change values. We need amount not direction (.abs)
          */
+        prevWindowWidth = currentWindowWidth;
+        prevWindowHeight = currentWindowWidth;
         howMuchWindowWidthChange = newWidth - currentWindowWidth;
         howMuchWindowHeightChange = newHeight - currentWindowHeight;
         totalWindowHeightChange = initialWindowWidth - newWidth

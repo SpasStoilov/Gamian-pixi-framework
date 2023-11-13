@@ -24,7 +24,7 @@ export function shift(
     data,
     animatorName
 ){
-    let {from, steps, to, model} = data
+    let {from, steps, to, model, ...args} = data
     let upV = [] 
     let sign = []
     /**
@@ -38,6 +38,7 @@ export function shift(
      * Deside what to put in animation Data
      */
     let animeData = {
+        ...args,
         assetName,
         paramName:param,
         from,
@@ -45,7 +46,7 @@ export function shift(
         toV: to,
         sign, 
         model,
-        animatorName
+        animatorName,
     }
 
     return animeData

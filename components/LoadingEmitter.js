@@ -7,23 +7,22 @@ export class LoadingEmitter extends GenericEmitter{
     }
     async afterRender(){
         console.log("LoadingEmitter >>> afterRender");
-        await new Promise((resolve)=>{
-            /**
-             * Pos new asset in container
-             */
-            this.emitter.emit("posAsset")
-            setTimeout(() => {
-                resolve()
-            }, 3000)
-        })
+        this.emitter.emit("loadLoadingAssets")
         /**
          * Play animations
          */
-        this.emitter.emit("anime")
+        this.emitter.emit("loadingAnimation")
+        return ()=>{}
+    }
+    async destroy(){
+        console.log("LoadingEmitter >>> destroy");
+        await this.tree.del("loading_container")
+    }
+    async afterDestroy(){
+        console.log("LoadingEmitter >>> afterDestroy");
         /**
          * Hook the params of SplashEmitter
          */
         this.emitter.emit("SplashEmitter")
-        return ()=>{}
     }
 }

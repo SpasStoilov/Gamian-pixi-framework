@@ -34,6 +34,7 @@ export class GenericEmitter{
             await this.beforeDestroy();
             await this.destroy();
             await this.afterDestroy();
+            return Promise.resolve()
         }.bind(this))
         // 2.
         this.emitter.on(this.emitterName + "-beforeUpdate", async function(){
@@ -46,6 +47,7 @@ export class GenericEmitter{
         await this.beforeRender();
         await this.render();
         await this.afterRender();
+        return Promise.resolve()
     }
     // Hooks:
     async beforeRender(asset=null){

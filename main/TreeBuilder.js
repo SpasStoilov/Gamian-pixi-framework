@@ -405,12 +405,20 @@ export class TreeBuilder{
          * Check if asset exist
          */
         let asset = this.get(assetName)
-        if (asset)return;
+        if (!asset)return;
         /**
          * Delete mask
          */
         if (asset.mask){
             this.del(asset.mask.name)
+        }
+        /**
+         * Delete children
+         */
+        console.log("asset.children >>>", asset.children);
+        for (let child of asset.children){
+            console.log("child.name>>>",child.name);
+            this.del(child.name)
         }
         /**
          * Holds all assets current state (first-render; re-render; destroy).

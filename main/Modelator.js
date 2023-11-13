@@ -32,11 +32,23 @@ export class Modelator{
                 )
                 const newValue = tree.assets_params[assetName][paramName]
                 /**
+                 * Call Anime Hook onUpdate
+                 */
+                if(animeData.onUpdate){
+                    animeData.onUpdate.call(tree.props)
+                }
+                /**
                  * We stop animation if current value is the same as new one!
                  */
                 if (
                     animeData.currentValue == newValue
                 ){
+                    /**
+                     * Call Anime Hook onComplate
+                     */
+                    if(animeData.onComplate){
+                        animeData.onComplate.call(tree.props)
+                    }
                     animationsToDelete.push([assetName, paramName])
                     continue
                 }
