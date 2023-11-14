@@ -73,7 +73,7 @@ async function START_APP(){
      * -----------------------------------------------
      */
     app.ticker.add((delta)=>{
-        Model.TIME += 1
+        //Model.TIME += 1
         /**
          * Plays all animations
          */

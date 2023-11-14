@@ -6,15 +6,11 @@ export class RootEmitter extends GenericEmitter{
     }
     async afterRender(){
         console.log("RootEmitter >>> afterRender");
-        this.emitter.emit("RootEmitter-destroy")
-        return ()=>{}
-    }
-    async afterDestroy(){
-        console.log("RootEmitter >>> afterDestroy");
         /**
-         * Hook params of LoadingEmitter
+         * Hook params of BackgroundEmitter && LoadingEmitter
          */
         this.emitter.emit("BackgroundEmitter")
         this.emitter.emit("LoadingEmitter")
+        return ()=>{}
     }
 }

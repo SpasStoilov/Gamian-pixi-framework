@@ -1,6 +1,6 @@
 import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
 
-export function geometry_grid(axis, value, tag=null, asset=null, assetInitPosition=null){
+export function geometry_grid(axis, value){
     /**
      * Convert grid values in % values
      * value ~ {grd:10000, n:10}

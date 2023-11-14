@@ -16,7 +16,7 @@ export class LoadingEmitter extends GenericEmitter{
     }
     async destroy(){
         console.log("LoadingEmitter >>> destroy");
-        await this.tree.del("loading_container")
+        //await this.tree.del("loading_container")
     }
     async afterDestroy(){
         console.log("LoadingEmitter >>> afterDestroy");

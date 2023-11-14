@@ -9,5 +9,5 @@ export const LibGeometry = {
     "sqr": use_geometry_based_upone_square_grid,
     "px": use_geometry_based_upone_proportional_coordinates,
     "grd": geometry_grid,
-    //"tst": test_geometry
+    "tst": test_geometry
 }
