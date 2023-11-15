@@ -21,8 +21,8 @@ export function background_scaler(
     * 
     * Register original size of the asset
     */
-    if (!assetScalerRecord[asset.name]){
-        assetScalerRecord[asset.name] = {w:asset.width, h:asset.height}
+   if (!assetScalerRecord[asset.name]){
+       assetScalerRecord[asset.name] = {w:asset.width, h:asset.height}
     }
     const initWidth = assetScalerRecord[asset.name].w
     const initHeight = assetScalerRecord[asset.name].h
@@ -64,10 +64,23 @@ export function background_scaler(
     let newWidth = Math.sqrt(newArea * initSizeRation)
     let newHeight = Math.sqrt(newArea / initSizeRation)
 
+    // console.log(
+    //     "Scaler",
+    //     asset.name,
+    //     newArea,
+    //     initSizeRation
+    // );
+
     if (axis == "x"){
+        console.log(
+            "x", asset.name, (newWidth / initWidth)*value.x.bs
+        );
         return (newWidth / initWidth)*value.x.bs
     }
     else if (axis == "y"){
+        console.log(
+            "y", asset.name, (newHeight / initHeight)*value.y.bs
+        );
         return (newHeight / initHeight)*value.y.bs
     }
 }

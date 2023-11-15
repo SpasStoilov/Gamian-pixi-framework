@@ -3,26 +3,26 @@
         @omponent Sprite;
             args ~ ../assets/sprites/loading-bar/loading-frame.png;
             name ~ loading_frame;
+            scale ~ {x:{bs:0.05}, y:{bs:0.05}};
             position ~ {
-                x:{tst:0.5}, 
-                y:{tst:0.7}
+                x:{bind:0.50},
+                y:{bind:0.7}
             };
-            scale ~ {x:{bs:0.0002}, y:{bs:0.0002}};
-            update ~ ["position"];
+            update ~ ["position", "scale"];
         <
         ,
         @omponent Sprite;
             args ~ ../assets/sprites/loading-bar/loading-amount.png;
             name ~ loading_amount;
+            scale ~ {x:{bs:0.04}, y:{bs:0.04}};
             position ~ {
-                x:{tst:0.503},
-                y:{tst:0.705}
+                x:{bind:0.50},
+                y:{bind:0.698}
             };
-            scale ~ {x:{bs:0}, y:{bs:0.0002}};
-            update ~ ["position"];
+            update ~ ["position", "scale"];
         <
-
     ]
+    
     for (let comp of lodingAssets){
         this.tree.pos(
             comp
@@ -31,19 +31,38 @@
             "LoadingEmitter"
         )
     }
+    console.log("XXXXXXXXXXXX",this.tree.get("loading_container"))
 }
 #LoadingEmitter.once loadingAnimation(){
+    this.tree.updateAssetParam("loading_amount", "scale", {x:{bs:0}, y:{bs:0.04}})
     this.model.shift(
         "loading_amount", "scale",
         {
-            from: [[0], [0.0002]], 
-            steps:[[10],[1]], 
-            to:   [[0.0002], [0.0002]], 
+            from: [[0], [0.04]], 
+            steps:[[60],[1]], 
+            to:   [[0.04], [0.04]], 
             model:[["LR"], ["LR"]],
             onComplate(){
                 this.emitter.emit("LoadingEmitter-destroy")
             }
         }
+    )
+}
+
+#LoadingEmitter.once incrementAnimation(){
+    this.model.shiftOnResize(
+        "loading_amount", 
+        "position",
+        {
+            x:{w:0.048, h:0, W:1500, H:800},
+            y:{w:0.0005, h:0, W:1500, H:800},
+            initValues:{
+                x:{"%":0.503},
+                y:{"%":0.705}
+            }
+        },
+        "testMid",
+        "testAnimator"
     )
 }
 
@@ -54,12 +73,11 @@
     @omponent Sprite;
         args ~ ../assets/sprites/logo/logo1.png;
         name ~ logo1;
-        position ~ {
-            x:{"%":0},
-            y:{"%":0}
-        };
         scale ~ {x:{bs:0.25}, y:{bs:0.25}};
-        anchor.set ~ [0.5, 0];
-        update ~ ["position", "anchor.set", "scale"];
+        position ~ {
+            x:{bind:0},
+            y:{bind:0}
+        };
+        update ~ ["position", "scale"];
     <
 <

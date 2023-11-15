@@ -17,7 +17,7 @@ const assetsDistanceChange = {}
 export function use_geometry_based_upone_procent(
     axis, value, asset
 ){
-    //console.log(axis, value, asset.name);
+    //console.log(axis, value, asset.name, asset);
     /**
      * axis: x
      * value ~ {"%":0.443, d:{w:0.005, h:0}, rel:{W:1500, H:800}}
@@ -53,10 +53,8 @@ export function use_geometry_based_upone_procent(
      */
     if (axis == "x"){
         return  window.innerWidth*(value["%"] + assetsDistanceChange[asset.name][axis])
-            //+ assetsDistanceChange[asset.name].dW
     }
     else if (axis == "y"){
         return window.innerHeight*(value["%"] + assetsDistanceChange[asset.name][axis])
-            //+ assetsDistanceChange[asset.name].dH
     }
 }

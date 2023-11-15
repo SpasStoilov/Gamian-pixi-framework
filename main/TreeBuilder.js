@@ -457,4 +457,23 @@ export class TreeBuilder{
          */
         delete this.assets_register[assetName]
     }
+    updateAssetParam(assetName, paramName, value, animeData=null){
+        const asset = this.get(assetName)
+        
+        if (value.constructor.name != "String"){
+            value = JSON.stringify(value)
+        }
+
+        this.assets_params[assetName][paramName] = value
+
+        this.setContext(assetName)
+
+        evalProp.call(
+            this.props, // emitter context
+            asset, // asset
+            paramName,  // parameter to update
+            this.assets_params[assetName][paramName], // current value
+            animeData
+        )
+    }
 }

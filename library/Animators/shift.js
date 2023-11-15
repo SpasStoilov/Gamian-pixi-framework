@@ -1,5 +1,4 @@
 import { LibModels } from '../index.js'
-
 /**
  * 
  * @param {DisplayObject} asset 
@@ -40,7 +39,7 @@ export function shift(asset, vIn, animationData, i=0){
         *   {"%":0.5} -> [0.5]
         *   {grd:1000, n:0.5} -> [1000, 0.5]
         *   { x:{grd:1000, n:0.5}, y:{sqr:1000, n:0.5}} 
-        *     -> [ [1000, 0.5], [1000, n:0.5] ]
+        *     -> [ [1000, 0.5], [1000, 0.5] ]
         */
         for (let [key, value] of Object.entries(vIn)){
             let reducedAnimationData = {

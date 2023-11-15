@@ -5,7 +5,7 @@ import {
 import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
 
 export function use_geometry_based_upone_proportional_coordinates(
-    axis, value, tag=null, asset=null, assetInitPosition=null
+    axis, value, asset
 ){
     /**
      * Convert pixel values in % values
@@ -20,7 +20,7 @@ export function use_geometry_based_upone_proportional_coordinates(
     /**
      * Extract new value
      */
-    const newValue = use_geometry_based_upone_procent(axis, value)
+    const newValue = use_geometry_based_upone_procent(axis, value, asset)
 
     return newValue
 }
