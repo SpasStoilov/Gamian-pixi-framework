@@ -16,7 +16,7 @@ export class LoadingEmitter extends GenericEmitter{
         /**
          * Play animations
          */
-        //this.emitter.emit("loadingAnimation")
+        this.emitter.emit("loadingAnimation")
         return ()=>{}
     }
     async destroy(){

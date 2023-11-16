@@ -1,5 +1,5 @@
 const http = require("http");
-const {lexer, ComponentsJsLogic} = require("./lexer.js"); 
+const {lexer, ComponentsJsLogic, MANIFEST} = require("./lexer.js"); 
 
 // we are adding event lissener for http request:
 const server = http.createServer(requestHandler);
@@ -13,7 +13,9 @@ function requestHandler(req, res) {
     console.log("server >>> origin:", origin);
 
     if('http://127.0.0.1:5500/structure' == origin){
-        data = lexer()
+        const Lexer = lexer()
+        const Manifest = MANIFEST
+        data = {Lexer, Manifest}
     }
     else if ('http://127.0.0.1:5500/js-logic' == origin){
         data = ComponentsJsLogic

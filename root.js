@@ -6,6 +6,14 @@ import { Modelator} from './main/Modelator.js'
 import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
 //------------------ GLOBAL PARAMS ---------------------//
 /**
+ * BUNDLES
+ */
+export let SPRITES = null
+/**
+ * 
+ */
+export let APP = null
+/**
  *  Create an instance of EventEmitter
  */
 export const emitter = new EventEmitter();
@@ -34,6 +42,40 @@ export const worldRation = window.innerWidth / window.innerHeight
 export const worldArea = window.innerWidth * window.innerHeight
 //----------------------------------------------------------------------------^
 
+export function resizeAppView() {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+    // console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
+    // console.log("resize >>> Window new demension:", newWidth, newHeight);
+    /**
+     * Rerender App
+     */
+    APP.renderer.resize(newWidth, newHeight);
+    /**
+     * Set change values. We need amount not direction (.abs)
+     */
+    prevWindowWidth = currentWindowWidth;
+    prevWindowHeight = currentWindowWidth;
+    howMuchWindowWidthChange = newWidth - currentWindowWidth;
+    howMuchWindowHeightChange = newHeight - currentWindowHeight;
+    totalWindowHeightChange = initialWindowWidth - newWidth
+    totalWindowHeightChange = initialWindowHeight - newHeight
+    // console.log(
+    //     "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
+    //     howMuchWindowWidthChange, 
+    //     howMuchWindowHeightChange
+    // );
+    /**
+     * Set new demensions
+     */
+    currentWindowWidth = newWidth;
+    currentWindowHeight = newHeight;
+    /**
+     * Refresh the tree params on resize
+     */
+    tree.hookTreeParams()
+}
+
  /**
  *  Start Application
  */
@@ -50,16 +92,25 @@ async function START_APP(){
         }
     )
     console.log("app >>>", app);
+    APP = app
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *       Get Tree information from back-end
      * -----------------------------------------------
      */
-    const root_gm = await tree.getTreeInformation()
-    console.log("app >>> back-end-response: ", root_gm);
+    const response = await tree.getTreeInformation()
+    console.log("app >>> back-end-response: ", response);
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *          Load MANIFEST with all bundles
+     * -----------------------------------------------
+     */
+    const manifest = response.Manifest
+    await PIXI.Assets.init({manifest})
+    SPRITES = await PIXI.Assets.loadBundle('SPRITES')
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *             Add Tree Root to stage
      * -----------------------------------------------
      */
+    const root_gm = response.Lexer
     const structure = tree.prepareComponent(root_gm, app.stage)
     console.log("app >>> Assets Register:", tree.assets_register);
     console.log("app >>> Tree Structure:", structure);
@@ -83,39 +134,6 @@ async function START_APP(){
      *           Keep track of screen size
      * -----------------------------------------------
      */
-    function resizeAppView() {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
-        // console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
-        // console.log("resize >>> Window new demension:", newWidth, newHeight);
-        /**
-         * Rerender App
-         */
-        app.renderer.resize(newWidth, newHeight);
-        /**
-         * Set change values. We need amount not direction (.abs)
-         */
-        prevWindowWidth = currentWindowWidth;
-        prevWindowHeight = currentWindowWidth;
-        howMuchWindowWidthChange = newWidth - currentWindowWidth;
-        howMuchWindowHeightChange = newHeight - currentWindowHeight;
-        totalWindowHeightChange = initialWindowWidth - newWidth
-        totalWindowHeightChange = initialWindowHeight - newHeight
-        // console.log(
-        //     "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
-        //     howMuchWindowWidthChange, 
-        //     howMuchWindowHeightChange
-        // );
-        /**
-         * Set new demensions
-         */
-        currentWindowWidth = newWidth;
-        currentWindowHeight = newHeight;
-        /**
-         * Refresh the tree params on resize
-         */
-        tree.hookTreeParams()
-    }
     window.addEventListener('resize', resizeAppView);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *       Hook the params of root componet
@@ -128,5 +146,6 @@ async function START_APP(){
      */
     document.body.appendChild(app.view)
 }
+
 
 START_APP()

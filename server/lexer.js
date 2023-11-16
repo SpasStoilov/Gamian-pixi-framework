@@ -1,6 +1,15 @@
 const fs = require("fs")
 
 // vars:
+const MANIFEST = {
+    bundles: [
+        {
+            name:'SPRITES',
+            assets: []
+        },
+    ]
+}
+ 
 const componentEnds = /<$/
 const componentsDir = "../components/"
 const logicComponentSeparator = ">>>"
@@ -344,9 +353,14 @@ function lexer(
         }
     }
     
+    if(asset.type == "Sprite"){
+        MANIFEST.bundles[0].assets.push(
+            {name: asset.name, srcs: asset.args}
+        )
+    }
     return asset
 
    
 }
 
-module.exports = {lexer, ComponentsJsLogic}
+module.exports = {lexer, ComponentsJsLogic, MANIFEST}

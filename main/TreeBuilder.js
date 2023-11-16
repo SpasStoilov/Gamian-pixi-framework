@@ -3,7 +3,7 @@ import {fetchME}  from "./Utils/fetch.js"
 import {classEmitterRegister} from "./GlobalEmitterRegister.js"
 import {evalArgs, evalProp} from "./Utils/EvalProps.js"
 import {ParentChainVisibility} from "./Utils/ParentChainVisibility.js"
-import { emitter } from '../root.js';
+import { emitter, SPRITES } from '../root.js';
 
 export class TreeBuilder{
     /**
@@ -66,8 +66,8 @@ export class TreeBuilder{
      * Defines what components can be present in the three
      */
     constructorObject = {
-        Sprite(args){
-            return PIXI.Sprite.from(args);
+        Sprite(args, name){
+            return PIXI.Sprite.from(SPRITES[name]);
         },
         Container(){
             return new PIXI.Container();
@@ -86,8 +86,9 @@ export class TreeBuilder{
      * Information needed to construct the tree
      */
     async getTreeInformation(){
-        this.root_gm = await fetchME("structure")
-        return this.root_gm
+        const response = await fetchME("structure")
+        this.root_gm = response.Lexer
+        return response
     }
     /**
      * Extract needed data for object creation 
@@ -118,7 +119,7 @@ export class TreeBuilder{
          * type: any
          */
         component.args = evalArgs(component.args)
-        const asset = this.constructorObject[component.type](component.args)
+        const asset = this.constructorObject[component.type](component.args, component.name)
         /**
          * Set name of the asset
          * type: string
@@ -394,6 +395,7 @@ export class TreeBuilder{
         return asset
     }
     pos(component, parent, parentEmitter){
+        //console.log("tree pos >>>",component, parent, parentEmitter);
         const asset = this.prepareComponent(component, parent, parentEmitter)
         this.showNeededAssets()
         const params  = this.assets_params[asset.name]

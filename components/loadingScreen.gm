@@ -31,7 +31,6 @@
             "LoadingEmitter"
         )
     }
-    console.log("XXXXXXXXXXXX",this.tree.get("loading_container"))
 }
 #LoadingEmitter.once loadingAnimation(){
     this.tree.updateAssetParam("loading_amount", "scale", {x:{bs:0}, y:{bs:0.04}})
