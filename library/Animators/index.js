@@ -1,7 +1,7 @@
 import {testAnimator} from './test.js'
 import {shift} from "./shift.js"
 import {SinCosProcentOnly} from "./sin-cos-procent-only.js"
-
+import {incrementBindPosition} from "./Increment-animators/increment-bind-position.js"
 /**
 * Set key for your new animator.
 * Use it:
@@ -17,6 +17,7 @@ export const LibAnimators = {
     //default:
     shift,
     //new:
+    incBindAnimator: incrementBindPosition,
     testAnimator: testAnimator,
     SinCosProcent: SinCosProcentOnly
 

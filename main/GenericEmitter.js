@@ -1,6 +1,7 @@
-import {emitter, tree, Model} from "../root.js"
-import { setOngoingEvent, ongoingEvent } from "./Utils/OngoingEvent.js";
-import { gsap } from "../node_modules/gsap/gsap-core.js";
+import {emitter, tree, Model, DataFromUserMode} from "../root.js"
+import {setOngoingEvent, ongoingEvent } from "./Utils/OngoingEvent.js";
+import {sleep} from "./Utils/Sleep.js"
+import {gsap} from "../node_modules/gsap/gsap-core.js";
 
 export class GenericEmitter{
     emitter = emitter
@@ -9,7 +10,9 @@ export class GenericEmitter{
     gsap = gsap
     model = Model
     data = {}
+    modeData = DataFromUserMode
     emitterName = null
+    sleep = sleep
 
     constructor(){}
 

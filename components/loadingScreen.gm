@@ -6,7 +6,7 @@
             scale ~ {x:{bs:0.05}, y:{bs:0.05}};
             position ~ {
                 x:{bind:0.50},
-                y:{bind:0.7}
+                y:{bind:0.9}
             };
             update ~ ["position", "scale"];
         <
@@ -14,10 +14,10 @@
         @omponent Sprite;
             args ~ ../assets/sprites/loading-bar/loading-amount.png;
             name ~ loading_amount;
-            scale ~ {x:{bs:0.04}, y:{bs:0.04}};
+            scale ~ {x:{bs:0.041}, y:{bs:0.04}};
             position ~ {
-                x:{bind:0.50},
-                y:{bind:0.698}
+                x:{bind:0.5},
+                y:{bind:0.895}
             };
             update ~ ["position", "scale"];
         <
@@ -39,7 +39,7 @@
         {
             from: [[0], [0.04]], 
             steps:[[60],[1]], 
-            to:   [[0.04], [0.04]], 
+            to:   [[0.041], [0.04]], 
             model:[["LR"], ["LR"]],
             onComplate(){
                 this.emitter.emit("LoadingEmitter-destroy")
@@ -56,12 +56,12 @@
             x:{w:0.048, h:0, W:1500, H:800},
             y:{w:0.0005, h:0, W:1500, H:800},
             initValues:{
-                x:{"%":0.503},
-                y:{"%":0.705}
+                x:{bind:0.503},
+                y:{bind:0.705}
             }
         },
-        "testMid",
-        "testAnimator"
+        "incBindMid",
+        "incBindAnimator"
     )
 }
 
@@ -74,8 +74,8 @@
         name ~ logo1;
         scale ~ {x:{bs:0.25}, y:{bs:0.25}};
         position ~ {
-            x:{bind:0},
-            y:{bind:0}
+            x:{bind:0.5},
+            y:{bind:0.2}
         };
         update ~ ["position", "scale"];
     <

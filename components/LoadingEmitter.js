@@ -7,7 +7,7 @@ export class LoadingEmitter extends GenericEmitter{
     }
     async beforeRender(){
         console.log("LoadingEmitter >>> beforeRender");
-        this.emitter.emit("incrementAnimation")
+        // this.emitter.emit("incrementAnimation")
         return ()=>{}
     }
     async afterRender(){
@@ -28,6 +28,7 @@ export class LoadingEmitter extends GenericEmitter{
         /**
          * Hook the params of SplashEmitter
          */
+        await this.sleep(100)
         this.emitter.emit("SplashEmitter")
     }
 }

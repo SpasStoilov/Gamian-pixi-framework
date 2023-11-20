@@ -94,22 +94,19 @@ export class Modelator{
         this.animations[assetName][param] = animeData
     }
     /**
-     * Execute all animation
+     * Execute one animation on resize
      */
     animateOnResize(assetName, paramName){
         const animations = this.animationsOnResize[assetName]
         const animeData = animations[paramName]
-        //
-        tree.setContext(assetName)
         /**
-         * Eval the prop with the correct context
+         * Update the state of the param value
          */
-        evalProp.call(
-            tree.props, // emitter context
-            tree.assets_register[assetName], // asset
-            paramName,  // parameter to update
-            tree.assets_params[assetName][paramName], // current value
-            animeData // animation data
+        tree.updateAssetParam(
+            assetName, 
+            paramName, 
+            tree.assets_params[assetName][paramName], 
+            animeData
         )
         const newValue = tree.assets_params[assetName][paramName]
         /**
@@ -122,6 +119,36 @@ export class Modelator{
          * Update current value of animation
          */
         animeData.currentValue = newValue
+    }
+    /**
+     * Execute all animation on resize
+     */
+    animateAllOnResize(){
+        for (let [assetName, animations] of Object.entries(this.animationsOnResize)){
+            for (let [paramName, animeData] of Object.entries(animations)){
+                /**
+                 * Update the state of the param value
+                 */
+                tree.updateAssetParam(
+                    assetName, 
+                    paramName, 
+                    tree.assets_params[assetName][paramName], 
+                    animeData
+                )
+                const newValue = tree.assets_params[assetName][paramName]
+                /**
+                 * Call Anime Hook onUpdate
+                 */
+                if(animeData.onUpdate){
+                    animeData.onUpdate.call(tree.props)
+                }
+                /**
+                 * Update current value of animation
+                 */
+                animeData.currentValue = newValue
+
+            }
+        }
     }
     /**
      * Function register animation data OnResize.

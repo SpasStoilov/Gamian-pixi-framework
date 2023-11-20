@@ -4,11 +4,33 @@
     emitter ~ SplashEmitter;
     visible ~ this.emitterName == this.ongoingEvent.initiatedEmitter;
     @omponent Sprite; 
-        args ~ ../assets/sprites/player2.png;
-        name ~ player_2;
+        args ~ ../assets/sprites/splash-screen/feat1.png;
+        name ~ feat1;
         scale ~ {x:{bs:0.1}, y:{bs:0.1}};
-        x ~ {"%":0};
-        y ~ {"%":0};
-        update ~ ["x", "y", "scale"];
+        position ~ {
+            x:{"%":0.35},
+            y:{"%":0}
+        };
+        update ~ ["position", "scale"];
+    <
+    @omponent Sprite; 
+        args ~ ../assets/sprites/splash-screen/feat2.png;
+        name ~ feat2;
+        scale ~ {x:{bs:0.1}, y:{bs:0.1}};
+        position ~ {
+            x:{"%":0.5},
+            y:{"%":0}
+        };
+        update ~ ["position", "scale"];
+    <
+    @omponent Sprite; 
+        args ~ ../assets/sprites/splash-screen/feat3.png;
+        name ~ feat3;
+        scale ~ {x:{bs:0.1}, y:{bs:0.1}};
+        position ~ {
+            x:{"%":0.65},
+            y:{"%":0}
+        };
+        update ~ ["position", "scale"];
     <
 <

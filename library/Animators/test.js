@@ -6,7 +6,7 @@ import{
    prevWindowHeight
 }from "../../root.js"
 
-const assetsDistanceChange = {}
+const assetsInitPositionsValues = {}
 
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                            ! NOTES !
@@ -39,58 +39,28 @@ export function testAnimator(asset, vIn, animationData){
    console.log("testAnimator >>>", asset, vIn, animationData);
 
    // TEST you animator here......................
-
-   const values = vIn ? vIn : animationData.data.initValues
-
-   for (let [axis, propData] of Object.entries(values)){
-      let value = propData["%"]
-
-      const difW = Math.abs(animationData.data[axis].W - currentWindowWidth)
-      const difH = Math.abs(animationData.data[axis].H - currentWindowHeight)
-      const widthChangeMore = difW >= difH ? true : false
-
-      if(!assetsDistanceChange[asset.name]){
-         assetsDistanceChange[asset.name] = {x:0, y:0}
-      }
-      if (widthChangeMore){
-         assetsDistanceChange[asset.name][axis] = 
-            value + animationData.data[axis].w*(1-animationData.data[axis].W/currentWindowWidth)
-            animationData.data[axis].W = currentWindowWidth
-      }
-      else if (!widthChangeMore){
-         assetsDistanceChange[asset.name][axis] = 
-            value + animationData.data[axis].h*(1-animationData.data[axis].H/currentWindowHeight)
-            animationData.data[axis].H = currentWindowHeight
-      }
+   
+   /**FIRST TEMPLATE ANAMATOR
+    * Save init positions
+    */
+   if (!assetsInitPositionsValues[asset.name]){
+      assetsInitPositionsValues[asset.name] = JSON.parse(JSON.stringify(vIn))
    }
 
-   return animationData.data.initValues
+   if (currentWindowHeight <= animationData.data.height.min){
+      // change position
+      return {
+         x:{bind: assetsInitPositionsValues[asset.name].x},
+         y:{bind: assetsInitPositionsValues[asset.name].y}
+      }
 
-   // return {
-   //    x:{"%": assetsDistanceChange[asset.name].x},
-   //    y:{"%": assetsDistanceChange[asset.name].y}
-   // }
-
-   // let dx = 0
-   // if (currentWindowWidth > prevWindowWidth){
-   //    dx = 0.01
-   // }
-   // else if (currentWindowWidth < prevWindowWidth){
-   //    dx = -0.01
-   // }
-
-   // return  {
-   //    x:{"%": values.x["%"] + dx},
-   //    y:{"%": values.y["%"]}
-   // }
-
-   // const acountForZero = value["%"] ? 1:0
-   // if (axis == "x"){
-   //     return (value["%"]*(currentWindowWidth - asset.width) + (acountForZero*asset.width/2))
-   //     //return  window.innerWidth*(value["%"] + assetsDistanceChange[asset.name][axis])
-   // }
-   // else if (axis == "y"){
-   //     return (value["%"]*(currentWindowHeight - asset.height) + (acountForZero*asset.height/2))
-   //     //return window.innerHeight*(value["%"] + assetsDistanceChange[asset.name][axis])
-   // }
+   }
+   if (currentWindowWidth <= animationData.data.width.min){
+      //change position
+      return {
+         x:{bind: assetsInitPositionsValues[asset.name].x},
+         y:{bind: assetsInitPositionsValues[asset.name].y}
+      }
+   }
+   return assetsInitPositionsValues[asset.name]
 } 

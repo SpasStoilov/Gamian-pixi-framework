@@ -4,28 +4,30 @@ import { EventEmitter } from './node_modules/events/events.mjs';
 import { emitterFactory } from "./main/GlobalEmitterRegister.js"
 import { Modelator} from './main/Modelator.js'
 import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
-//------------------ GLOBAL PARAMS ---------------------//
-/**
- * BUNDLES
+//----------------------  IMPORTS -------------------------------------^
+
+
+/** ------------------ GLOBAL PARAMS ----------------------------------
+ *  Bundles
  */
 export let SPRITES = null
 /**
- * 
+ *  App instance
  */
 export let APP = null
 /**
  *  Create an instance of EventEmitter
  */
 export const emitter = new EventEmitter();
- /**
+/**
  *  Create an instance of TreeBuilder
  */
 export const tree = new TreeBuilder()
- /**
+/**
  *  Create an instance of Modelator
  */
  export const Model = new Modelator()
- /**
+/**
  *  Window states & values
  */
 export let initialWindowWidth = window.innerWidth;
@@ -40,46 +42,49 @@ export let totalWindowWidthChange = 0;
 export let totalWindowHeightChange = 0;
 export const worldRation = window.innerWidth / window.innerHeight
 export const worldArea = window.innerWidth * window.innerHeight
-//----------------------------------------------------------------------------^
+/**
+ * USER mode information
+ */
+export let DataFromUserMode = {
+    animations:{}
+}
+//-----------------------------------------------------------------^
 
-export function resizeAppView() {
+/**
+ * Aplication resizer
+ */
+export function resizeAppView(userModeData={}) {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
-    // console.log("resize >>> Window current demension:", currentWindowWidth, currentWindowHeight);
-    // console.log("resize >>> Window new demension:", newWidth, newHeight);
     /**
      * Rerender App
      */
     APP.renderer.resize(newWidth, newHeight);
     /**
-     * Set change values. We need amount not direction (.abs)
+     * Set states
      */
-    prevWindowWidth = currentWindowWidth;
-    prevWindowHeight = currentWindowWidth;
     howMuchWindowWidthChange = newWidth - currentWindowWidth;
     howMuchWindowHeightChange = newHeight - currentWindowHeight;
-    totalWindowHeightChange = initialWindowWidth - newWidth
+    totalWindowWidthChange = initialWindowWidth - newWidth
     totalWindowHeightChange = initialWindowHeight - newHeight
-    // console.log(
-    //     "resize >>> howMuchWindowWidthChange/howMuchWindowHeightChange:", 
-    //     howMuchWindowWidthChange, 
-    //     howMuchWindowHeightChange
-    // );
-    /**
-     * Set new demensions
-     */
+    prevWindowWidth = currentWindowWidth;
+    prevWindowHeight = currentWindowHeight;
     currentWindowWidth = newWidth;
     currentWindowHeight = newHeight;
     /**
      * Refresh the tree params on resize
      */
     tree.hookTreeParams()
+    /**
+     * Play all animations on resize
+     */
+    Model.animateAllOnResize()
 }
 
- /**
- *  Start Application
+/**
+ *  Application starter
  */
-async function START_APP(){
+export async function START_APP(){
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *              Create Application
      * -----------------------------------------------
@@ -88,10 +93,11 @@ async function START_APP(){
         {
             width: window.innerWidth,
             height: window.innerHeight,
-            backgroundColor: 0xAAAAAA
+            backgroundColor: 0xAAAAAA,
         }
     )
     console.log("app >>>", app);
+    app.view.id = "game-world";
     APP = app
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *       Get Tree information from back-end
