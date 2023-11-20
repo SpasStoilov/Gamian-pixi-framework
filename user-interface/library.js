@@ -11,11 +11,17 @@ export let animationDrawingStage = [
             left: "0",
             display: 'none',
             zIndex: '9'
-        }
+        },
+        Events: [
+            {evnt: "mousedown", evntFunc: Event.startDraw},
+            {evnt: "mousemove", evntFunc: Event.onDraw},
+            {evnt: "mouseup", evntFunc: Event.destroyDraw},
+        ],
+        
     }
 ]
 
-export let NAV_OPTIONS = [
+export let Mode_Options = [
     {
         typeName: "a",
         className:"animation-drawing-stg",
@@ -38,23 +44,29 @@ export let NAV_OPTIONS = [
     },
 ]
 
-export let NAVBAR = [
+export let Mode_Menu = [
     {
         typeName: 'div',
-        className: "navbar",
+        className: "mode-menu",
         style: {
             display: 'none',
+            "flex-direction": "column",
             position: "absolute",
             top: "0",
             left: "0",
-            width: '100%',
-            height: "50px",
             backgroundColor: '#0a212d',
-            padding: '0px 0 0px 0',
             zIndex: '10',
+            borderTop:'25px solid #e5e8ed',
+            "border-top-left-radius": '10%',
+            "border-top-right-radius": '10%',
         },
+        Events: [
+            {evnt: "mousedown", evntFunc: Event.onStarDragModeMenu},
+            {evnt: "mousemove", evntFunc: Event.onDragModeMenu},
+            {evnt: "mouseup", evntFunc: Event.onDestroyDragModeMenu},
+        ],
         textContent: [
-            ...NAV_OPTIONS,
+            ...Mode_Options,
         ]
     }
 

@@ -46,7 +46,9 @@ export const worldArea = window.innerWidth * window.innerHeight
  * USER mode information
  */
 export let DataFromUserMode = {
-    animations:{}
+    animations:{
+        paths:{}
+    }
 }
 //-----------------------------------------------------------------^
 
