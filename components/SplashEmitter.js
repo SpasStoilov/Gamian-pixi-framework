@@ -5,4 +5,9 @@ export class SplashEmitter extends GenericEmitter{
     constructor(){
         super()
     }
+    async afterRender(){
+        console.log("SplashEmitter >>> afterRender");
+        this.emitter.emit("initDrawingAnimation")
+        return ()=>{}
+    }
 }

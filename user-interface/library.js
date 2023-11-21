@@ -10,7 +10,10 @@ export let animationDrawingStage = [
             top: "0",
             left: "0",
             display: 'none',
-            zIndex: '9'
+            zIndex: '9',
+            border: "10px solid #f00",
+            backgroundColor: `rgba(1, 78, 99, 0.5)`
+
         },
         Events: [
             {evnt: "mousedown", evntFunc: Event.startDraw},
@@ -25,7 +28,7 @@ export let Mode_Options = [
     {
         typeName: "a",
         className:"animation-drawing-stg",
-        textContent: "DrawAnimation",
+        textContent: "Draw Animation",
         style: glbStyles.AnchorNavBarStyles,
         href: "#animation-drawing-stg",
         Events: [

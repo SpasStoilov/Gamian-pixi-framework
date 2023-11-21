@@ -27,9 +27,6 @@ window.addEventListener('keydown', function(event) {
  * -----------------------------------------------------------------
  * 
  */
-/**
- * Mode menu
- */
 export function OnClick(e){
     /**
      * Handle drawing animation path:
@@ -47,7 +44,6 @@ export function OnClick(e){
         //---------------------------------------------------------------^
     }
 }
-//------------------------------------------------------------
 
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                  Handle user Animation Canvas drawings
@@ -84,7 +80,7 @@ export function onDraw(event){
             // Begin a path
             ctx.beginPath();
             // Set path properties (color, line width, etc.)
-            ctx.strokeStyle = 'blue';
+            ctx.strokeStyle = '#00fa9a';
             ctx.lineWidth = 3;
             // Move the starting point of the path to coordinates
             ctx.moveTo(startDrawingPoint[0], startDrawingPoint[1]);

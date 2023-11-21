@@ -2,6 +2,7 @@ import {testAnimationDataMiddleware} from "./test.js"
 import {shift} from "./shift.js"
 import {SinCosProcentOnlyMiddleware} from "./sin-cos-procent-only-middleware.js"
 import {incrementBindPositionMiddleware} from "./Increment-middlewares/increment-bind-position-middleware.js"
+import {animateDrawingDataMiddleware} from "./animate-drawing-middleware.js"
 /**
 * Set key for your new animator Middleware.
 * Use it:
@@ -19,5 +20,6 @@ export const LibAnimationDataMiddleware = {
     // new:
     testMid: testAnimationDataMiddleware,
     incBindMid: incrementBindPositionMiddleware,
-    SinCosProcentMid: SinCosProcentOnlyMiddleware
+    SinCosProcentMid: SinCosProcentOnlyMiddleware,
+    AnimeDrawingMid: animateDrawingDataMiddleware
 }

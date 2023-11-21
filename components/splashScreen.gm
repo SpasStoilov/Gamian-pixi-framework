@@ -1,3 +1,16 @@
+#SplashEmitter.once initDrawingAnimation(){
+    console.log("this.modeData", this.modeData)
+    this.model.shift(
+        "feat3", 
+        "position",
+        {
+            path: this.modeData.animations.paths["path-0"],
+        },
+        "AnimeDrawingMid",
+        "DrawingAnimator"
+    )
+}
+
 >>>
 @omponent Container;
     name ~ splash_container;
