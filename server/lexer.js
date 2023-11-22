@@ -1,15 +1,7 @@
 const fs = require("fs")
+let { MANIFEST } = require("./setManifestBundles.js")
 
 // vars:
-const MANIFEST = {
-    bundles: [
-        {
-            name:'SPRITES',
-            assets: []
-        },
-    ]
-}
- 
 const componentEnds = /<$/
 const componentsDir = "../components/"
 const logicComponentSeparator = ">>>"
@@ -17,7 +9,6 @@ const logicFunctionsSeparator = "#"
 let ComponentsJsLogic = {}
 let componentJsLogic = []
 //-----------------------------------------------------------------------^
-
 function returnFileDataSplitByLines(link = componentsDir + "root.gm") {
     /**
      * Get Data
@@ -359,8 +350,6 @@ function lexer(
         )
     }
     return asset
-
-   
 }
 
-module.exports = {lexer, ComponentsJsLogic, MANIFEST}
+module.exports = {lexer, ComponentsJsLogic}

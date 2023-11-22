@@ -1,5 +1,46 @@
 import * as Event from "./events.js"
 import * as glbStyles from "./globalStyles.js"
+import { svgFilesNames } from "../root.js"
+
+const origin  = "./library/Animators/Paths-svgs"
+
+export let svgPaths = svgFilesNames.map((name, i) => {
+        return {
+            typeName: "li",
+            className: `svg-li-${name}`,
+            style:{
+                display:"none",
+            },
+            textContent: [
+                {
+                    typeName: "label",
+                    style: {
+                        display: "block",
+                        padding: '10px 25px 10px 25px',
+                        margin: '0px',
+                        fontFamily: "Arial, Helvetica, sans-serif",
+                        textDecoration: "none",
+                        color: 'gray',
+                        border: "1px solid gray",
+                        margin: "5px 0 0 0",
+                        "border-radius": "5%",
+                        backgroundColor: ""
+                    },
+                    textContent: name,
+                    Events: [
+                        {evnt: "click", evntFunc: Event.getSvgCoordinates},
+                    ],
+                },
+                {
+                    typeName: 'object',
+                    id: name,
+                    type:"image/svg+xml",
+                    data: `${origin}/${name}`,
+                }
+            ],
+        }
+    }
+)
 
 export let animationDrawingStage = [
     {
@@ -36,11 +77,20 @@ export let Mode_Options = [
         ],
     },
     {
-        typeName: "a",
-        className:"stop",
-        textContent: "stop",
-        style: glbStyles.AnchorNavBarStyles,
-        href: "#stop",
+        typeName: "ul",
+        className:"ul-svg-drawings",
+        style: {
+            listStyleType: 'none',
+            display: "block",
+            padding: '10px 25px 10px 25px',
+            margin: '0px',
+            fontFamily: "Arial, Helvetica, sans-serif",
+            color: 'white',
+        },
+        textContent: [
+            "Select Svg Paths",
+            ...svgPaths
+        ],
         Events: [
             {evnt: "click", evntFunc: Event.OnClick},
         ],

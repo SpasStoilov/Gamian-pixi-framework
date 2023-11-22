@@ -45,10 +45,10 @@ export function animateDrawingDataMiddleware(
         data.hitPoint = 1
     }
     if (data.skipRangeX == undefined){
-        data.skipRangeX = 0
+        data.skipRangeX = -1
     }
     if (data.skipRangeY == undefined){
-        data.skipRangeY = 0
+        data.skipRangeY = -1
     }
     data.path = normalizeCoordinates(
         data.path, 
@@ -92,6 +92,7 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
     let pointCounter = 0
 
     for (let [x, y] of path){
+        //console.log(x, y);
 
         /**
          * Manage first coordinates
@@ -99,12 +100,14 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
         if (prevCoordinates[0] == null && prevCoordinates[1] == null){
             newPath.push([x, y])
             prevCoordinates = [x, y]
+            //console.log("first");
             continue
         }
         /**
          * Skip points if they are same
          */
         if (x == prevCoordinates[0] && y == prevCoordinates[1]){
+            //console.log("same");
             continue
         }
         pointCounter++
@@ -113,6 +116,7 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
          * anyNumber % 0 = NaN
          */
         if (pointCounter % skipPoint == 0){
+            //console.log("skipP");
             continue
         }
         /**
@@ -120,6 +124,7 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
          * anyNumber % 1 = 0
          */
         if (pointCounter % hitPoint != 0){
+            //console.log("hitP");
             continue
         }
         let dx = x - prevCoordinates[0]
@@ -128,12 +133,14 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
          * Skip points by range along x
          */
         if (Math.abs(dx) <= skipRangeX){
+            //console.log("absX");
             continue
         }
         /**
          * Skip points by range along y
          */
         if (Math.abs(dy) <= skipRangeY){
+            //console.log("absY");
             continue
         }
         let incrementX = dx / steps
@@ -146,6 +153,7 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
                 ]
             )
         }
+        //console.log(newPath);
         prevCoordinates = [x, y]
     }
     return newPath

@@ -1,13 +1,14 @@
 const http = require("http");
-const {lexer, ComponentsJsLogic, MANIFEST} = require("./lexer.js"); 
-
+const {lexer, ComponentsJsLogic} = require("./lexer.js"); 
+let {setBundles, MANIFEST} = require("./setManifestBundles.js")
+const {getSvgsNames} = require("./svgFilesNames.js")
 
 // we are adding event lissener for http request:
 const server = http.createServer(requestHandler);
 const port = 3000;
 
 // function wich will takecare for the request:
-function requestHandler(req, res) {
+async function requestHandler(req, res) {
     let data = {}
 
     const liveServerOrigin = "http://127.0.0.1:5500"
@@ -17,9 +18,11 @@ function requestHandler(req, res) {
     console.log("server >>> origin:", origin, reactAppOrigin);
 
     if('http://127.0.0.1:5500/structure' == origin){
+        const svgFilesNames = await getSvgsNames()
+        setBundles()
         const Lexer = lexer()
         const Manifest = MANIFEST
-        data = {Lexer, Manifest}
+        data = {Lexer, Manifest, svgFilesNames}
     }
     else if ('http://127.0.0.1:5500/js-logic' == origin){
         data = ComponentsJsLogic

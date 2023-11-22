@@ -79,6 +79,7 @@ export class Modelator{
         animationMiddleware = "shift",
         animatorName = "shift"
     ){
+        //console.log("Modelator shift >>>", data.path);
         let animeData = LibAnimationDataMiddleware[animationMiddleware](
             assetName,
             param,

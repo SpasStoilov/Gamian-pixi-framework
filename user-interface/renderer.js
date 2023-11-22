@@ -29,7 +29,3 @@ const Interior = {
 }
 
 Interior.start()
-
-
-
-

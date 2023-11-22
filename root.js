@@ -8,9 +8,14 @@ import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
 
 
 /** ------------------ GLOBAL PARAMS ----------------------------------
+ *
  *  Bundles
  */
 export let SPRITES = null
+/**
+ * svgFilesNames
+ */
+export let svgFilesNames = null
 /**
  *  App instance
  */
@@ -123,6 +128,11 @@ export async function START_APP(){
     console.log("app >>> Assets Register:", tree.assets_register);
     console.log("app >>> Tree Structure:", structure);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *           Get all SVG animation paths
+     * -----------------------------------------------
+     */
+    svgFilesNames = response.svgFilesNames
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *           Get all components emitters
      * -----------------------------------------------
      */
@@ -156,4 +166,4 @@ export async function START_APP(){
 }
 
 
-START_APP()
+await START_APP()
