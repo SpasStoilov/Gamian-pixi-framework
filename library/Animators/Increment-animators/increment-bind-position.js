@@ -6,7 +6,7 @@ import{
    prevWindowHeight
 }from "../../../root.js"
 
-const assetsDistanceChange = {}
+import {assetsDistanceChangeInc } from "../../Utils/globalScopeVariables.js"
 
 /** 
  * @param {DisplayObject} asset
@@ -28,25 +28,25 @@ export function incrementBindPosition(asset, vIn, animationData){
       const difH = Math.abs(animationData.data[axis].H - currentWindowHeight)
       const widthChangeMore = difW >= difH ? true : false
 
-      if(!assetsDistanceChange[asset.name]){
-         assetsDistanceChange[asset.name] = {x:0, y:0}
+      if(!assetsDistanceChangeInc[asset.name]){
+         assetsDistanceChangeInc[asset.name] = {x:0, y:0}
       }
       if (widthChangeMore){
          // NOTE: this is model function, move it out to models!
-         assetsDistanceChange[asset.name][axis] = 
+         assetsDistanceChangeInc[asset.name][axis] = 
             value + animationData.data[axis].w*(1-animationData.data[axis].W/currentWindowWidth)
             animationData.data[axis].W = currentWindowWidth
       }
       else if (!widthChangeMore){
          // NOTE: this is model function, move it out to models!
-         assetsDistanceChange[asset.name][axis] = 
+         assetsDistanceChangeInc[asset.name][axis] = 
             value + animationData.data[axis].h*(1-animationData.data[axis].H/currentWindowHeight)
             animationData.data[axis].H = currentWindowHeight
       }
    }
 
    return {
-      x:{bind: assetsDistanceChange[asset.name].x},
-      y:{bind: assetsDistanceChange[asset.name].y}
+      x:{bind: assetsDistanceChangeInc[asset.name].x},
+      y:{bind: assetsDistanceChangeInc[asset.name].y}
    }
 } 

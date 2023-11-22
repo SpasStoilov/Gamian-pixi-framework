@@ -113,9 +113,12 @@ export function DEEP_COPY_OBJECT(OBJ){
 }
 
 function loop(htmlEL, atributes, ignoreAtr){
- 
-    for (let [atrName, value] of Object.entries(atributes)){
+    if (htmlEL.nodeName === '#document-fragment' && typeof atributes == "string"){
+        htmlEL.textContent = atributes
+        return
+    }
 
+    for (let [atrName, value] of Object.entries(atributes)){
         if (ignoreAtr.includes(atrName)){
             continue
         }
@@ -139,7 +142,7 @@ function loop(htmlEL, atributes, ignoreAtr){
             htmlEL.appendChild(value)
         }
         else {
-            htmlEL[`${atrName}`] = value
+            htmlEL[atrName] = value
         };
 
     };
@@ -147,7 +150,6 @@ function loop(htmlEL, atributes, ignoreAtr){
 };
 
 export function insertTo(parent, ARR, flag='end', ignoreAtr=[]){
-
     try {
         
         if (typeof parent != "string" && !(parent instanceof HTMLElement)){
@@ -160,7 +162,7 @@ export function insertTo(parent, ARR, flag='end', ignoreAtr=[]){
         for (let value of ARR) {
 
             let htmlEL;
-
+            //console.log(value, value.typeName);
             if (typeof value === 'string' || typeof value === 'number'){
                 htmlEL = document.createDocumentFragment()
                 htmlEL.textContent += value
@@ -182,7 +184,7 @@ export function insertTo(parent, ARR, flag='end', ignoreAtr=[]){
                 htmlEL = document.createElement(value.typeName);
                 delete value.typeName
             }
-            
+            //console.log(htmlEL);
             loop(htmlEL, value, ignoreAtr);
             
             if (parent) {

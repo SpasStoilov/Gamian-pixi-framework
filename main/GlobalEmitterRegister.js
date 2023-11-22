@@ -11,6 +11,9 @@ export let classEmitterRegister = {}
  * handler == new emitterClass().init
  */
 export async function emitterFactory(){
+    functionalEmitterRegister = {}
+    classEmitterRegister = {}
+    
     let functionalLogic = await fetchME("js-logic")
     /**
      * Loop over all emitterClass in components dir

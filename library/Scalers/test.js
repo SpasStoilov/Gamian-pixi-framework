@@ -11,7 +11,6 @@ import {
 } from "../../root.js"
 import { LibScalers } from "./index.js";
 
-const assetScalerRecord = {}
 
 /**
  * Test function

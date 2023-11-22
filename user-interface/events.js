@@ -1,4 +1,6 @@
 import { START_APP, DataFromUserMode } from "../root.js";
+import {drawingPath} from "./library.js"
+import * as act from "./interior.js"
 
 let modeOn = false
 let isDragging = false
@@ -30,7 +32,7 @@ window.addEventListener('keydown', function(event) {
  * 
  */
 export function OnClick(e){
-    //console.log(e.target.className);
+    console.log(e.target.className);
     /**
      * Handle drawing animation path:
      */
@@ -45,8 +47,21 @@ export function OnClick(e){
         canvas.height = window.innerHeight
         //---------------------------------------------------------------^
     }
+
+    if (e.target.className == "ul-hand-drawings"){
+        e.target.style.color = "gray"
+        //---------------------------------------------------------------^
+
+        // Set Demesions of the drawing stage
+        const canvas = document.getElementById("animation-drawing-stage");
+        canvas.style.display = 'block'
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        //---------------------------------------------------------------^
+    }
     if (e.target.className == "ul-svg-drawings"){
         svgClicked = svgClicked ? false : true
+        e.target.style.color = svgClicked ? "gray" : "white"
         const typeDisplay = svgClicked ? "block" : "none"
         const listItems = e.target.getElementsByTagName('li');
         // Loop through each <li> and set its display to block
@@ -65,6 +80,7 @@ let isDrawing = false
 let pathId = 0
 let startDrawingPoint = []
 let animationDataPath = []
+const drawingsPathToAdd = {}
 
 export function startDraw(event){
     if(event.target.id == "animation-drawing-stage"){
@@ -86,7 +102,7 @@ export function onDraw(event){
             // console.log(`Prev Coordinates: (${startDrawingPoint[0]}, ${startDrawingPoint[1]})`);
             // console.log(`Current Coordinates: (${x}, ${y})`);
             // JavaScript to draw a path
-            console.log(canvas);
+            //console.log(canvas);
             const ctx = canvas.getContext('2d');
             // Begin a path
             ctx.beginPath();
@@ -114,19 +130,23 @@ export function destroyDraw(event){
         canvas.height = 0
         canvas.style.display = 'none'
         // 
-        const anchor = document.getElementsByClassName("animation-drawing-stg")[0];
+        const anchor = document.getElementsByClassName("ul-hand-drawings")[0];
         anchor.style.color = "white"
         // Remove current game stage
-        document.body.removeChild(
-            document.getElementById("game-world")
-        )
+        // document.body.removeChild(
+        //     document.getElementById("game-world")
+        // )
+        // Push new path drawing in ul:
+        let component = drawingPath(`path-${pathId}` ,`path-${pathId}`)
+        act.insertTo(".ul-hand-drawings", [component])
         // Pass the animation data
-        DataFromUserMode.animations.paths[`path-${pathId}`] = JSON.parse(JSON.stringify(animationDataPath))
+        //DataFromUserMode.animations.paths[`path-${pathId}`] = JSON.parse(JSON.stringify(animationDataPath))
+        // Reset game stage
+        //START_APP()
+        //
+        drawingsPathToAdd[`path-${pathId}`] = JSON.parse(JSON.stringify(animationDataPath))
         // Inc the path Id
         pathId++
-        // Reset game stage
-        START_APP()
-        //
         animationDataPath = []
         isDrawing = false
         startDrawingPoint = []
@@ -170,10 +190,9 @@ export function onDestroyDragModeMenu(event){
  * -----------------------------------------------------------------
  * Function to retrieve points from the embedded SVG
  */
-let switchClick = false
 export function getSvgCoordinates(e){
-    switchClick = switchClick ? false : true
-    if (switchClick){
+    console.log("getSvgCoordinates");
+    if (!e.target.style.backgroundColor){
         // Set on styles:
         e.target.style.backgroundColor = "gray"
         e.target.style.color = "white"
@@ -224,4 +243,35 @@ function getPointsFromSVG(svgObject) {
     } else {
         console.log('SVG content not loaded yet');
     }
+}
+
+/** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ *                        Handle drawings
+ * -----------------------------------------------------------------
+ * Function to retrieve points from the embedded SVG
+ */
+export function getDrawingCoordinates(e){
+    console.log("getDrawingCoordinates");
+    if (!e.target.style.backgroundColor){
+        // Set on styles:
+        e.target.style.backgroundColor = "gray"
+        e.target.style.color = "white"
+        // Get the object element
+        const fileName = e.target.textContent
+        DataFromUserMode.animations.paths[fileName] = drawingsPathToAdd[fileName]
+        console.log("DataFromUserMode:",DataFromUserMode.animations.paths);
+    }
+    else {
+        const fileName = e.target.textContent
+        // Set off styles:
+        e.target.style.backgroundColor = ""
+        e.target.style.color = "gray"
+        delete DataFromUserMode.animations.paths[fileName]
+        console.log("DataFromUserMode:", DataFromUserMode.animations.paths);
+    }
+    // Reset App
+    document.body.removeChild(
+        document.getElementById("game-world")
+    )
+    START_APP()
 }

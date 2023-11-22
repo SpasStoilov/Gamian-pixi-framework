@@ -1,5 +1,4 @@
 import { tree } from "../root.js"
-import { evalProp } from "./Utils/EvalProps.js"
 import {LibAnimationDataMiddleware} from "../library/index.js"
 /**
  * Manages Animations

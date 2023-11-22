@@ -3,11 +3,9 @@ import {
     currentWindowHeight,
     currentWindowWidth,
 } from "../../root.js"
-
-const assetScalerRecord = {}
+import {assetScalerRecord} from "../Utils/globalScopeVariables.js"
 
 /**
- * Test function
  * @param {number} value 
  * @returns 
  */

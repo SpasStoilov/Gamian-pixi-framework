@@ -6,7 +6,8 @@ import{
    prevWindowHeight
 }from "../../root.js"
 
-const assetsInitPositionsValues = {}
+import {assetsInitPositionsValues} from "../Utils/globalScopeVariables.js"
+
 
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                            ! NOTES !

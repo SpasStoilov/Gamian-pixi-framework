@@ -2,8 +2,7 @@ import{
     currentWindowHeight,
     currentWindowWidth,
 }from "../../root.js"
-
-const assetsDistanceChange = {}
+import {assetsDistanceChange} from "../Utils/globalScopeVariables.js"
 
 /**
  * Position of asset is defined in procent of the sreen

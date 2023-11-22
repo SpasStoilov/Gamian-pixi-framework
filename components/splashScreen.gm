@@ -5,7 +5,7 @@
         "position",
         {
             path: this.modeData.animations.paths["path1.svg"],
-            steps: 50,
+            steps: 70,
         },
         "AnimeDrawingMid",
         "DrawingAnimator"

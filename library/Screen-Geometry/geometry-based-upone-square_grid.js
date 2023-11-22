@@ -5,10 +5,7 @@ import {
     initialWindowHeight
 } from "../../root.js"
 import {use_geometry_based_upone_procent} from "./geometry-based-upone-procent.js"
-/**
- * Initial screen change state
- */
-let initChangeState = "|W,H>"
+import {initChangeState} from "../Utils/globalScopeVariables.js"
 
 export function use_geometry_based_upone_square_grid(
     axis, value, asset

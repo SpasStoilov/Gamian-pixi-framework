@@ -23,15 +23,15 @@ export let APP = null
 /**
  *  Create an instance of EventEmitter
  */
-export const emitter = new EventEmitter();
+export let emitter = null;
 /**
  *  Create an instance of TreeBuilder
  */
-export const tree = new TreeBuilder()
+export let tree = null
 /**
  *  Create an instance of Modelator
  */
- export const Model = new Modelator()
+ export let Model = null
 /**
  *  Window states & values
  */
@@ -93,6 +93,13 @@ export function resizeAppView(userModeData={}) {
  */
 export async function START_APP(){
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *               Set Foundations
+     * -----------------------------------------------
+     */
+    emitter = new EventEmitter();
+    tree = new TreeBuilder()
+    Model = new Modelator()
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *              Create Application
      * -----------------------------------------------
      */
@@ -136,6 +143,7 @@ export async function START_APP(){
      *           Get all components emitters
      * -----------------------------------------------
      */
+    emitter.removeAllListeners()
     await emitterFactory()
     /**^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *               Start world ticker
@@ -152,6 +160,7 @@ export async function START_APP(){
      *           Keep track of screen size
      * -----------------------------------------------
      */
+    window.removeEventListener('resize', resizeAppView);
     window.addEventListener('resize', resizeAppView);
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *       Hook the params of root componet

@@ -42,6 +42,37 @@ export let svgPaths = svgFilesNames.map((name, i) => {
     }
 )
 
+export function drawingPath(className, name){
+    return {
+        typeName: "li",
+        className,
+        style:{
+            display:"block",
+        },
+        textContent: [
+            {
+                typeName: "label",
+                style: {
+                    display: "block",
+                    padding: '10px 25px 10px 25px',
+                    margin: '0px',
+                    fontFamily: "Arial, Helvetica, sans-serif",
+                    textDecoration: "none",
+                    color: 'gray',
+                    border: "1px solid gray",
+                    margin: "5px 0 0 0",
+                    "border-radius": "5%",
+                    backgroundColor: ""
+                },
+                textContent: name,
+                Events: [
+                    {evnt: "click", evntFunc: Event.getDrawingCoordinates},
+                ],
+            },
+        ],
+    }
+}
+
 export let animationDrawingStage = [
     {
         typeName: 'canvas',
@@ -69,9 +100,27 @@ export let Mode_Options = [
     {
         typeName: "a",
         className:"animation-drawing-stg",
-        textContent: "Draw Animation",
+        textContent: "Drawing",
         style: glbStyles.AnchorNavBarStyles,
         href: "#animation-drawing-stg",
+        Events: [
+            {evnt: "click", evntFunc: Event.OnClick},
+        ],
+    },
+    {
+        typeName: "ul",
+        className: "ul-hand-drawings",
+        style: {
+            listStyleType: 'none',
+            display: "block",
+            padding: '10px 25px 10px 25px',
+            margin: '0px',
+            fontFamily: "Arial, Helvetica, sans-serif",
+            color: 'white',
+        },
+        textContent: [
+            "Animation from Drawing",
+        ],
         Events: [
             {evnt: "click", evntFunc: Event.OnClick},
         ],
@@ -88,7 +137,7 @@ export let Mode_Options = [
             color: 'white',
         },
         textContent: [
-            "Select Svg Paths",
+            "Animation from SVG",
             ...svgPaths
         ],
         Events: [
