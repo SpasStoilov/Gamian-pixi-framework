@@ -98,16 +98,6 @@ export let animationDrawingStage = [
 
 export let Mode_Options = [
     {
-        typeName: "a",
-        className:"animation-drawing-stg",
-        textContent: "Drawing",
-        style: glbStyles.AnchorNavBarStyles,
-        href: "#animation-drawing-stg",
-        Events: [
-            {evnt: "click", evntFunc: Event.OnClick},
-        ],
-    },
-    {
         typeName: "ul",
         className: "ul-hand-drawings",
         style: {
@@ -140,6 +130,21 @@ export let Mode_Options = [
             "Animation from SVG",
             ...svgPaths
         ],
+        Events: [
+            {evnt: "click", evntFunc: Event.OnClick},
+        ],
+    },
+    {
+        typeName: "button",
+        className:"reset-app-button",
+        textContent: "Reset App",
+        style: {
+            display: "block",
+            padding: '10px 25px 10px 25px',
+            margin: '10px 0 0 0',
+            fontFamily: "Arial, Helvetica, sans-serif",
+            textDecoration: "none",
+        },
         Events: [
             {evnt: "click", evntFunc: Event.OnClick},
         ],

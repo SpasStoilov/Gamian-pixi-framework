@@ -3,6 +3,7 @@ import { TreeBuilder } from '/main/TreeBuilder.js';
 import { EventEmitter } from './node_modules/events/events.mjs';
 import { emitterFactory } from "./main/GlobalEmitterRegister.js"
 import { Modelator} from './main/Modelator.js'
+import {resetLibGlobalScopeVariables} from "./library/Utils/globalScopeVariables.js"
 import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
 //----------------------  IMPORTS -------------------------------------^
 
@@ -35,18 +36,18 @@ export let tree = null
 /**
  *  Window states & values
  */
-export let initialWindowWidth = window.innerWidth;
-export let initialWindowHeight = window.innerHeight;
-export let currentWindowWidth = window.innerWidth;
-export let currentWindowHeight = window.innerHeight;
-export let prevWindowWidth = window.innerWidth;
-export let prevWindowHeight = window.innerHeight;
-export let howMuchWindowWidthChange = 0;
-export let howMuchWindowHeightChange = 0;
-export let totalWindowWidthChange = 0;
-export let totalWindowHeightChange = 0;
-export const worldRation = window.innerWidth / window.innerHeight
-export const worldArea = window.innerWidth * window.innerHeight
+export let initialWindowWidth = null;
+export let initialWindowHeight = null;
+export let currentWindowWidth = null;
+export let currentWindowHeight = null;
+export let prevWindowWidth = null;
+export let prevWindowHeight = null;
+export let howMuchWindowWidthChange = null;
+export let howMuchWindowHeightChange = null;
+export let totalWindowWidthChange = null;
+export let totalWindowHeightChange = null;
+export let worldRation = null
+export let worldArea = null
 /**
  * USER mode information
  */
@@ -100,6 +101,23 @@ export async function START_APP(){
     tree = new TreeBuilder()
     Model = new Modelator()
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     *               Set World variables
+     * -----------------------------------------------
+     */
+    initialWindowWidth = window.innerWidth;
+    initialWindowHeight = window.innerHeight;
+    currentWindowWidth = window.innerWidth;
+    currentWindowHeight = window.innerHeight;
+    prevWindowWidth = window.innerWidth;
+    prevWindowHeight = window.innerHeight;
+    howMuchWindowWidthChange = 0;
+    howMuchWindowHeightChange = 0;
+    totalWindowWidthChange = 0;
+    totalWindowHeightChange = 0;
+    worldRation = window.innerWidth / window.innerHeight
+    worldArea = window.innerWidth * window.innerHeight
+    resetLibGlobalScopeVariables()
+    /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *              Create Application
      * -----------------------------------------------
      */
@@ -149,13 +167,14 @@ export async function START_APP(){
      *               Start world ticker
      * -----------------------------------------------
      */
-    app.ticker.add((delta)=>{
+    function Ticker(delta){
         //Model.TIME += 1
         /**
          * Plays all animations
          */
         Model.animate()
-    })
+    }
+    app.ticker.add(Ticker)
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *           Keep track of screen size
      * -----------------------------------------------

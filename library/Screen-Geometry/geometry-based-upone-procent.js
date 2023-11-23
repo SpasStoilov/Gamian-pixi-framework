@@ -16,7 +16,7 @@ import {assetsDistanceChange} from "../Utils/globalScopeVariables.js"
 export function use_geometry_based_upone_procent(
     axis, value, asset
 ){
-    //console.log(axis, value, asset.name, asset);
+    //console.log(asset.name, value);
     /**
      * axis: x
      * value ~ {"%":0.443, d:{w:0.005, h:0}, rel:{W:1500, H:800}}

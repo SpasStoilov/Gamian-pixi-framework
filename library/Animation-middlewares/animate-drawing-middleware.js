@@ -153,8 +153,8 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
                 ]
             )
         }
-        //console.log(newPath);
         prevCoordinates = [x, y]
     }
+    console.log("newPath >>>",newPath);
     return newPath
 }

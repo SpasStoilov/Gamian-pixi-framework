@@ -1,4 +1,4 @@
-import { START_APP, DataFromUserMode } from "../root.js";
+import { START_APP, DataFromUserMode, APP } from "../root.js";
 import {drawingPath} from "./library.js"
 import * as act from "./interior.js"
 
@@ -31,23 +31,21 @@ window.addEventListener('keydown', function(event) {
  * -----------------------------------------------------------------
  * 
  */
-export function OnClick(e){
+export async function OnClick(e){
     console.log(e.target.className);
+    /**
+     * Handle Reset App:
+     */
+    if (e.target.className == "reset-app-button"){
+        document.body.removeChild(
+            document.getElementById("game-world")
+        )
+        APP.destroy({ children: true, texture: true, baseTexture: true });
+        START_APP()
+    }
     /**
      * Handle drawing animation path:
      */
-    if (e.target.className == "animation-drawing-stg"){
-        e.target.style.color = "gray"
-        //---------------------------------------------------------------^
-
-        // Set Demesions of the drawing stage
-        const canvas = document.getElementById("animation-drawing-stage");
-        canvas.style.display = 'block'
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-        //---------------------------------------------------------------^
-    }
-
     if (e.target.className == "ul-hand-drawings"){
         e.target.style.color = "gray"
         //---------------------------------------------------------------^
@@ -59,6 +57,9 @@ export function OnClick(e){
         canvas.height = window.innerHeight
         //---------------------------------------------------------------^
     }
+    /**
+     * Handle svg animation path:
+     */
     if (e.target.className == "ul-svg-drawings"){
         svgClicked = svgClicked ? false : true
         e.target.style.color = svgClicked ? "gray" : "white"
@@ -208,11 +209,6 @@ export function getSvgCoordinates(e){
         e.target.style.color = "gray"
         delete DataFromUserMode.animations.paths[fileName]
     }
-    // Reset App
-    document.body.removeChild(
-        document.getElementById("game-world")
-    )
-    START_APP()
 }
 function getPointsFromSVG(svgObject) {
     // Check if the #Document is available (loaded)
@@ -269,9 +265,4 @@ export function getDrawingCoordinates(e){
         delete DataFromUserMode.animations.paths[fileName]
         console.log("DataFromUserMode:", DataFromUserMode.animations.paths);
     }
-    // Reset App
-    document.body.removeChild(
-        document.getElementById("game-world")
-    )
-    START_APP()
 }

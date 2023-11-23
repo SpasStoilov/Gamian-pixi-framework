@@ -6,8 +6,8 @@
 */
 export function drawingAnimator(asset, vIn, animationData){
     // console.log("drawingAnimator >>>", asset, );
-    // console.log("drawingAnimator >>>", vIn);
-    //console.log("drawingAnimator >>>", animationData.data.path[0]);
+    //console.log("drawingAnimator >>>", vIn);
+    //console.log("drawingAnimator >>>", animationData.data.path);
 
     if (animationData.data.path && animationData.data.path.length){
         let [nx, ny] = animationData.data.path.shift()
