@@ -1,5 +1,5 @@
 /* ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                        
-*                           Drawing Animato
+*                           Drawing Animator
 *  --------------------------------------------------------------
 * Function that takes coordinates of each point of a drawing
 * and makes animation out of it.
@@ -7,18 +7,63 @@
 export function drawingAnimator(asset, vIn, animationData){
     // console.log("drawingAnimator >>>", asset, );
     // console.log("drawingAnimator >>>", vIn);
-    // console.log("drawingAnimator >>>", animationData.data.path);
+    // console.log("drawingAnimator >>>", animationData);
 
-    if (animationData.data.path && animationData.data.path.length){
-        // Get coordinates from data
-        let [nx, ny] = animationData.data.path.shift()
-        // Reset path data if Loop is true
-        if (animationData.data.loop && animationData.data.path.length == 0){
-            animationData.data.path = JSON.parse(JSON.stringify(animationData.data.originalPath))
+    let pathData = animationData.dataBulk[0]
+   
+    // Return value if data is undefined
+    if (!pathData){
+        return vIn
+    }
+
+    // Call start hook if present
+    if (pathData.onStart){
+        pathData.onStart.call(this, asset)
+        delete pathData.onStart
+    }
+    
+    let nextCoordinates = calcNextCoordinates(vIn, pathData)
+    
+    // Make transition to next pathData
+    if (animationData.dataBulk.length && JSON.stringify(nextCoordinates) == JSON.stringify(vIn)){
+        // Call complate hook if present for the current
+        if (pathData.onComplate){
+            pathData.onComplate.call(this, asset)
         }
+        // Remove current path data from bulk
+        animationData.dataBulk.shift()
+        // Get first coordinate from next dataPath
+        return nextCoordinates = drawingAnimator(asset, vIn, animationData)
+    }
+
+    // Call update hook if present
+    if (pathData.onUpdate){
+        pathData.onUpdate.call(this, asset)
+    }
+
+    return nextCoordinates
+} 
+
+function calcNextCoordinates(vIn, data){
+
+    if (data.path && data.path.length){
+
+        // Get coordinates from data
+        let [nx, ny] = data.path.shift()
+
+        // Reset path data if Loop is true
+        if (data.loop && data.path.length == 0){
+            data.path = JSON.parse(JSON.stringify(data.originalPath))
+            if (data.loop.constructor.name == 'Number'){
+                data.loop -= 1
+            }
+        }
+
         // Convert coordindates relative to units
-        const unitTag = animationData.data.unitTag
+        const unitTag = data.unitTag
         if (unitTag == "%"){
+            // TODO: Makane animation to be depended of the screen resize as option! 
+            // if screen resize the ration "nx / window.innerWidth" must be constant in order to be depended
             nx = nx / window.innerWidth
             ny = ny / window.innerHeight
             return {
@@ -27,5 +72,6 @@ export function drawingAnimator(asset, vIn, animationData){
             }
         }
     }
+
     return vIn
-} 
+}

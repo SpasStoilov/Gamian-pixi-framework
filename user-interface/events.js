@@ -5,6 +5,7 @@ import * as act from "./interior.js"
 let modeOn = false
 let isDragging = false
 let svgClicked = false
+let drawingClicked = false
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                      Handle User Mode Menu
  * -----------------------------------------------------------------
@@ -49,14 +50,16 @@ export async function OnClick(e){
      * Handle drawing animation path:
      */
     if (e.target.className == "ul-hand-drawings"){
-        e.target.style.color = "gray"
+        drawingClicked = drawingClicked ? false : true
+        e.target.style.color = drawingClicked ? "gray" : "white"
+        const typeDisplay = drawingClicked ? "block" : "none"
         //---------------------------------------------------------------^
 
         // Set Demesions of the drawing stage
         const canvas = document.getElementById("animation-drawing-stage");
-        canvas.style.display = 'block'
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
+        canvas.style.display = typeDisplay
+        canvas.width = typeDisplay ? window.innerWidth : 0
+        canvas.height = typeDisplay ? window.innerHeight : 0
         //---------------------------------------------------------------^
     }
     /**

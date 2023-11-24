@@ -1,13 +1,17 @@
 #SplashEmitter.once initDrawingAnimation(){
-    console.log("this.modeData", this.modeData.animations.paths["path1.svg"])
     this.model.shift(
         "feat3", 
         "position",
-        {
-            path: this.modeData.animations.paths["path1.svg"],
-            steps: 70,
-            loop: true
-        },
+        [
+            {
+                path: this.modeData.animations.paths["path1.svg"],
+                steps: 70
+            },
+            {
+                path: this.modeData.animations.paths["path-0"],
+                steps: 1
+            },
+        ],
         "AnimeDrawingMid",
         "DrawingAnimator"
     )

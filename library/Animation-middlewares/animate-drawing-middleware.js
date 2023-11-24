@@ -1,34 +1,65 @@
-/**
- * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                        
+/** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                        
  *                 Animate Drawing Data Middleware
  *  --------------------------------------------------------------
  * 
  * Function that build animation data from drawing.
  * @param {String} assetName 
  * @param {String} param 
- * @param {any} data -
- * {
-        path       : array  (coordinates),
-        steps      : number (puts that many coordinates between two poins (x and x') ), 
-        skipPoint  : number (skip every number coordinate),
-        hitPoint   : number (hit every number coordinate),
-        skipRangeX : number (skip every x' if difrence between | x' - x | <= number),
-        skipRangeY : number (skip every y' if difrence between | y' - y | <= number)
-    }
+ * @param {Array}  dataBulk - 
+ *  [
+*       {
+            path       : array  (coordinates),
+            steps      : number (puts that many coordinates between two poins (x and x') ), 
+            skipPoint  : number (skip every number coordinate),
+            hitPoint   : number (hit every number coordinate),
+            skipRangeX : number (skip every x' if difrence between | x' - x | <= number),
+            skipRangeY : number (skip every y' if difrence between | y' - y | <= number),
+            loop       : boolean | number (loop the path forever on some number of times),
+            onStart    : function,
+            onUpdate   : function,
+            onComplate : function
+        },
+        ...
+    ]
  * @param {string} animatorName
  */
 export function animateDrawingDataMiddleware(
     assetName,
     paramName,
-    data,
+    dataBulk,
     animatorName
 ){
-    console.log("animateDrawingDataMiddleware >>> ",
+    // NEW:
+    for (let i=0; i < dataBulk.length; i++){
+        parseData(dataBulk[i])
+    }
+    // Construct the animeData object for animator
+    let animeData = {
         assetName,
         paramName,
-        data,
+        dataBulk,
         animatorName
-    );
+    }
+    return animeData
+}
+
+/**
+ * 
+ * @param {object} data -
+ *  {
+        path       : array  (coordinates),
+        steps      : number (puts that many coordinates between two poins (x and x') ), 
+        skipPoint  : number (skip every number coordinate),
+        hitPoint   : number (hit every number coordinate),
+        skipRangeX : number (skip every x' if difrence between | x' - x | <= number),
+        skipRangeY : number (skip every y' if difrence between | y' - y | <= number),
+        loop       : boolean | number,
+        onStart    : function,
+        onUpdate   : function,
+        onComplate : function
+    }
+ */
+function parseData(data){
     /**
      * Default values:
      */
@@ -56,7 +87,10 @@ export function animateDrawingDataMiddleware(
     if (data.unitTag == undefined){
         data.unitTag = "%"
     }
-
+    
+    /**
+     * Manage coordinates
+     */
     data.path = normalizeCoordinates(
         data.path, 
         data.steps, 
@@ -65,33 +99,19 @@ export function animateDrawingDataMiddleware(
         data.skipRangeX, 
         data.skipRangeY
     )
-    data.originalPath = JSON.parse(JSON.stringify(data.path))
     /**
-     * Deside what to put in animation Data
+     *  Save original path
      */
-    let animeData = {
-        assetName,
-        paramName,
-        data,
-        animatorName
-    }
-
-    return animeData
+    data.originalPath = JSON.parse(JSON.stringify(data.path))
 }
 
 /**
- * Function that removes repeated coordinates and pushes more 
- * depending upon the steps we need to take between two points.
- * x              x'
- * |--.--.--.--.--|
- *   
- * where:
- * --.--.--.--.-- = dx = x' - x
- * .--. incrementX = dx / steps
- * 
- * -----------------------------------------------------------
  * @param {array} path 
  * @param {number} steps 
+ * @param {number} skipPoint 
+ * @param {number} hitPoint 
+ * @param {number} skipRangeX 
+ * @param {number} skipRangeY 
  * @returns {array}
  */
 function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skipRangeY){
@@ -153,6 +173,16 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
         }
         let incrementX = dx / steps
         let incrementY = dy / steps
+
+        /** 
+         * Depending upon the steps we need to put more coordinates between two points.
+         * x              x'
+         * |--.--.--.--.--|
+         *   
+         * where:
+         * --.--.--.--.-- = dx = x' - x
+         * .--. incrementX = dx / steps
+         */
         for (let mult of Array.from({ length: steps }, (_, i) => i+1)){
             newPath.push(
                 [
@@ -163,6 +193,6 @@ function normalizeCoordinates(path, steps, skipPoint, hitPoint, skipRangeX, skip
         }
         prevCoordinates = [x, y]
     }
-    console.log("newPath >>>",newPath);
+    
     return newPath
 }

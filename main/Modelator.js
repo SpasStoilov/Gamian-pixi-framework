@@ -29,6 +29,8 @@ export class Modelator{
                 )
                 const newValue = tree.assets_params[assetName][paramName]
                 /**
+                 * TODO: move this hooks in animators
+                 * NOTE: in shift and sin-cos
                  * Call Anime Hook onUpdate
                  */
                 if(animeData.onUpdate){
@@ -41,6 +43,8 @@ export class Modelator{
                     animeData.currentValue == newValue
                 ){
                     /**
+                     * TODO: move this hooks in animators
+                     * NOTE: in shift and sin-cos
                      * Call Anime Hook onComplate
                      */
                     if(animeData.onComplate){
