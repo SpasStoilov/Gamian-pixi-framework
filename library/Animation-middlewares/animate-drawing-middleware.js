@@ -50,6 +50,13 @@ export function animateDrawingDataMiddleware(
     if (data.skipRangeY == undefined){
         data.skipRangeY = -1
     }
+    if (data.loop == undefined){
+        data.loop = false
+    }
+    if (data.unitTag == undefined){
+        data.unitTag = "%"
+    }
+
     data.path = normalizeCoordinates(
         data.path, 
         data.steps, 
@@ -58,6 +65,7 @@ export function animateDrawingDataMiddleware(
         data.skipRangeX, 
         data.skipRangeY
     )
+    data.originalPath = JSON.parse(JSON.stringify(data.path))
     /**
      * Deside what to put in animation Data
      */

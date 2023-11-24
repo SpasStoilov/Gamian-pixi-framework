@@ -37,9 +37,11 @@ export async function OnClick(e){
      * Handle Reset App:
      */
     if (e.target.className == "reset-app-button"){
+        // Remove view
         document.body.removeChild(
             document.getElementById("game-world")
         )
+        //Destroy app
         APP.destroy({ children: true, texture: true, baseTexture: true });
         START_APP()
     }

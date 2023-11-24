@@ -6,6 +6,7 @@
         {
             path: this.modeData.animations.paths["path1.svg"],
             steps: 70,
+            loop: true
         },
         "AnimeDrawingMid",
         "DrawingAnimator"
