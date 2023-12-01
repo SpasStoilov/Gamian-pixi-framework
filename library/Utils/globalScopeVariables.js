@@ -3,7 +3,7 @@ export let assetsInitPositionsValues = {}
 export let assetScalerRecord = {}
 export let assetsDistanceChange = {}
 export let initChangeState = "|W,H>"
-
+export let templateFromPathStateRegister = {}
 /**
  * Function that resets global scopes varaibles
  */
@@ -13,4 +13,5 @@ export function resetLibGlobalScopeVariables(){
     assetScalerRecord = {}
     assetsDistanceChange = {}
     initChangeState = "|W,H>"
+    templateFromPathStateRegister = {}
 }

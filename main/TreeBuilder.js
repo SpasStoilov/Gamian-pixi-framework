@@ -1,6 +1,6 @@
 import * as PIXI from '../node_modules/pixi.js/dist/pixi.mjs';
 import {fetchME}  from "./Utils/fetch.js"
-import {classEmitterRegister} from "./GlobalEmitterRegister.js"
+import {classEmitterRegister} from "./Utils/globalScopeVariables.js"
 import {evalArgs, evalProp} from "./Utils/EvalProps.js"
 import {ParentChainVisibility} from "./Utils/ParentChainVisibility.js"
 import { emitter, SPRITES } from '../root.js';
@@ -271,11 +271,14 @@ export class TreeBuilder{
     };
     setContext(assetName){
         //....
-        const emmiterName = this.asset_emitter_mapper[assetName]
+        const emitterName = this.asset_emitter_mapper[assetName]
         //....
-        this.props = classEmitterRegister[emmiterName]
+        this.props = this.getEmitter(emitterName)
         //....
-        return emmiterName
+        return emitterName
+    }
+    getEmitter(emitterName){
+        return classEmitterRegister[emitterName]
     }
     hookTreeParams(){
         /**

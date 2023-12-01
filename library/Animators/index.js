@@ -3,6 +3,7 @@ import {shift} from "./shift.js"
 import {SinCosProcentOnly} from "./sin-cos-procent-only.js"
 import {incrementBindPosition} from "./Increment-animators/increment-bind-position.js"
 import {drawingAnimator} from "./animate-drawing.js"
+import { templateFromPathAnimator } from "./Template-animators/template-animator-from-path.js"
 /**
 * Set key for your new animator.
 * Use it:
@@ -18,9 +19,10 @@ export const LibAnimators = {
     //default:
     shift,
     //new:
-    incBindAnimator: incrementBindPosition,
-    testAnimator: testAnimator,
-    SinCosProcent: SinCosProcentOnly,
-    DrawingAnimator: drawingAnimator
+    incBindAnimator             : incrementBindPosition,
+    testAnimator                : testAnimator,
+    SinCosProcent               : SinCosProcentOnly,
+    DrawingAnimator             : drawingAnimator,
+    TFPAnimator                 : templateFromPathAnimator
 
 }

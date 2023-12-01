@@ -105,10 +105,6 @@ export function onDraw(event){
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX  - rect.left;
             const y = event.clientY - rect.top;
-            // console.log(`Prev Coordinates: (${startDrawingPoint[0]}, ${startDrawingPoint[1]})`);
-            // console.log(`Current Coordinates: (${x}, ${y})`);
-            // JavaScript to draw a path
-            //console.log(canvas);
             const ctx = canvas.getContext('2d');
             // Begin a path
             ctx.beginPath();
@@ -138,18 +134,10 @@ export function destroyDraw(event){
         // 
         const anchor = document.getElementsByClassName("ul-hand-drawings")[0];
         anchor.style.color = "white"
-        // Remove current game stage
-        // document.body.removeChild(
-        //     document.getElementById("game-world")
-        // )
         // Push new path drawing in ul:
         let component = drawingPath(`path-${pathId}` ,`path-${pathId}`)
         act.insertTo(".ul-hand-drawings", [component])
         // Pass the animation data
-        //DataFromUserMode.animations.paths[`path-${pathId}`] = JSON.parse(JSON.stringify(animationDataPath))
-        // Reset game stage
-        //START_APP()
-        //
         drawingsPathToAdd[`path-${pathId}`] = JSON.parse(JSON.stringify(animationDataPath))
         // Inc the path Id
         pathId++
@@ -197,7 +185,6 @@ export function onDestroyDragModeMenu(event){
  * Function to retrieve points from the embedded SVG
  */
 export function getSvgCoordinates(e){
-    console.log("getSvgCoordinates");
     if (!e.target.style.backgroundColor){
         // Set on styles:
         e.target.style.backgroundColor = "gray"
@@ -212,7 +199,7 @@ export function getSvgCoordinates(e){
         // Set off styles:
         e.target.style.backgroundColor = ""
         e.target.style.color = "gray"
-        delete DataFromUserMode.animations.paths[fileName]
+        delete DataFromUserMode.animationsSVG[fileName]
     }
 }
 function getPointsFromSVG(svgObject) {
@@ -223,6 +210,7 @@ function getPointsFromSVG(svgObject) {
 
         //Find the polyline element and retrieve its points attribute
         const polyline = svgDoc.querySelector('polyline');
+        const svg = svgDoc.querySelector('svg');
         if (polyline) {
             const pointsAttribute = polyline.getAttribute('points');
             // Prepear string data:
@@ -236,8 +224,11 @@ function getPointsFromSVG(svgObject) {
                     [Number(x), Number(y)]
                 )
             }
-            // Save data
-            DataFromUserMode.animations.paths[svgObject.id] = coordinates
+            // Save data from svg file
+            DataFromUserMode.animationsSVG[svgObject.id] = {}
+            DataFromUserMode.animationsSVG[svgObject.id].path = coordinates
+            const [_0, _1, ...screenSize] = svg.getAttribute('viewBox').split(" ").map(el => +el)
+            DataFromUserMode.animationsSVG[svgObject.id].viewBox = {width:screenSize[0], height: screenSize[1]}
         } else {
             console.log('Polyline element not found in SVG');
         }
@@ -249,25 +240,26 @@ function getPointsFromSVG(svgObject) {
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                        Handle drawings
  * -----------------------------------------------------------------
- * Function to retrieve points from the embedded SVG
+ * Function to retrieve points from drawings
  */
 export function getDrawingCoordinates(e){
-    console.log("getDrawingCoordinates");
     if (!e.target.style.backgroundColor){
         // Set on styles:
         e.target.style.backgroundColor = "gray"
         e.target.style.color = "white"
         // Get the object element
         const fileName = e.target.textContent
-        DataFromUserMode.animations.paths[fileName] = drawingsPathToAdd[fileName]
-        console.log("DataFromUserMode:",DataFromUserMode.animations.paths);
+        DataFromUserMode.animationsDrawings[fileName] = {}
+        DataFromUserMode.animationsDrawings[fileName].path = drawingsPathToAdd[fileName]
+        DataFromUserMode.animationsDrawings[fileName].viewBox = {width:window.innerWidth, height: window.innerHeight}
+        console.log("animationsDrawings >>> Add:", DataFromUserMode.animationsDrawings);
     }
     else {
         const fileName = e.target.textContent
         // Set off styles:
         e.target.style.backgroundColor = ""
         e.target.style.color = "gray"
-        delete DataFromUserMode.animations.paths[fileName]
-        console.log("DataFromUserMode:", DataFromUserMode.animations.paths);
+        delete DataFromUserMode.animationsDrawings[fileName]
+        console.log("animationsDrawings >>> Delete :", DataFromUserMode.animationsDrawings);
     }
 }

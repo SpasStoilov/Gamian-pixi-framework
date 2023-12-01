@@ -1,19 +1,30 @@
-#SplashEmitter.once initDrawingAnimation(){
-    this.model.shift(
+#SplashEmitter.once emmitFirstTemplate(){
+    this.model.shiftOnResize(
         "feat3", 
         "position",
-        [
-            {
-                path: this.modeData.animations.paths["path1.svg"],
-                steps: 70
+        {
+            setState(){
+                return window.innerWidth > 700 ? 0 : 1
             },
-            {
-                path: this.modeData.animations.paths["path-0"],
-                steps: 1
-            },
-        ],
-        "AnimeDrawingMid",
-        "DrawingAnimator"
+            chooseFromData:[
+                [
+                    {
+                        path: this.modeData.animationsDrawings["path-0"]?.path,
+                        viewBox: this.modeData.animationsDrawings["path-0"]?.viewBox,
+                        steps: 1,
+                    }
+                ],
+                [
+                    {
+                        path: this.modeData.animationsSVG["path1.svg"]?.path,
+                        viewBox: this.modeData.animationsSVG["path1.svg"]?.viewBox,
+                        steps: 70,
+                    }
+                ]
+            ]
+        },
+        "TFPMid",
+        "TFPAnimator"
     )
 }
 

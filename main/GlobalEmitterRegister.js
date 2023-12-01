@@ -1,9 +1,8 @@
 import * as AllEmitters from "../components/emitters.js"
-import {emitter} from "../root.js"
+import { emitter } from "../root.js"
 import { fetchME } from "./Utils/fetch.js"
+import { functionalEmitterRegister , classEmitterRegister } from "./Utils/globalScopeVariables.js"
 
-export let functionalEmitterRegister = {}
-export let classEmitterRegister = {}
 /**
  * Creates all instaces of componets emitters.
  * Register events:
@@ -11,9 +10,7 @@ export let classEmitterRegister = {}
  * handler == new emitterClass().init
  */
 export async function emitterFactory(){
-    functionalEmitterRegister = {}
-    classEmitterRegister = {}
-    
+
     let functionalLogic = await fetchME("js-logic")
     /**
      * Loop over all emitterClass in components dir
@@ -24,9 +21,15 @@ export async function emitterFactory(){
          */
         const instance = new emitterClass()
         /**
-         * Register
+         * Register class emitters
          */
         classEmitterRegister[name] = instance
+        /**
+         * Register event object for functions of the class emitters
+         */
+        if (!functionalEmitterRegister[name]){
+            functionalEmitterRegister[name] = {}
+        }
         /**
          *  Register Events that change the tree when you call them
          *  When you change the tree the tiker will hook new props
@@ -42,13 +45,16 @@ export async function emitterFactory(){
             ){
                 /**
                  * Define logic
+                 * name = calss emitterName
                  */
-                if (funcData.emitType == "once"){
-                    eval(`emitter.once(funcData.name, (${funcData.logic}).bind(instance))`)
+                functionalEmitterRegister[name][funcData.name] = { 
+                    handler: eval(`(${funcData.logic}).bind(instance)`), 
+                    type: funcData.emitType
                 }
-                else if (funcData.emitType == "on"){
-                    eval(`emitter.on(funcData.name}, (${funcData.logic}).bind(instance))`)
-                }
+                const eventName = funcData.name
+                const eventType = functionalEmitterRegister[name][funcData.name].type
+                const handler = functionalEmitterRegister[name][funcData.name].handler
+                emitter[eventType](eventName, handler)
             }
         }
     }

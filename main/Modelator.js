@@ -1,13 +1,17 @@
 import { tree } from "../root.js"
 import {LibAnimationDataMiddleware} from "../library/index.js"
+import { removeOngoingEvent } from "./Utils/OngoingEvent.js"
+import { ongoingEvent } from "./Utils/globalScopeVariables.js";
 /**
- * Manages Animations
+ * Manages Animations 
  */
 export class Modelator{
     TIME = 0
     animations = {}
     animationsOnResize = {}
     currentAnimationsState = {}
+    waitingRoomForAnimate = []
+    waitingRoomForAnimateOnResize = []
 
     constructor(){}
 
@@ -80,22 +84,53 @@ export class Modelator{
         param,
         data,
         animationMiddleware = "shift",
-        animatorName = "shift"
+        animatorName = "shift",
+        ongoingEventName = null
     ){
-        //console.log("Modelator shift >>>", data.path);
         let animeData = LibAnimationDataMiddleware[animationMiddleware](
             assetName,
             param,
             data,
             animatorName
         )
-        /**
-         * Register animation with data
-         */
-        if (!this.animations[assetName]){
-            this.animations[assetName] = {}
+        this.waitingRoomForAnimate.push({assetName, animeData, param, ongoingEventName})
+    }
+    /**
+     * Register the animation data for animate function
+     */
+    registerAnimationsForAnimate(){
+
+        const deleteFromWaitingRoom = []
+
+        for(let anime of this.waitingRoomForAnimate){
+            let {assetName, animeData, param, ongoingEventName} = anime
+            const emitterName = tree.asset_emitter_mapper[assetName]
+            const props = tree.getEmitter(emitterName)
+            if (
+                ongoingEventName == null || 
+                ongoingEvent[ongoingEventName].constructor.name == 'Boolean' && ongoingEvent[ongoingEventName] || 
+                ongoingEvent[ongoingEventName].constructor.name == 'Function' && ongoingEvent[ongoingEventName].call(props)
+            ){
+                /**
+                 * Register animation with data
+                 */
+                if (!this.animations[assetName]){
+                    this.animations[assetName] = {}
+                }
+                this.animations[assetName][param] = animeData
+                deleteFromWaitingRoom.push(assetName)
+
+                /**
+                 * Remove the event
+                 */
+                removeOngoingEvent(ongoingEventName)
+            }
         }
-        this.animations[assetName][param] = animeData
+        /**
+         * Refresh waiting room
+         */
+        this.waitingRoomForAnimate = this.waitingRoomForAnimate.filter(data => deleteFromWaitingRoom.indexOf(data.assetName) == -1)
+
     }
     /**
      * Execute one animation on resize
@@ -125,7 +160,7 @@ export class Modelator{
         animeData.currentValue = newValue
     }
     /**
-     * Execute all animation on resize
+     * Execute all animation on resize forever
      */
     animateAllOnResize(){
         for (let [assetName, animations] of Object.entries(this.animationsOnResize)){
@@ -167,7 +202,8 @@ export class Modelator{
         param,
         data,
         animationMiddleware = "shift",
-        animatorName = "shift"
+        animatorName = "shift",
+        ongoingEventName = null
     ){
         let animeData = LibAnimationDataMiddleware[animationMiddleware](
             assetName,
@@ -175,12 +211,42 @@ export class Modelator{
             data,
             animatorName
         )
-        /**
-         * Register animation with data
-         */
-        if (!this.animationsOnResize[assetName]){
-            this.animationsOnResize[assetName] = {}
+
+        this.waitingRoomForAnimateOnResize.push({assetName, animeData, param, ongoingEventName})
+    }
+    /**
+     * Register the animation data for resize
+     */
+    registerAnimationsForResize(){
+
+        const deleteFromWaitingRoom = []
+
+        for(let anime of this.waitingRoomForAnimateOnResize){
+            let {assetName, animeData, param, ongoingEventName} = anime
+            const emitterName = tree.asset_emitter_mapper[assetName]
+            const props = tree.getEmitter(emitterName)
+            if (
+                ongoingEventName == null || 
+                ongoingEvent[ongoingEventName].constructor.name == 'Boolean' && ongoingEvent[ongoingEventName] || 
+                ongoingEvent[ongoingEventName].constructor.name == 'Function' && ongoingEvent[ongoingEventName].call(props)
+            ){
+                /**
+                 * Register animation with data
+                 */
+                if (!this.animationsOnResize[assetName]){
+                    this.animationsOnResize[assetName] = {}
+                }
+                this.animationsOnResize[assetName][param] = animeData
+                /**
+                 * Remove the event
+                 */
+                removeOngoingEvent(ongoingEventName)
+            }
         }
-        this.animationsOnResize[assetName][param] = animeData
+        /**
+         * Refresh waiting room
+         */
+        this.waitingRoomForAnimateOnResize = this.waitingRoomForAnimateOnResize.filter(data => deleteFromWaitingRoom.indexOf(data.assetName) == -1)
+
     }
 }

@@ -1,5 +1,6 @@
 import {emitter, tree, Model, DataFromUserMode} from "../root.js"
-import {setOngoingEvent, ongoingEvent } from "./Utils/OngoingEvent.js";
+import {setOngoingEvent, removeOngoingEvent } from "./Utils/OngoingEvent.js";
+import { ongoingEvent } from "./Utils/globalScopeVariables.js";
 import {sleep} from "./Utils/Sleep.js"
 import {gsap} from "../node_modules/gsap/gsap-core.js";
 
@@ -13,6 +14,8 @@ export class GenericEmitter{
     modeData = DataFromUserMode
     emitterName = null
     sleep = sleep
+    setOngoingEvent = setOngoingEvent
+    removeOngoingEvent = removeOngoingEvent
 
     constructor(){}
 
@@ -25,7 +28,7 @@ export class GenericEmitter{
          * Set event helper - current initiatedEmitter
          * For more see -> ./Utils/OngoingEvent.js
          */
-        setOngoingEvent("initiatedEmitter", this.emitterName)
+        this.setOngoingEvent("initiatedEmitter", this.emitterName)
         /**
          * Init all live hooks
          * 1. Destroy Scope
@@ -74,10 +77,6 @@ export class GenericEmitter{
     //
     async beforeUpdate(asset=null){
         console.log(`${this.emitterName} >>> beforeUpdate`);
-        return ()=>{}
-    }
-    async update(asset=null){
-        console.log(`${this.emitterName} >>> update`);
         return ()=>{}
     }
     async afterUpdate(asset=null){

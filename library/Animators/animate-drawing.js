@@ -62,10 +62,8 @@ function calcNextCoordinates(vIn, data){
         // Convert coordindates relative to units
         const unitTag = data.unitTag
         if (unitTag == "%"){
-            // TODO: Makane animation to be depended of the screen resize as option! 
-            // if screen resize the ration "nx / window.innerWidth" must be constant in order to be depended
-            nx = nx / window.innerWidth
-            ny = ny / window.innerHeight
+            nx = nx / data.viewBox.width
+            ny = ny / data.viewBox.height
             return {
                 x:{[unitTag]:nx},
                 y:{[unitTag]:ny}

@@ -4,11 +4,11 @@ import { EventEmitter } from './node_modules/events/events.mjs';
 import { emitterFactory } from "./main/GlobalEmitterRegister.js"
 import { Modelator} from './main/Modelator.js'
 import {resetLibGlobalScopeVariables} from "./library/Utils/globalScopeVariables.js"
-import {classEmitterRegister} from "./main/GlobalEmitterRegister.js"
+import {resetMainGlobalScopeVariables}  from "./main/Utils/globalScopeVariables.js"
 //----------------------  IMPORTS -------------------------------------^
 
 
-/** ------------------ GLOBAL PARAMS ----------------------------------
+/** ------------------ WORLD PARAMS ----------------------------------
  *
  *  Bundles
  */
@@ -52,9 +52,8 @@ export let worldArea = null
  * USER mode information
  */
 export let DataFromUserMode = {
-    animations:{
-        paths:{}
-    }
+    animationsDrawings:{},
+    animationsSVG:{}
 }
 //-----------------------------------------------------------------^
 
@@ -83,6 +82,10 @@ export function resizeAppView(userModeData={}) {
      * Refresh the tree params on resize
      */
     tree.hookTreeParams()
+    /**
+     * Register animations for resize
+     */
+    Model.registerAnimationsForResize()
     /**
      * Play all animations on resize
      */
@@ -116,6 +119,7 @@ export async function START_APP(){
     totalWindowHeightChange = 0;
     worldRation = window.innerWidth / window.innerHeight
     worldArea = window.innerWidth * window.innerHeight
+    resetMainGlobalScopeVariables()
     resetLibGlobalScopeVariables()
     /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
      *              Create Application
@@ -169,6 +173,10 @@ export async function START_APP(){
      */
     function Ticker(delta){
         //Model.TIME += 1
+        /**
+         * Register animations
+         */
+        Model.registerAnimationsForAnimate()
         /**
          * Plays all animations
          */

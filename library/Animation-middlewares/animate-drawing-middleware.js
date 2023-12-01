@@ -14,6 +14,7 @@
             hitPoint   : number (hit every number coordinate),
             skipRangeX : number (skip every x' if difrence between | x' - x | <= number),
             skipRangeY : number (skip every y' if difrence between | y' - y | <= number),
+            viewBox    : screen demension [0, 0 , width, height],
             loop       : boolean | number (loop the path forever on some number of times),
             onStart    : function,
             onUpdate   : function,
@@ -53,6 +54,7 @@ export function animateDrawingDataMiddleware(
         hitPoint   : number (hit every number coordinate),
         skipRangeX : number (skip every x' if difrence between | x' - x | <= number),
         skipRangeY : number (skip every y' if difrence between | y' - y | <= number),
+        viewBox    : screen demension [0, 0 , width, height],
         loop       : boolean | number,
         onStart    : function,
         onUpdate   : function,
@@ -65,6 +67,9 @@ function parseData(data){
      */
     if (!data.path){
         data.path = []
+    }
+    if (!data.viewBox){
+        data.viewBox = {width:window.innerWidth, height: window.innerHeight}
     }
     if (!data.steps){
         data.steps = 1
