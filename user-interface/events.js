@@ -1,5 +1,6 @@
 import { START_APP, DataFromUserMode, APP } from "../root.js";
 import {drawingPath} from "./library.js"
+import { parse_SVG_FILE } from "./Utils/SVG/parseSvg.js"
 import * as act from "./interior.js"
 
 let modeOn = false
@@ -51,7 +52,7 @@ export async function OnClick(e){
      */
     if (e.target.className == "ul-hand-drawings"){
         drawingClicked = drawingClicked ? false : true
-        e.target.style.color = drawingClicked ? "gray" : "white"
+        e.target.style.color = drawingClicked ? "gray" : "black"
         const typeDisplay = drawingClicked ? "block" : "none"
         //---------------------------------------------------------------^
 
@@ -67,7 +68,7 @@ export async function OnClick(e){
      */
     if (e.target.className == "ul-svg-drawings"){
         svgClicked = svgClicked ? false : true
-        e.target.style.color = svgClicked ? "gray" : "white"
+        e.target.style.color = svgClicked ? "gray" : "black"
         const typeDisplay = svgClicked ? "block" : "none"
         const listItems = e.target.getElementsByTagName('li');
         // Loop through each <li> and set its display to block
@@ -133,7 +134,7 @@ export function destroyDraw(event){
         canvas.style.display = 'none'
         // 
         const anchor = document.getElementsByClassName("ul-hand-drawings")[0];
-        anchor.style.color = "white"
+        anchor.style.color = "black"
         // Push new path drawing in ul:
         let component = drawingPath(`path-${pathId}` ,`path-${pathId}`)
         act.insertTo(".ul-hand-drawings", [component])
@@ -143,6 +144,7 @@ export function destroyDraw(event){
         pathId++
         animationDataPath = []
         isDrawing = false
+        drawingClicked = false
         startDrawingPoint = []
         //
         //console.log("DataFromUserMode >>>", DataFromUserMode);
@@ -158,7 +160,7 @@ export function onStarDragModeMenu(event){
     if (event.target.className == "mode-menu"){
         const modeMenu = event.target
         isDragging = true;
-        modeMenu.style.borderTop = '25px solid #CCCCCC'
+        modeMenu.style.borderTop = '25px solid #F7B538'
     }
 }
 export function onDragModeMenu(event){
@@ -173,7 +175,7 @@ export function onDragModeMenu(event){
 export function onDestroyDragModeMenu(event){
     if (event.target.className == "mode-menu"){
         const modeMenu = event.target
-        modeMenu.style.borderTop = '25px solid #e5e8ed'
+        modeMenu.style.borderTop = '25px solid #2E2E2E'
         isDragging = false
     }
 }
@@ -192,7 +194,7 @@ export function getSvgCoordinates(e){
         // Get the object element
         const fileName = e.target.textContent
         let svgObject = document.getElementById(fileName);
-        svgObject.onload = getPointsFromSVG(svgObject)
+        svgObject.onload = parse_SVG_FILE(svgObject)
     }
     else {
         const fileName = e.target.textContent
@@ -202,41 +204,6 @@ export function getSvgCoordinates(e){
         delete DataFromUserMode.animationsSVG[fileName]
     }
 }
-function getPointsFromSVG(svgObject) {
-    // Check if the #Document is available (loaded)
-    if (svgObject.contentDocument) {
-        // Access the SVG content
-        const svgDoc = svgObject.contentDocument;
-
-        //Find the polyline element and retrieve its points attribute
-        const polyline = svgDoc.querySelector('polyline');
-        const svg = svgDoc.querySelector('svg');
-        if (polyline) {
-            const pointsAttribute = polyline.getAttribute('points');
-            // Prepear string data:
-            let splitData = pointsAttribute.split(" ")
-            let filterData = splitData.filter(el => el)
-            // Get coordinates data:
-            const coordinates = []
-            for (let stringData of filterData){
-                let [x, y] = stringData.split(",")
-                coordinates.push(
-                    [Number(x), Number(y)]
-                )
-            }
-            // Save data from svg file
-            DataFromUserMode.animationsSVG[svgObject.id] = {}
-            DataFromUserMode.animationsSVG[svgObject.id].path = coordinates
-            const [_0, _1, ...screenSize] = svg.getAttribute('viewBox').split(" ").map(el => +el)
-            DataFromUserMode.animationsSVG[svgObject.id].viewBox = {width:screenSize[0], height: screenSize[1]}
-        } else {
-            console.log('Polyline element not found in SVG');
-        }
-    } else {
-        console.log('SVG content not loaded yet');
-    }
-}
-
 /** ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *                        Handle drawings
  * -----------------------------------------------------------------

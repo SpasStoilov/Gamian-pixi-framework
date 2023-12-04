@@ -16,7 +16,7 @@
                 ],
                 [
                     {
-                        path: this.modeData.animationsSVG["path1.svg"]?.path,
+                        path: this.modeData.animationsSVG["path1.svg"]?.polylines[`polyline-0`],
                         viewBox: this.modeData.animationsSVG["path1.svg"]?.viewBox,
                         steps: 70,
                     }

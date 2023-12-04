@@ -36,6 +36,10 @@ export let svgPaths = svgFilesNames.map((name, i) => {
                     id: name,
                     type:"image/svg+xml",
                     data: `${origin}/${name}`,
+                    style:{
+                        width:"200px",
+                        height:"100px"
+                    }
                 }
             ],
         }
@@ -106,7 +110,7 @@ export let Mode_Options = [
             padding: '10px 25px 10px 25px',
             margin: '0px',
             fontFamily: "Arial, Helvetica, sans-serif",
-            color: 'white',
+            color: 'black',
         },
         textContent: [
             "Animation from Drawing",
@@ -124,7 +128,7 @@ export let Mode_Options = [
             padding: '10px 25px 10px 25px',
             margin: '0px',
             fontFamily: "Arial, Helvetica, sans-serif",
-            color: 'white',
+            color: 'black',
         },
         textContent: [
             "Animation from SVG",
@@ -140,10 +144,13 @@ export let Mode_Options = [
         textContent: "Reset App",
         style: {
             display: "block",
+            "align-self": "flex-center",
             padding: '10px 25px 10px 25px',
-            margin: '10px 0 0 0',
+            "margin-top": "auto",
+            border:"none",
             fontFamily: "Arial, Helvetica, sans-serif",
             textDecoration: "none",
+            backgroundColor: '#F7B538',
         },
         Events: [
             {evnt: "click", evntFunc: Event.OnClick},
@@ -157,15 +164,17 @@ export let Mode_Menu = [
         className: "mode-menu",
         style: {
             display: 'none',
+            overflow: "auto",
+            height:"50%",
             "flex-direction": "column",
             position: "absolute",
             top: "0",
             left: "0",
-            backgroundColor: '#0a212d',
+            backgroundColor: 'white',
             zIndex: '10',
-            borderTop:'25px solid #e5e8ed',
-            "border-top-left-radius": '10%',
-            "border-top-right-radius": '10%',
+            borderTop:'25px solid #2E2E2E',
+            // "border-top-left-radius": '10%',
+            // "border-top-right-radius": '10%',
         },
         Events: [
             {evnt: "mousedown", evntFunc: Event.onStarDragModeMenu},
